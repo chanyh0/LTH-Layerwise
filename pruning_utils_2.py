@@ -112,7 +112,7 @@ def prune_model_custom_random(model, mask_dict, conv1=True, random_index=-1):
                 new_mask_2 = np.random.permutation(new_mask_2).reshape(origin_mask.shape)
         
                 prune.CustomFromMask.apply(m, 'weight', mask=torch.from_numpy(new_mask_2).to(origin_mask.device))
-                print((new_mask_2 == 0).sum().float() / new_mask_2.size)
+                print((new_mask_2 == 0).sum() / new_mask_2.size)
             print(index)
             index += 1
 
