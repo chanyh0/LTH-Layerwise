@@ -72,8 +72,7 @@ def prune_model_custom_random(model, mask_dict, conv1=True, random_index=-1):
                 uppers[name] = (mask_dict[name+'.weight_mask'].numel())
             
             index += 1
-            
-    uppers = np.array(uppers)  
+ 
     print(random_zeroes)
     print(sum(random_zeroes.values()))
     names = list(random_zeroes.keys())
