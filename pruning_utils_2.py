@@ -81,8 +81,8 @@ def prune_model_custom_random(model, mask_dict, conv1=True, random_index=-1):
         names_to_switch = np.random.choice(names, 2)
         name1 = names_to_switch[0]
         name2 = names_to_switch[1]
-        limit = min(random_zeroes[name1], random_zeroes[name1], uppers[name1] - random_zeroes[name1], uppers[name2] - random_zeroes[name2])
-        to_exchange = random.randint(-limit, limit)
+        limit = min(random_zeroes[name1], uppers[name2] - random_zeroes[name2])
+        to_exchange = random.randint(limit)
         random_zeroes[name1] -= to_exchange
         random_zeroes[name2] += to_exchange
 
