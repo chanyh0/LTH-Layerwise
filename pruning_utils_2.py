@@ -79,7 +79,7 @@ def prune_model_custom_random(model, mask_dict, conv1=True, random_index=-1):
     names = list(random_zeroes.keys())
     import random
     for i in range(10000):
-        names_to_switch = random.choice(names, 2)
+        names_to_switch = np.ranmdom.choice(names, 2)
         name1 = names_to_switch[0]
         name2 = names_to_switch[1]
         limit = min(random_zeroes[name1], random_zeroes[name1], uppers[name1] - random_zeroes[name1], uppers[name2] - random_zeroes[name2])
