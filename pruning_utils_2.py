@@ -51,6 +51,8 @@ def prune_model_custom(model, mask_dict, conv1=True, random_index=-1, hold_spars
                 new_mask_2[new_mask <= threshold] = 0
                 new_mask_2[new_mask > threshold] = 1
                 assert abs((new_mask_2 == 0).sum() - number_of_zeros) < 5 or (not hold_sparsity)
+
+                assert (mask_dict[name+'.weight_mask'] - new_mask_2).abs().mean() > 0 # assert different mask
                 prune.CustomFromMask.apply(m, 'weight', mask=new_mask_2)
                 print((new_mask_2 == 0).sum().float() / new_mask_2.numel())
             print(index)
