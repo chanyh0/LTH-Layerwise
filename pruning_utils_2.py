@@ -64,34 +64,29 @@ def prune_model_custom_random(model, mask_dict, conv1=True, random_index=-1):
     index = 0
     random_zeroes = {}
     zeroes = {}
-    uppers = []
+    uppers = {}
     for name,m in model.named_modules():
         if isinstance(m, nn.Conv2d):
             if index <= random_index:
                 random_zeroes[name] = (mask_dict[name+'.weight_mask'] == 0).sum().item()
-                uppers.append(mask_dict[name+'.weight_mask'].numel())
+                uppers[name] = (mask_dict[name+'.weight_mask'].numel())
             
             index += 1
             
     uppers = np.array(uppers)  
-    list_random_zeroes = list(random_zeroes.values())     
-    not_done = True
     print(random_zeroes)
-    print(uppers)
     print(sum(random_zeroes.values()))
-    while not_done:
-        up = (1.05 * np.array(list_random_zeroes[:-1])).astype(int)
-        up = (np.abs(up + uppers[:-1]) - np.abs(up - uppers[:-1])) / 2
-        randoms = np.random.randint(size = len(list_random_zeroes)-1, low = 0, high = up)
+    names = list(random_zeroes.keys())
+    import random
+    for i in range(10000):
+        names_to_switch = random.choice(names, 2)
+        name1 = names_to_switch[0]
+        name2 = names_to_switch[1]
+        limit = min(random_zeroes[name1], random_zeroes[name1], uppers[name1] - random_zeroes[name1], uppers[name2] - random_zeroes[name2])
+        to_exchange = random.randint(-limit, limit)
+        random_zeroes[name1] -= to_exchange
+        random_zeroes[name2] += to_exchange
 
-        last = sum(list_random_zeroes) - sum(randoms)
-
-        not_done = last <=0 or last >= uppers[-1]
-
-    randoms = list(randoms)
-    randoms.append(last)
-    for index, name in enumerate(random_zeroes):
-        random_zeroes[name] = randoms[index]
     print(random_zeroes)
     print(sum(random_zeroes.values()))
     index = 0
