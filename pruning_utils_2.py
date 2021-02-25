@@ -102,12 +102,7 @@ def prune_model_custom_random(model, mask_dict, conv1=True, random_index=-1):
                 
             else:
                 origin_mask = mask_dict[name+'.weight_mask']
-
-                if index <= random_index:
-                    number_of_zeros = random_zeroes[name]
-                else:
-                    number_of_zeros = (origin_mask == 0).sum()
-                
+                number_of_zeros = random_zeroes[name]
                 new_mask_2 = np.concatenate([np.zeros(number_of_zeros), np.ones(origin_mask.numel() - number_of_zeros)], 0)
                 new_mask_2 = np.random.permutation(new_mask_2).reshape(origin_mask.shape)
         
