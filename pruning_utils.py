@@ -72,3 +72,20 @@ def prune_model_custom(model, mask_dict, conv1=True):
         if isinstance(m, nn.Conv2d):
             print('pruning layer with custom mask:', name)
             prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'])
+
+
+def pruning_model_random(model, px):
+
+    print('start unstructured pruning')
+    parameters_to_prune =[]
+    for name,m in model.named_modules():
+        if isinstance(m, nn.Conv2d):
+            parameters_to_prune.append((m,'weight'))
+
+    parameters_to_prune = tuple(parameters_to_prune)
+
+    prune.global_unstructured(
+        parameters_to_prune,
+        pruning_method=prune.RandomUnstructured,
+        amount=px,
+    )

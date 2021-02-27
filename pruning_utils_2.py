@@ -34,15 +34,12 @@ def prune_model_custom(model, mask_dict, conv1=True, random_index=-1, hold_spars
     index = 0
     for name,m in model.named_modules():
         if isinstance(m, nn.Conv2d):
+
+            print("{}: {}".format(index, name))
+
             if index > random_index:
-                if name == 'conv1':
-                    if conv1:
-                        prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'])
-                    else:
-                        print('skip conv1 for custom pruning')
-                else:
-                    prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'])
-                
+                print("origin: {}".format(index))
+                prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'])
             else:
                 number_of_zeros = (mask_dict[name+'.weight_mask'] == 0).sum()
                 new_mask = torch.randn(mask_dict[name+'.weight_mask'].shape, device=mask_dict[name+'.weight_mask'].device)
@@ -55,7 +52,6 @@ def prune_model_custom(model, mask_dict, conv1=True, random_index=-1, hold_spars
                 assert (mask_dict[name+'.weight_mask'] - new_mask_2).abs().mean() > 0 # assert different mask
                 prune.CustomFromMask.apply(m, 'weight', mask=new_mask_2)
                 print((new_mask_2 == 0).sum().float() / new_mask_2.numel())
-            print(index)
             index += 1
 
 def prune_model_custom_random(model, mask_dict, conv1=True, random_index=-1):
