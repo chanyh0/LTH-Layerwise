@@ -89,13 +89,7 @@ def prune_model_custom_random(model, mask_dict, conv1=True, random_index=-1):
     for name,m in model.named_modules():
         if isinstance(m, nn.Conv2d):
             if index > random_index:
-                if name == 'conv1':
-                    if conv1:
-                        prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'])
-                    else:
-                        print('skip conv1 for custom pruning')
-                else:
-                    prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'])
+                prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'])
                 
             else:
                 origin_mask = mask_dict[name+'.weight_mask']
