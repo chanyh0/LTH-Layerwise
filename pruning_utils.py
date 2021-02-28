@@ -94,7 +94,7 @@ def pruning_model_random(model, px):
         index = 0
         if isinstance(m, nn.Conv2d):            
             origin_mask = m.weight_mask
-            print((origin_mask == 0).sum() / origin_mask.size)
+            print((origin_mask == 0).sum() / origin_mask.numel())
             print(index)
             index += 1
             print(name, (origin_mask == 0).sum())
