@@ -90,7 +90,7 @@ def prune_model_custom_random(model, mask_dict, conv1=True, random_index=-1):
         if isinstance(m, nn.Conv2d):
             if index > random_index:
                 #prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'])
-                
+                pass
             else:
                 origin_mask = mask_dict[name+'.weight_mask']
                 number_of_zeros = random_zeroes[name]
