@@ -73,6 +73,7 @@ def prune_model_custom_random(model, mask_dict, conv1=True, random_index=-1):
     print(random_zeroes)
     print(sum(random_zeroes.values()))
     names = list(random_zeroes.keys())
+    print(uppers)
     import random
     for i in range(50000):
         names_to_switch = np.random.choice(names, 2)
