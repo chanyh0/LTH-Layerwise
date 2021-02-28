@@ -74,7 +74,7 @@ def prune_model_custom_random(model, mask_dict, conv1=True, random_index=-1):
     print(sum(random_zeroes.values()))
     names = list(random_zeroes.keys())
     import random
-    for i in range(10000):
+    for i in range(50000):
         names_to_switch = np.random.choice(names, 2)
         name1 = names_to_switch[0]
         name2 = names_to_switch[1]
@@ -89,17 +89,17 @@ def prune_model_custom_random(model, mask_dict, conv1=True, random_index=-1):
     for name,m in model.named_modules():
         if isinstance(m, nn.Conv2d):
             if index > random_index:
-                #prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'])
-                pass
+                print("fix {}".format(index))
+                prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'])
             else:
+                print("free {}".format(index))
                 origin_mask = mask_dict[name+'.weight_mask']
                 number_of_zeros = random_zeroes[name]
                 new_mask_2 = np.concatenate([np.zeros(number_of_zeros), np.ones(origin_mask.numel() - number_of_zeros)], 0)
                 new_mask_2 = np.random.permutation(new_mask_2).reshape(origin_mask.shape)
         
-                #prune.CustomFromMask.apply(m, 'weight', mask=torch.from_numpy(new_mask_2).to(origin_mask.device))
+                prune.CustomFromMask.apply(m, 'weight', mask=torch.from_numpy(new_mask_2).to(origin_mask.device))
                 print((new_mask_2 == 0).sum() / new_mask_2.size)
-            print(index)
             index += 1
 
     print('start unstructured pruning')
