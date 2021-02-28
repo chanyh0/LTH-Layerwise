@@ -102,20 +102,6 @@ def prune_model_custom_random(model, mask_dict, conv1=True, random_index=-1):
                 print((new_mask_2 == 0).sum() / new_mask_2.size)
             index += 1
 
-    print('start unstructured pruning')
-    parameters_to_prune =[]
-    for name,m in model.named_modules():
-        if isinstance(m, nn.Conv2d):
-            parameters_to_prune.append((m,'weight'))
-
-    parameters_to_prune = tuple(parameters_to_prune)
-
-    prune.global_unstructured(
-        parameters_to_prune,
-        pruning_method=prune.RandomUnstructured,
-        amount=0.9907766,
-    )
-
 def remove_prune(model, conv1=True):
     
     print('remove pruning')
