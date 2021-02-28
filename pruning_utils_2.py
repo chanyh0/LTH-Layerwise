@@ -89,7 +89,7 @@ def prune_model_custom_random(model, mask_dict, conv1=True, random_index=-1):
     for name,m in model.named_modules():
         if isinstance(m, nn.Conv2d):
             if index > random_index:
-                prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'])
+                #prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'])
                 
             else:
                 origin_mask = mask_dict[name+'.weight_mask']
@@ -97,10 +97,24 @@ def prune_model_custom_random(model, mask_dict, conv1=True, random_index=-1):
                 new_mask_2 = np.concatenate([np.zeros(number_of_zeros), np.ones(origin_mask.numel() - number_of_zeros)], 0)
                 new_mask_2 = np.random.permutation(new_mask_2).reshape(origin_mask.shape)
         
-                prune.CustomFromMask.apply(m, 'weight', mask=torch.from_numpy(new_mask_2).to(origin_mask.device))
+                #prune.CustomFromMask.apply(m, 'weight', mask=torch.from_numpy(new_mask_2).to(origin_mask.device))
                 print((new_mask_2 == 0).sum() / new_mask_2.size)
             print(index)
             index += 1
+
+    print('start unstructured pruning')
+    parameters_to_prune =[]
+    for name,m in model.named_modules():
+        if isinstance(m, nn.Conv2d):
+            parameters_to_prune.append((m,'weight'))
+
+    parameters_to_prune = tuple(parameters_to_prune)
+
+    prune.global_unstructured(
+        parameters_to_prune,
+        pruning_method=prune.RandomUnstructured,
+        amount=0.9907766,
+    )
 
 def remove_prune(model, conv1=True):
     
