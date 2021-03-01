@@ -59,7 +59,7 @@ parser.add_argument('--rewind_arch', action="store_true", help="mask add back")
 
 parser.add_argument('--random-index', default=20, type=int)
 parser.add_argument('--random-sparsity', action="store_true")
-
+parser.add_argument('--rate', type=float)
 
 
 best_sa = 0
@@ -287,7 +287,7 @@ def load_ticket(model, args):
         if args.reverse_mask:
             current_mask = reverse_mask(current_mask)
         
-        pruning_model_random(model, 0.99)
+        pruning_model_random(model, args.rate)
 
         check_sparsity(model, conv1=args.conv1)
 

@@ -288,7 +288,7 @@ def load_ticket(model, args):
             current_mask = reverse_mask(current_mask)
         
         if args.random_sparsity:
-            prune_model_custom_random(model, current_mask, conv1=args.conv1, random_index=args.random_index)
+            prune_model_custom_random_normal(model, current_mask, conv1=args.conv1, random_index=args.random_index)
         else:
             prune_model_custom(model, current_mask, conv1=args.conv1, random_index=args.random_index)
 
