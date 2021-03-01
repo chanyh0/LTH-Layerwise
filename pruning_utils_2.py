@@ -139,8 +139,6 @@ def prune_model_custom_random_normal(model, mask_dict, conv1=True, random_index=
     new_masks_seq = torch.zeros(number_of_elements)
     new_masks_seq[random_values >= threshold] = 0
     new_masks_seq[random_values < threshold] = 1
-    print(random_zeroes)
-    print(sum(random_zeroes.values()))
     index = 0
     #random_zeros = {'conv1': 1708, 'layer1.0.conv1': 36492, 'layer1.0.conv2': 36502, 'layer1.1.conv1': 36505, 'layer1.1.conv2': 36500, 'layer2.0.conv1': 72973, 'layer2.0.conv2': 145958, 'layer2.0.downsample.0': 8108, 'layer2.1.conv1': 145978, 'layer2.1.conv2': 146033, 'layer3.0.conv1': 291894, 'layer3.0.conv2': 583861, 'layer3.0.downsample.0': 32439, 'layer3.1.conv1': 583925, 'layer3.1.conv2': 583984, 'layer4.0.conv1': 1167779, 'layer4.0.conv2': 2335680, 'layer4.0.downsample.0': 129812, 'layer4.1.conv1': 2335822, 'layer4.1.conv2': 2335687}
     for name,m in model.named_modules():
