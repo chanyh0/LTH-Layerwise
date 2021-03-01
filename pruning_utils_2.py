@@ -155,7 +155,7 @@ def prune_model_custom_random_normal(model, mask_dict, conv1=True, random_index=
                 new_mask_2 = new_masks_seq[indexes[index]:indexes[index + 1]].reshape(origin_mask.shape)
         
                 prune.CustomFromMask.apply(m, 'weight', mask=new_mask_2.to(origin_mask.device))
-                print((new_mask_2 == 0).sum() / new_mask_2.numel())
+                print((new_mask_2 == 0).sum().float() / new_mask_2.numel())
             index += 1
 
 def remove_prune(model, conv1=True):
