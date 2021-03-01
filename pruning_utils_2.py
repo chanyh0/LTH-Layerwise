@@ -128,7 +128,7 @@ def prune_model_custom_random_normal(model, mask_dict, conv1=True, random_index=
     number_of_zeros = sum(random_zeroes.values())
     number_of_elements = sum(uppers.values())
 
-    random_zeroes = list(random_zeroes)
+    random_zeroes = list(random_zeroes.values())
     indexes = [0]
     for i in range(len(random_zeroes)):
         indexes.append(sum(random_zeroes[:(i+1)]))
