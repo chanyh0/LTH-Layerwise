@@ -129,9 +129,10 @@ def prune_model_custom_random_normal(model, mask_dict, conv1=True, random_index=
     number_of_elements = sum(uppers.values())
 
     random_zeroes = list(random_zeroes.values())
+    uppers = list(uppers.values())
     indexes = [0]
     for i in range(len(random_zeroes)):
-        indexes.append(sum(random_zeroes[:(i+1)]))
+        indexes.append(sum(uppers[:(i+1)]))
     random_values = torch.randn(number_of_elements)
     threshold,_ = torch.topk(random_values, number_of_zeros)
     threshold = threshold[-1]
