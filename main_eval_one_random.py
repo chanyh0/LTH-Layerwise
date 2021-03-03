@@ -273,7 +273,7 @@ def load_ticket(model, args):
         index = 0
         for name,m in model.named_modules():
             if isinstance(m, nn.Conv2d):
-                if index == random_index:
+                if index == args.random_index:
                     torch.nn.init.normal_(m.weight)
                 index += 1
 
