@@ -2,6 +2,7 @@ from torchvision import transforms
 from torchvision.datasets import CIFAR10, CIFAR100, FashionMNIST
 from torch.utils.data import DataLoader, Subset
 
+import os
 
 def cifar10_dataloaders(batch_size=128, data_dir = 'datasets/cifar10'):
 
