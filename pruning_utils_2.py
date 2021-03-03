@@ -354,7 +354,7 @@ def prune_model_custom_one_random(model, mask_dict, random_index = -1):
             print('pruning layer with custom mask:', name)
             prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'])
             if index == random_index:
-                prune.RandomUnstructured.apply(m, 'weight', amount=(mask_dict[name+'.weight_mask']==0).sum().int())
+                prune.RandomUnstructured.apply(m, 'weight', amount=(mask_dict[name+'.weight_mask']==0).sum().int().item())
             index += 1
 
 
