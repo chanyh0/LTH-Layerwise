@@ -1,5 +1,5 @@
 from torchvision import transforms
-from torchvision.datasets import CIFAR10, CIFAR100, FashionMNIST
+from torchvision.datasets import CIFAR10, CIFAR100, FashionMNIST, ImageFolder
 from torch.utils.data import DataLoader, Subset
 
 import os
