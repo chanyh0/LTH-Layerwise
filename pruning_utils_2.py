@@ -347,11 +347,14 @@ def check_zero_channel(mask_dict):
 
 def prune_model_custom_one_random(model, mask_dict, random_index = -1):
 
+    index = 0
     for name,m in model.named_modules():
         if isinstance(m, nn.Conv2d):
+
             print('pruning layer with custom mask:', name)
             prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'])
-
-
+            if index == random_index:
+                prune.RandomUnstructured.apply(m, 'weight', amount=(mask_dict[name+'.weight_mask']==0).sum().float() / mask_dict[name+'.weight_mask'].numel())
+            index += 1
 
 
