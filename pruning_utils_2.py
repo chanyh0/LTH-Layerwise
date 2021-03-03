@@ -158,6 +158,60 @@ def prune_model_custom_random_normal(model, mask_dict, conv1=True, random_index=
                 print((new_mask_2 == 0).sum().float() / new_mask_2.numel())
             index += 1
 
+
+def prune_model_custom_random_normal_reverse(model, mask_dict, conv1=True, random_index=-1):
+
+    print('start unstructured pruning with custom mask')
+    index = 0
+    random_zeroes = {}
+    zeroes = {}
+    uppers = {}
+    for name,m in model.named_modules():
+        if isinstance(m, nn.Conv2d):
+            if index >= random_index:
+                random_zeroes[name] = (mask_dict[name+'.weight_mask'] == 0).sum().item()
+                uppers[name] = (mask_dict[name+'.weight_mask'].numel())
+            
+            index += 1
+ 
+    print(random_zeroes)
+    print(sum(random_zeroes.values()))
+    names = list(random_zeroes.keys())
+    print(uppers)
+    
+    number_of_zeros = sum(random_zeroes.values())
+    number_of_elements = sum(uppers.values())
+
+    random_zeroes = list(random_zeroes.values())
+    uppers = list(uppers.values())
+    indexes = [0]
+    for i in range(len(random_zeroes)):
+        indexes.append(sum(uppers[:(i+1)]))
+    random_values = torch.randn(number_of_elements)
+    threshold,_ = torch.topk(random_values, number_of_zeros)
+    threshold = threshold[-1]
+
+    new_masks_seq = torch.zeros(number_of_elements)
+    new_masks_seq[random_values >= threshold] = 0
+    new_masks_seq[random_values < threshold] = 1
+    index = 0
+    #random_zeros = {'conv1': 1708, 'layer1.0.conv1': 36492, 'layer1.0.conv2': 36502, 'layer1.1.conv1': 36505, 'layer1.1.conv2': 36500, 'layer2.0.conv1': 72973, 'layer2.0.conv2': 145958, 'layer2.0.downsample.0': 8108, 'layer2.1.conv1': 145978, 'layer2.1.conv2': 146033, 'layer3.0.conv1': 291894, 'layer3.0.conv2': 583861, 'layer3.0.downsample.0': 32439, 'layer3.1.conv1': 583925, 'layer3.1.conv2': 583984, 'layer4.0.conv1': 1167779, 'layer4.0.conv2': 2335680, 'layer4.0.downsample.0': 129812, 'layer4.1.conv1': 2335822, 'layer4.1.conv2': 2335687}
+    for name,m in model.named_modules():
+        if isinstance(m, nn.Conv2d):
+            if index < random_index:
+                print("fix {}".format(index))
+                prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'])
+            else:
+                print("free {}".format(index))
+                origin_mask = mask_dict[name+'.weight_mask']
+                #number_of_zeros = random_zeroes[name]
+                #new_mask_2 = np.concatenate([np.zeros(number_of_zeros), np.ones(origin_mask.numel() - number_of_zeros)], 0)
+                new_mask_2 = new_masks_seq[indexes[index]:indexes[index + 1]].reshape(origin_mask.shape)
+        
+                prune.CustomFromMask.apply(m, 'weight', mask=new_mask_2.to(origin_mask.device))
+                print((new_mask_2 == 0).sum().float() / new_mask_2.numel())
+            index += 1
+
 def remove_prune(model, conv1=True):
     
     print('remove pruning')
