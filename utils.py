@@ -103,6 +103,12 @@ def setup_model_dataset(args):
             mean=[0.2860, 0.2860, 0.2860], std=[0.3530, 0.3530, 0.3530])
         train_loader, val_loader, test_loader = fashionmnist_dataloaders(batch_size= args.batch_size, data_dir =args.data)
 
+    elif args.dataset == 'tiny-imagenet':
+        classes = 200
+        normalization = NormalizeByChannelMeanStd(
+            mean=[0.4802, 0.4481, 0.3975], std=[0.2302, 0.2265, 0.2262])
+        train_loader = tiny_imagenet_dataloaders_val(batch_size= args.batch_size, data_dir =args.data, split_file=args.split_file)
+        model.normalize = normalization
     else:
         print('dataset not support')
 
