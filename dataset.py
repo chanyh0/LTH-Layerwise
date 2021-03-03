@@ -90,4 +90,37 @@ def fashionmnist_dataloaders(batch_size=64, data_dir = 'datasets/fashionmnist'):
     return train_loader, val_loader, test_loader
 
 
+def tiny_imagenet_dataloaders(batch_size=64, data_dir = 'datasets/tiny-imagenet-200', dataset=False, split_file=None):
+
+    train_transform = transforms.Compose([
+        transforms.RandomCrop(64, padding=4),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+    ])
+
+    test_transform = transforms.Compose([
+        transforms.ToTensor(),
+    ])
+
+    train_path = os.path.join(data_dir, 'train')
+    val_path = os.path.join(data_dir, 'val')
+
+    if not split_file:
+        split_file = 'npy_files/tiny-imagenet-train-val.npy'
+    split_permutation = list(np.load(split_file))
+
+    train_set = Subset(ImageFolder(train_path, transform=train_transform), split_permutation[:90000])
+    val_set = Subset(ImageFolder(train_path, transform=test_transform), split_permutation[90000:])
+    test_set = ImageFolder(val_path, transform=test_transform)
+
+    train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=2, pin_memory=True)
+    val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
+    test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
+
+    if dataset:
+        print('return train dataset')
+        train_dataset = ImageFolder(train_path, transform=train_transform)
+        return train_dataset, val_loader, test_loader
+    else:
+        return train_loader, val_loader, test_loader
 

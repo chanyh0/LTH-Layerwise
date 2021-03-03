@@ -13,104 +13,47 @@ from dataset import *
 def setup_model_dataset(args):
     
     if args.dataset == 'cifar10':
-        print('training on cifar10 dataset')
-        
-        if args.arch == 'res18':
-            model = resnet18(num_classes=10)
-        elif args.arch == 'res50':
-            model = resnet50(num_classes=10)
-        elif args.arch == 'res20s':
-            model = resnet20(number_class=10)
-        elif args.arch == 'res20s_2fc':
-            model = resnet20_2fc(number_class=10)
-        else:
-            print('do not support ', args.arch)
-
-        model.normalize = NormalizeByChannelMeanStd(
+        classes = 10
+        train_number = 45000
+        normalization = NormalizeByChannelMeanStd(
             mean=[0.4914, 0.4822, 0.4465], std=[0.2470, 0.2435, 0.2616])
-        train_loader, val_loader, test_loader = cifar10_dataloaders(batch_size= args.batch_size, data_dir =args.data)
+        train_set_loader, val_loader, test_loader = cifar10_dataloaders(batch_size= args.batch_size, data_dir =args.data, dataset=if_train_set)
 
-    elif args.dataset == 'cifar10_index':
-        print('training on cifar10 subset')
-
-        if args.arch == 'res18':
-            model = resnet18(num_classes=10)
-        elif args.arch == 'res50':
-            model = resnet50(num_classes=10)
-        elif args.arch == 'res20s':
-            model = resnet20(number_class=10)
-        elif args.arch == 'res20s_2fc':
-            model = resnet20_2fc(number_class=10)
-        else:
-            print('do not support ', args.arch)
-
-        model.normalize = NormalizeByChannelMeanStd(
-            mean=[0.4914, 0.4822, 0.4465], std=[0.2470, 0.2435, 0.2616])
-        train_loader, val_loader, test_loader = cifar10_dataloaders_index(batch_size= args.batch_size, data_dir =args.data, file_name=args.file_name)
-    
     elif args.dataset == 'cifar100':
-        print('training on cifar100 dataset')
-
-        if args.arch == 'res18':
-            print('model = resnet18')
-            model = resnet18(num_classes=100)
-        elif args.arch == 'res50':
-            print('model = resnet50')
-            model = resnet50(num_classes=100)
-        elif args.arch == 'wide_res50_2':
-            print('model = wide_res50_2')
-            model = wide_resnet50_2(num_classes=100)
-        elif args.arch == 'resnext50_32x4d':
-            print('model = resnext50_32x4d')
-            model = resnext50_32x4d(num_classes=100)
-        elif args.arch == 'res152':
-            print('model = resnet152')
-            model = resnet152(num_classes=100)
-        elif args.arch == 'resnext101':
-            print('model = resnext101')
-            model = resnext101_32x8d(num_classes=100)
-        elif args.arch == 'dense161':
-            print('model = dense161')
-            model = densenet161(num_classes=100)
-        elif args.arch == 'shufflenet':
-            print('model = shufflenet_v2_x1_0')
-            model = shufflenet_v2_x1_0(num_classes=100)
-        elif args.arch == 'res20s':
-            print('model = res20s')
-            model = resnet20(number_class=100)
-        else:
-            print('do not support ', args.arch)
-
-        model.normalize = NormalizeByChannelMeanStd(
-            mean=[0.5071, 0.4866, 0.4409], std=[0.2009, 0.1984, 0.2023])
-
-        train_loader, val_loader, test_loader = cifar100_dataloaders(batch_size= args.batch_size, data_dir =args.data)
-
-    elif args.dataset == 'fmnist':
-        
-        print('training on fashion-mnist dataset expand to RGB channel')
-
-        if args.arch == 'res18':
-            model = resnet18(num_classes=10)
-        elif args.arch == 'res50':
-            model = resnet50(num_classes=10)
-        elif args.arch == 'res20s':
-            model = resnet20(number_class=10)
-        else:
-            print('do not support ', args.arch)
-
-        model.normalize = NormalizeByChannelMeanStd(
-            mean=[0.2860, 0.2860, 0.2860], std=[0.3530, 0.3530, 0.3530])
-        train_loader, val_loader, test_loader = fashionmnist_dataloaders(batch_size= args.batch_size, data_dir =args.data)
+        classes = 100
+        train_number = 45000
+        normalization = NormalizeByChannelMeanStd(
+            mean=[0.5071, 0.4866, 0.4409], std=[0.2673, 0.2564, 0.2762])
+        train_set_loader, val_loader, test_loader = cifar100_dataloaders(batch_size= args.batch_size, data_dir =args.data, dataset=if_train_set)
 
     elif args.dataset == 'tiny-imagenet':
         classes = 200
+        train_number = 90000
         normalization = NormalizeByChannelMeanStd(
             mean=[0.4802, 0.4481, 0.3975], std=[0.2302, 0.2265, 0.2262])
-        train_loader = tiny_imagenet_dataloaders_val(batch_size= args.batch_size, data_dir =args.data, split_file=args.split_file)
-        model.normalize = normalization
+        train_set_loader, val_loader, test_loader = tiny_imagenet_dataloaders(batch_size= args.batch_size, data_dir =args.data, dataset=if_train_set, split_file=args.split_file)
     else:
-        print('dataset not support')
+        raise ValueError('unknow dataset')
+
+    if args.arch == 'res18':
+        print('build model resnet18')
+        model = resnet18(num_classes=classes, imagenet=True)
+    elif args.arch == 'res50':
+        print('build model resnet50')
+        model = resnet50(num_classes=classes, imagenet=True)
+    elif args.arch == 'res20s':
+        print('build model: resnet20')
+        model = resnet20(number_class=classes)
+    elif args.arch == 'res56s':
+        print('build model: resnet56')
+        model = resnet56(number_class=classes)
+    elif args.arch == 'vgg16_bn':
+        print('build model: vgg16_bn')
+        model = vgg16_bn(num_classes=classes)
+    else:
+        raise ValueError('unknow model')
+
+    model.normalize = normalization
 
     return model, train_loader, val_loader, test_loader
 
