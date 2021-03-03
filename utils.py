@@ -8,6 +8,7 @@ from models.shufflenet import shufflenet_v2_x1_0
 from models.resnets_2fc import resnet20 as resnet20_2fc
 from advertorch.utils import NormalizeByChannelMeanStd
 from dataset import *
+from models.vgg import vgg16_bn
 
 
 def setup_model_dataset(args):
