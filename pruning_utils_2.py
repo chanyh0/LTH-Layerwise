@@ -206,7 +206,7 @@ def prune_model_custom_random_normal_reverse(model, mask_dict, conv1=True, rando
                 origin_mask = mask_dict[name+'.weight_mask']
                 #number_of_zeros = random_zeroes[name]
                 #new_mask_2 = np.concatenate([np.zeros(number_of_zeros), np.ones(origin_mask.numel() - number_of_zeros)], 0)
-                new_mask_2 = new_masks_seq[indexes[index]:indexes[index + 1]].reshape(origin_mask.shape)
+                new_mask_2 = new_masks_seq[indexes[index - random_index]:indexes[index - random_index + 1]].reshape(origin_mask.shape)
         
                 prune.CustomFromMask.apply(m, 'weight', mask=new_mask_2.to(origin_mask.device))
                 print((new_mask_2 == 0).sum().float() / new_mask_2.numel())
