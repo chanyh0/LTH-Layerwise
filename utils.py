@@ -56,7 +56,7 @@ def setup_model_dataset(args):
 
     model.normalize = normalization
 
-    return model, train_loader, val_loader, test_loader
+    return model, train_set_loader, val_loader, test_loader
 
 def cvt_state_dict(state_dict, adv_simclr, bn_idx=0):
 
