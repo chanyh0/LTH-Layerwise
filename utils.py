@@ -32,7 +32,7 @@ def setup_model_dataset(args):
         train_number = 90000
         normalization = NormalizeByChannelMeanStd(
             mean=[0.4802, 0.4481, 0.3975], std=[0.2302, 0.2265, 0.2262])
-        train_set_loader, val_loader, test_loader = tiny_imagenet_dataloaders(batch_size= args.batch_size, data_dir =args.data, split_file=args.split_file)
+        train_set_loader, val_loader, test_loader = tiny_imagenet_dataloaders(batch_size= args.batch_size, data_dir =args.data)
     else:
         raise ValueError('unknow dataset')
 
