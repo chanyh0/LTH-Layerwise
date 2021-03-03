@@ -294,7 +294,7 @@ def load_ticket(model, args):
         elif args.random_sparsity_normal:
             prune_model_custom_random_normal(model, current_mask, conv1=args.conv1, random_index=args.random_index)
 
-        elif args.random_sparisty_reverse:
+        elif args.random_sparsity_reverse:
             prune_model_custom_random_normal_reverse(model, current_mask, conv1=args.conv1, random_index=args.random_index)
         else:
             prune_model_custom(model, current_mask, conv1=args.conv1, random_index=args.random_index)
