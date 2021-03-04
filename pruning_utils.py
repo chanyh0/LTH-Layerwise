@@ -19,7 +19,7 @@ def pruning_model(model, px):
         amount=px,
     )
 
-def check_sparsity(model, report=False, conv1=True):
+def check_sparsity(model, report=False):
     sum_list = 0
     zero_sum = 0
     for m in model.modules():
@@ -30,7 +30,7 @@ def check_sparsity(model, report=False, conv1=True):
         print('report remain weight = ', 100*(1-zero_sum/sum_list),'%')
     else:
         print('remain weight = ', 100*(1-zero_sum/sum_list),'%')
-    return 100*(1-zero_sum/sum_list)
+    return 100*(1-zero_sum/sum_list), sum_list - zero_sum
 
 def remove_prune(model):
     print('remove pruning')

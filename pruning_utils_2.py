@@ -375,3 +375,43 @@ def prune_random_path(model, mask_dict):
 
                 
             prune.CustomFromMask.apply(m, 'weight', mask=mask)
+
+
+
+def prune_random_ewp(model, mask_dict):
+
+    ewp = {}
+
+    for name,m in model.named_modules():
+        if isinstance(m, nn.Conv2d):
+            print('pruning layer with custom mask:', name)
+            mask = mask_dict[name+'.weight_mask']
+            
+            for _ in range(10):
+                start = np.random.randint(mask.shape[1])
+                end = np.random.randint(mask.shape[0])
+                h, w = np.random.randint(mask.shape[2]), np.random.randint(mask.shape[3])
+                while mask[end, start, h, w ] == 0:
+                    start = np.random.randint(mask.shape[1])
+                    end = np.random.randint(mask.shape[0])
+                    h, w = np.random.randint(mask.shape[2]), np.random.randint(mask.shape[3])
+
+                
+            prune.CustomFromMask.apply(m, 'weight', mask=mask)
+
+    for name,m in model.named_modules():
+        if isinstance(m, nn.Conv2d):
+            print('pruning layer with custom mask:', name)
+            mask = mask_dict[name+'.weight_mask']
+            
+            for _ in range(10):
+                start = np.random.randint(mask.shape[1])
+                end = np.random.randint(mask.shape[0])
+                h, w = np.random.randint(mask.shape[2]), np.random.randint(mask.shape[3])
+                while mask[end, start, h, w ] == 0:
+                    start = np.random.randint(mask.shape[1])
+                    end = np.random.randint(mask.shape[0])
+                    h, w = np.random.randint(mask.shape[2]), np.random.randint(mask.shape[3])
+
+                
+            prune.CustomFromMask.apply(m, 'weight', mask=mask)
