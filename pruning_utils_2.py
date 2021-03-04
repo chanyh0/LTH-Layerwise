@@ -357,4 +357,18 @@ def prune_model_custom_one_random(model, mask_dict, random_index = -1):
                 prune.RandomUnstructured.apply(m, 'weight', amount=(mask_dict[name+'.weight_mask']==0).sum().int().item() / mask_dict[name+'.weight_mask'].numel())
             index += 1
 
+def prune_random_path(model, mask_dict):
 
+    for name,m in model.named_modules():
+        if isinstance(m, nn.Conv2d):
+            print('pruning layer with custom mask:', name)
+            mask = mask_dict[name+'.weight_mask']
+            
+            for _ in range(10):
+                start = np.ranom.randint(mask.shape[1])
+                end = np.ranom.randint(mask.shape[0])
+                while mask[start, end] == 0:
+                    start = np.ranom.randint(mask.shape[1])
+                    end = np.ranom.randint(mask.shape[0])
+                
+            prune.CustomFromMask.apply(m, 'weight', mask=mask)
