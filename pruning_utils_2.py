@@ -367,7 +367,7 @@ def prune_random_path(model, mask_dict):
             for _ in range(10):
                 start = np.random.randint(mask.shape[1])
                 end = np.random.randint(mask.shape[0])
-                while mask[end, start] == 0:
+                while mask[end, start, np.random.randint(mask.shape[2]), np.random.randint(mask.rand[3])] == 0:
                     start = np.random.randint(mask.shape[1])
                     end = np.random.randint(mask.shape[0])
                 
