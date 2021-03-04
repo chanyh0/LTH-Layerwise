@@ -367,11 +367,11 @@ def prune_random_path(model, mask_dict):
             for _ in range(10):
                 start = np.random.randint(mask.shape[1])
                 end = np.random.randint(mask.shape[0])
-                h, w = np.random.randint(mask.shape[2]), np.random.randint(mask.rand[3])
+                h, w = np.random.randint(mask.shape[2]), np.random.randint(mask.shape[3])
                 while mask[end, start, h, w ] == 0:
                     start = np.random.randint(mask.shape[1])
                     end = np.random.randint(mask.shape[0])
-                    h, w = np.random.randint(mask.shape[2]), np.random.randint(mask.rand[3])
+                    h, w = np.random.randint(mask.shape[2]), np.random.randint(mask.shape[3])
 
                 
             prune.CustomFromMask.apply(m, 'weight', mask=mask)
