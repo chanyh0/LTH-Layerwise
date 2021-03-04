@@ -191,8 +191,8 @@ def train(train_loader, model, criterion, optimizer, epoch, K):
                 all_grad.append( m.grad.data.view(-1) )
 
         all_grad = torch.cat(all_grad, 0)
-        _, threshold = torch.kthvalue(all_grad.abs(), K)
-        all_grad[all_grad.abs() < K] = 0
+        _, threshold = torch.kthvalue(all_grad.abs(), int(K))
+        all_grad[all_grad.abs() < threshold] = 0
 
         index = 0
         for m in model.parameters():
