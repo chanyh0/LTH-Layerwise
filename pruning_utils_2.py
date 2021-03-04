@@ -365,10 +365,10 @@ def prune_random_path(model, mask_dict):
             mask = mask_dict[name+'.weight_mask']
             
             for _ in range(10):
-                start = random.randint(mask.shape[1])
-                end = random.randint(mask.shape[0])
+                start = np.random.randint(mask.shape[1])
+                end = np.random.randint(mask.shape[0])
                 while mask[start, end] == 0:
-                    start = random.randint(mask.shape[1])
-                    end = random.randint(mask.shape[0])
+                    start = np.random.randint(mask.shape[1])
+                    end = np.random.randint(mask.shape[0])
                 
             prune.CustomFromMask.apply(m, 'weight', mask=mask)
