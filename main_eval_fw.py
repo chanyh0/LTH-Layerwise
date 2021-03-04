@@ -185,7 +185,8 @@ def train(train_loader, model, criterion, optimizer, epoch, K):
 
         all_grad = []
         grad_index = [0]
-        for m in model.modules():
+        for m in model.parameters():
+
             if m.grad is not None:
                 grad_index.append( np.prod(m.grad.data.shape.numpy()) + grad_index[-1])
                 all_grad.append( m.grad.data.view(-1) )
@@ -195,7 +196,7 @@ def train(train_loader, model, criterion, optimizer, epoch, K):
         all_grad[all_grad.abs() < K] = 0
 
         index = 0
-        for m in model.modules():
+        for m in model.parameters():
             if m.grad is not None:
                 m.grad = all_grad[grad_index[index]:grad_index[index + 1]]
                 m.grad = m.grad - m.data
