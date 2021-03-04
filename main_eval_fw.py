@@ -310,7 +310,7 @@ def load_ticket(model, args):
 
         _,sparsity = check_sparsity(model)
 
-        remove_prune(model, conv1=args.conv1)
+        remove_prune(model)
     
         return sparsity
 
