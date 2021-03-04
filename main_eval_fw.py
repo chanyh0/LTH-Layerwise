@@ -198,7 +198,7 @@ def train(train_loader, model, criterion, optimizer, epoch, K):
         for m in model.parameters():
             if m.grad is not None:
                 m.grad.data = all_grad[grad_index[index]:grad_index[index + 1]].reshape(m.grad.data.shape)
-                m.grad.data = m.grad.data - m.weight.data
+                m.grad.data = m.grad.data - m.data
                 index += 1
 
         optimizer.step()
