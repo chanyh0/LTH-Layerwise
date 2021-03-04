@@ -38,10 +38,10 @@ def setup_model_dataset(args):
 
     if args.arch == 'res18':
         print('build model resnet18')
-        model = resnet18(num_classes=classes, imagenet=True)
+        model = resnet18(num_classes=classes, imagenet=args.dataset == 'tiny-imagenet')
     elif args.arch == 'res50':
         print('build model resnet50')
-        model = resnet50(num_classes=classes, imagenet=True)
+        model = resnet50(num_classes=classes, imagenet=args.dataset == 'tiny-imagenet')
     elif args.arch == 'res20s':
         print('build model: resnet20')
         model = resnet20(number_class=classes)
