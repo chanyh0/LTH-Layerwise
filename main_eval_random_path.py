@@ -291,8 +291,8 @@ def load_ticket(model, args):
             current_mask = reverse_mask(current_mask)
         
         
-        prune_model_custom(model, current_mask, conv1=args.conv1)
-        prune_random_path(model)
+        #prune_model_custom(model, current_mask, conv1=args.conv1)
+        prune_random_path(model, current_mask)
 
         check_sparsity(model, conv1=args.conv1)
 
