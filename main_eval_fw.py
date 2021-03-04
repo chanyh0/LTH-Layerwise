@@ -168,6 +168,7 @@ def train(train_loader, model, criterion, optimizer, epoch, K):
     model.train()
 
     start = time.time()
+    m_grad = None
     for i, (image, target) in enumerate(train_loader):
 
         if epoch < args.warmup:
@@ -191,6 +192,11 @@ def train(train_loader, model, criterion, optimizer, epoch, K):
                 all_grad.append( m.grad.data.view(-1) )
 
         all_grad = torch.cat(all_grad, 0)
+        if m_grad is None:
+            m_grad = all_grad
+        else:
+            all_grad = 0.9 * all_grad + 0.1 * m_grad
+
         _, threshold = torch.kthvalue(all_grad.abs(), int(K))
         all_grad[all_grad.abs() < threshold] = 0
 
@@ -198,7 +204,7 @@ def train(train_loader, model, criterion, optimizer, epoch, K):
         for m in model.parameters():
             if m.grad is not None:
                 m.grad.data = -all_grad[grad_index[index]:grad_index[index + 1]].reshape(m.grad.data.shape)
-                m.grad.data = m.grad.data - m.data
+                #m.grad.data = m.grad.data - m.data
                 index += 1
 
         optimizer.step()
