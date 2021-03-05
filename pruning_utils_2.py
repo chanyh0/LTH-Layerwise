@@ -381,7 +381,7 @@ def prune_random_path(model, mask_dict):
 def prune_random_ewp(model, mask_dict):
 
     ewp = {}
-    for _ in range(10):
+    for _ in range(100):
         end_index = None
         for name,m in model.named_modules():
             if isinstance(m, nn.Conv2d):
