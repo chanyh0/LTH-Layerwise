@@ -454,9 +454,9 @@ def prune_random_ewp(model, mask_dict):
                 start_index = end_index
 
     for name,m in model.named_modules():
-            if isinstance(m, nn.Conv2d):
-                mask = mask_dict[name+'.weight_mask']
-                prune.CustomFromMask.apply(m, 'weight', mask=mask)
+        if isinstance(m, nn.Conv2d):
+            mask = mask_dict[name+'.weight_mask']
+            prune.CustomFromMask.apply(m, 'weight', mask=mask)
 
 def prune_random_betweeness(model, mask_dict):
 
@@ -476,10 +476,10 @@ def prune_random_betweeness(model, mask_dict):
             #prune.CustomFromMask.apply(m, 'weight', mask=mask)
             weight = mask * m.weight
             weight = torch.sum(weight.abs(), [2, 3])
-            for i in range(weight.shape[0]):
+            for i in range(weight.shape[1]):
                 start_name = name + '.{}'.format(i)
                 graph.add_node(start_name)
-                for j in range(weight.shape[1]):
+                for j in range(weight.shape[0]):
                     try:
                         end_name = name_list[name_list.index(name) + 1] + '.{}'.format(j)
                         graph.add_node(end_name)
@@ -488,7 +488,20 @@ def prune_random_betweeness(model, mask_dict):
                         end_name = 'final.{}'.format(j)
                         graph.add_node(end_name)
 
-                    graph.add_edge(start_name, end_name, weight=weight[i, j])
+                    graph.add_edge(start_name, end_name, weight=weight[j, i])
+
     edges_betweenness = edge_betweenness_centrality(graph)
-    print(edges_betweenness)
+    edges_betweenness = sorted((value,key) for (key,value) in edges_betweenness.items())
+    for i in range(10000):
+        edge = edges_betweenness[-i]
+        kernel = edge[1][0].split(".")[0]
+        start_index = edge[1][0].split(".")[1]
+        end_index = edge[1][1].split(".")[1]
+        mask_dict[kernel + '.weight_mask'][end_index, start_index] = 0
+    
+    for name,m in model.named_modules():
+        if isinstance(m, nn.Conv2d):
+            mask = mask_dict[name+'.weight_mask']
+            prune.CustomFromMask.apply(m, 'weight', mask=mask)
+
     
