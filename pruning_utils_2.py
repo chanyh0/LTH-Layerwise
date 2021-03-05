@@ -392,15 +392,15 @@ def prune_random_ewp(model, mask_dict):
                 if end_index is None:
                     start_index = np.random.randint(0, weight.shape[1])
                     prob = weight[:, start_index]
-                    prob = prob.abs() / (np.abs(prob).sum() + 1e-5)
+                    prob = np.abs(prob) / (np.abs(prob).sum() + 1e-5)
                 else:
                     prob = weight[:, start_index]
-                    prob = prob.abs() / (np.abs(prob).sum() + 1e-5)
+                    prob = np.abs(prob) / (np.abs(prob).sum() + 1e-5)
                 
                 while prob.sum() != 1:
                     start_index = np.random.randint(0, weight.shape[1])
                     prob = weight[:, start_index]
-                    prob = prob.abs() / (np.abs(prob).sum() + 1e-5)
+                    prob = np.abs(prob) / (np.abs(prob).sum() + 1e-5)
 
                 end_index = np.random.choice(np.arange(weight.shape[0]), 1,
                             p=np.array(prob))[0]
