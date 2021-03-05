@@ -360,7 +360,7 @@ def prune_model_custom_one_random(model, mask_dict, random_index = -1):
 
 def prune_random_path(model, mask_dict):
 
-    for _ in range(200):
+    for _ in range(100):
         end_index = None
         for name,m in model.named_modules():
             if isinstance(m, nn.Conv2d):
@@ -411,7 +411,7 @@ def prune_random_path(model, mask_dict):
 
 def prune_random_ewp(model, mask_dict):
 
-    for _ in range(200):
+    for _ in range(100):
         end_index = None
         for name,m in model.named_modules():
             if isinstance(m, nn.Conv2d):
