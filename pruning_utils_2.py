@@ -494,9 +494,9 @@ def prune_random_betweeness(model, mask_dict):
     edges_betweenness = sorted((value,key) for (key,value) in edges_betweenness.items())
     for i in range(10000):
         edge = edges_betweenness[-i]
-        kernel = edge[1][0].split(".")[0]
-        start_index = edge[1][0].split(".")[1]
-        end_index = edge[1][1].split(".")[1]
+        kernel = '.'.join(edge[1][0].split(".")[:-1])
+        start_index = int(edge[1][0].split(".")[-1])
+        end_index = int(edge[1][1].split(".")[-1])
         mask_dict[kernel + '.weight_mask'][end_index, start_index] = 0
     
     for name,m in model.named_modules():
