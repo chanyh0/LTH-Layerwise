@@ -387,8 +387,7 @@ def prune_random_ewp(model, mask_dict):
             if isinstance(m, nn.Conv2d):
                 print('pruning layer with custom mask:', name)
                 mask = mask_dict[name+'.weight_mask']
-                print(mask_dict.keys())
-                weight = mask_dict[name+'.weight_orig'] * mask_dict[name+'.weight_mask'] 
+                weight = m.weight * mask_dict[name+'.weight_mask'] 
                 weight = torch.sum(weight.abs(), [2,3]).numpy()
                 if end_index is None:
                     start_index = np.random.randint(0, weight.shape[1])
