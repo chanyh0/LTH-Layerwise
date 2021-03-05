@@ -459,7 +459,7 @@ def prune_random_betweeness(model, mask_dict):
                         end_name = 'final.{}'.format(j)
                         graph.add_node(end_name)
 
-                    graph.add_edge(start_name, end_name, weight=weight[j, i])
+                    graph.add_edge(start_name, end_name, weight=weight[i, j])
         edges_betweenness = edge_betweenness_centrality(graph)
         print(edges_betweenness)
     
