@@ -389,14 +389,19 @@ def prune_random_ewp(model, mask_dict):
                 mask = mask_dict[name+'.weight_mask']
                 weight = m.weight * mask_dict[name+'.weight_mask'] 
                 weight = torch.sum(weight.abs(), [2,3]).cpu().detach().numpy()
-                if end_index is None:
+                try:
+                    if end_index is None:
+                        start_index = np.random.randint(0, weight.shape[1] - 1)
+                        prob = weight[:, start_index]
+                        prob = np.abs(prob) / (np.abs(prob).sum() + 1e-5)
+                    else:
+                        prob = weight[:, start_index]
+                        prob = np.abs(prob) / (np.abs(prob).sum() + 1e-5)
+                except:
                     start_index = np.random.randint(0, weight.shape[1] - 1)
                     prob = weight[:, start_index]
                     prob = np.abs(prob) / (np.abs(prob).sum() + 1e-5)
-                else:
-                    prob = weight[:, start_index]
-                    prob = np.abs(prob) / (np.abs(prob).sum() + 1e-5)
-                
+                    
                 while prob.sum() == 0:
                     start_index = np.random.randint(0, weight.shape[1] - 1)
                     prob = weight[:, start_index]
