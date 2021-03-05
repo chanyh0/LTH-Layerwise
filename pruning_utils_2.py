@@ -1,5 +1,6 @@
 
 from hashlib import new
+from networkx.algorithms.centrality.betweenness import edge_betweenness_centrality
 import torch
 import torch.nn as nn
 import torch.nn.utils.prune as prune
@@ -427,3 +428,38 @@ def prune_random_ewp(model, mask_dict):
             if isinstance(m, nn.Conv2d):
                 mask = mask_dict[name+'.weight_mask']
                 prune.CustomFromMask.apply(m, 'weight', mask=mask)
+
+def prune_random_betweeness(model, mask_dict):
+
+    import networkx
+
+    graph = networkx.Graph()
+    name_list = []
+
+    for name,m in model.named_modules():
+        if isinstance(m, nn.Conv2d):
+            if not 'downsample' in name:
+                name_list.append(name)
+
+    for name,m in model.named_modules():
+        if isinstance(m, nn.Conv2d) and not 'downsample' in name:
+            mask = mask_dict[name+'.weight_mask']
+            #prune.CustomFromMask.apply(m, 'weight', mask=mask)
+            weight = mask * m.weight
+            weight = torch.sum(weight.abs(), [2, 3])
+            for i in range(weight.shape[0]):
+                start_name = name + '.{}'.format(i)
+                graph.add_node(start_name)
+                for j in range(weight.shape[1]):
+                    try:
+                        end_name = name_list[name_list.index(name) + 1] + '.{}'.format(j)
+                        graph.add_node(end_name)
+                        
+                    except:
+                        end_name = 'final.{}'.format(j)
+                        graph.add_node(end_name)
+
+                    graph.add_edge(start_name, end_name, weight=weight[j, i])
+        edges_betweenness = edge_betweenness_centrality(graph)
+        print(edges_betweenness)
+    
