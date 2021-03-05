@@ -389,7 +389,7 @@ def prune_random_path(model, mask_dict):
                         prob = (np.abs(prob)>0) / ((np.abs(prob)>0).sum())
                     else:
                         prob = np.zeros(prob.shape)
-                    
+                counter = 0
                 while prob.sum() == 0:
                     start_index = np.random.randint(0, weight.shape[1] - 1)
                     prob = weight[:, start_index]
@@ -397,6 +397,10 @@ def prune_random_path(model, mask_dict):
                         prob = (np.abs(prob)>0) / ((np.abs(prob)>0).sum())
                     else:
                         prob = np.zeros(prob.shape)
+                    counter = counter + 1
+                    
+                    if counter > 200000:
+                        prob = np.ones(prob.shape) / np.sum(np.ones(prob.shape))
                 end_index = np.random.choice(np.arange(weight.shape[0]), 1,
                             p=np.array(prob))[0]
                 mask_dict[name+'.weight_mask'][end_index, start_index, :, :] = 0
@@ -406,6 +410,7 @@ def prune_random_path(model, mask_dict):
             if isinstance(m, nn.Conv2d):
                 mask = mask_dict[name+'.weight_mask']
                 prune.CustomFromMask.apply(m, 'weight', mask=mask)
+                
 
 
 
@@ -440,7 +445,8 @@ def prune_random_ewp(model, mask_dict):
                         prob = np.abs(prob) / (np.abs(prob).sum())
                     else:
                         prob = np.zeros(prob.shape)
-                    
+
+                counter = 0
                 while prob.sum() == 0:
                     start_index = np.random.randint(0, weight.shape[1] - 1)
                     prob = weight[:, start_index]
@@ -448,6 +454,12 @@ def prune_random_ewp(model, mask_dict):
                         prob = np.abs(prob) / (np.abs(prob).sum())
                     else:
                         prob = np.zeros(prob.shape)
+
+                    counter = counter + 1
+
+                    if counter > 200000:
+                        prob = np.ones(prob.shape) / np.sum(np.ones(prob.shape))
+                
                 end_index = np.random.choice(np.arange(weight.shape[0]), 1,
                             p=np.array(prob))[0]
                 mask_dict[name+'.weight_mask'][end_index, start_index, :, :] = 0
