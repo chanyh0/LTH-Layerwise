@@ -106,6 +106,10 @@ def main():
             current_mask = extract_mask(checkpoint['state_dict'])
             prune_model_custom(model, current_mask)
             check_sparsity(model)
+            optimizer = torch.optim.SGD(model.parameters(), args.lr,
+                                        momentum=args.momentum,
+                                        weight_decay=args.weight_decay)
+            scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=decreasing_lr, gamma=0.1)
 
         model.load_state_dict(checkpoint['state_dict'])
         optimizer.load_state_dict(checkpoint['optimizer'])
