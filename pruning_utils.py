@@ -54,16 +54,6 @@ def extract_main_weight(model_dict, fc=True, conv1=True):
         if not 'mask' in key:
             new_dict[key] = model_dict[key]
 
-    if not fc:
-        print('delete fc weight')
-        del new_dict['fc.weight']
-        del new_dict['fc.bias']
-    
-    if not conv1:
-        print('delete conv1 weight')
-        del new_dict['conv1.weight']
-        del new_dict['conv1.bias']
-    
     return new_dict
 
 def prune_model_custom(model, mask_dict, conv1=True):
