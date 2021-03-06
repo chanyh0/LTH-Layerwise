@@ -134,7 +134,7 @@ def main():
         if start_state>0:
             current_mask = extract_mask(checkpoint['state_dict'])
             prune_model_custom(model, current_mask, conv1=args.conv1)
-            check_sparsity(model, conv1=args.conv1)
+            check_sparsity(model)
 
         model.load_state_dict(checkpoint['state_dict'])
         optimizer.load_state_dict(checkpoint['optimizer'])
