@@ -133,7 +133,7 @@ def main():
 
         if start_state>0:
             current_mask = extract_mask(checkpoint['state_dict'])
-            prune_model_custom(model, current_mask, conv1=args.conv1)
+            prune_model_custom(model, current_mask)
             check_sparsity(model)
 
         model.load_state_dict(checkpoint['state_dict'])
@@ -160,7 +160,7 @@ def main():
         print('pruning state', state)
         print('******************************************')
         
-        check_sparsity(model, conv1=args.conv1)        
+        check_sparsity(model)        
         for epoch in range(start_epoch, args.epochs):
 
             print(optimizer.state_dict()['param_groups'][0]['lr'])
@@ -207,7 +207,7 @@ def main():
             plt.close()
 
         #report result
-        check_sparsity(model, conv1=args.conv1)
+        check_sparsity(model)
         print('* best SA={}'.format(all_result['test_ta'][np.argmax(np.array(all_result['ta']))]))
 
         all_result = {}
@@ -222,15 +222,15 @@ def main():
             print('* loading pretrained weight')
             initalization = torch.load(os.path.join(args.save_dir, '0model_SA_best.pth.tar'), map_location = torch.device('cuda:'+str(args.gpu)))['state_dict']
 
-        pruning_model(model, args.rate, conv1=args.conv1)
-        remain_weight = check_sparsity(model, conv1=args.conv1)
+        pruning_model(model, args.rate)
+        remain_weight = check_sparsity(model)
         current_mask = extract_mask(model.state_dict())
 
-        remove_prune(model, conv1=args.conv1)
+        remove_prune(model)
         #rewind weight to init
         model.load_state_dict(initalization)
-        prune_model_custom(model, current_mask, conv1=args.conv1)
-        check_sparsity(model, conv1=args.conv1)
+        prune_model_custom(model, current_mask)
+        check_sparsity(model)
 
         optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                     momentum=args.momentum,
@@ -331,7 +331,7 @@ def save_checkpoint(state, is_SA_best, save_path, pruning, filename='checkpoint.
 
 def load_weight(model, initalization, args): 
     print('loading pretrained weight')
-    loading_weight = extract_main_weight(initalization, fc=args.fc, conv1=args.conv1)
+    loading_weight = extract_main_weight(initalization)
     
     for key in loading_weight.keys():
         if not (key in model.state_dict().keys()):

@@ -47,7 +47,7 @@ def extract_mask(model_dict):
 
     return new_dict
 
-def extract_main_weight(model_dict, fc=True, conv1=True):
+def extract_main_weight(model_dict):
     new_dict = {}
 
     for key in model_dict.keys():
@@ -56,7 +56,7 @@ def extract_main_weight(model_dict, fc=True, conv1=True):
 
     return new_dict
 
-def prune_model_custom(model, mask_dict, conv1=True):
+def prune_model_custom(model, mask_dict):
 
     for name,m in model.named_modules():
         if isinstance(m, nn.Conv2d):
