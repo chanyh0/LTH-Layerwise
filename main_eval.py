@@ -263,7 +263,7 @@ def load_ticket(model, args):
             print('loading from state_dict')
             initalization = initalization['state_dict']
 
-        loading_weight = extract_main_weight(initalization, fc=args.fc, conv1=args.conv1)
+        loading_weight = extract_main_weight(initalization)
 
         for key in loading_weight.keys():
             assert key in model.state_dict().keys()
