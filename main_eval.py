@@ -109,7 +109,7 @@ def main():
 
     start_epoch = 0
     print(model.normalize)  
-    remain_weight = check_sparsity(model, conv1=args.conv1)
+    remain_weight = check_sparsity(model)
 
     for epoch in range(start_epoch, args.epochs):
 
@@ -155,7 +155,7 @@ def main():
         plt.savefig(os.path.join(args.save_dir, 'net_train.png'))
         plt.close()
 
-    check_sparsity(model, conv1=args.conv1)
+    check_sparsity(model)
     print('* best SA={}'.format(all_result['test_ta'][np.argmax(np.array(all_result['ta']))]))
 
 def train(train_loader, model, criterion, optimizer, epoch):
@@ -287,9 +287,9 @@ def load_ticket(model, args):
         if args.reverse_mask:
             current_mask = reverse_mask(current_mask)
         
-        prune_model_custom(model, current_mask, conv1=args.conv1)
+        prune_model_custom(model, current_mask)
 
-        check_sparsity(model, conv1=args.conv1)
+        check_sparsity(model)
 
 def warmup_lr(epoch, step, optimizer, one_epoch_step):
 
