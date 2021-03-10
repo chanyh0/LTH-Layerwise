@@ -487,7 +487,7 @@ def prune_random_ewp_add_back(model, mask_dict):
     
     rand_vector = torch.randn(n_param)
     rand_vector[mask_vector == 1] = np.inf
-    threshold, _ = torch.kthvalue(rand_vector, real_n_zeros - n_zeros)
+    threshold, _ = torch.kthvalue(rand_vector, int(real_n_zeros - n_zeros))
     mask_vector[rand_vector < threshold] = 1
 
     n_cur = 0
