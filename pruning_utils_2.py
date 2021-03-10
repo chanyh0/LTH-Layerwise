@@ -497,7 +497,7 @@ def prune_random_ewp_add_back(model, mask_dict):
             size = np.product(np.array(mask.shape))
             new_mask = mask_vector[n_cur:n_cur+size].view(mask.shape)
             n_cur += size
-            prune.CustomFromMask.apply(m, 'weight', mask=new_mask)
+            prune.CustomFromMask.apply(m, 'weight', mask=new_mask.to(mask.device))
 
 
 def prune_random_betweeness(model, mask_dict):
