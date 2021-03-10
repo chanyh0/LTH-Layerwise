@@ -25,7 +25,7 @@ from torch.utils.data.sampler import SubsetRandomSampler
 from advertorch.utils import NormalizeByChannelMeanStd
 
 from utils import *
-from pruning_utils import *
+from pruning_utils_2 import *
 
 parser = argparse.ArgumentParser(description='PyTorch Evaluation Tickets')
 
@@ -59,6 +59,8 @@ parser.add_argument('--rewind_arch', action="store_true", help="mask add back")
 
 parser.add_argument('--random-index', default=20, type=int)
 parser.add_argument('--random-sparsity', action="store_true")
+parser.add_argument('--random-sparsity-normal', action="store_true")
+parser.add_argument('--random-sparsity-reverse', action="store_true")
 
 
 
@@ -109,7 +111,7 @@ def main():
 
     start_epoch = 0
     print(model.normalize)  
-    remain_weight = check_sparsity(model)
+    remain_weight = check_sparsity(model, conv1=args.conv1)
 
     for epoch in range(start_epoch, args.epochs):
 
@@ -155,7 +157,7 @@ def main():
         plt.savefig(os.path.join(args.save_dir, 'net_train.png'))
         plt.close()
 
-    check_sparsity(model)
+    check_sparsity(model, conv1=args.conv1)
     print('* best SA={}'.format(all_result['test_ta'][np.argmax(np.array(all_result['ta']))]))
 
 def train(train_loader, model, criterion, optimizer, epoch):
@@ -263,7 +265,7 @@ def load_ticket(model, args):
             print('loading from state_dict')
             initalization = initalization['state_dict']
 
-        loading_weight = extract_main_weight(initalization)
+        loading_weight = extract_main_weight(initalization, fc=args.fc, conv1=args.conv1)
 
         for key in loading_weight.keys():
             assert key in model.state_dict().keys()
@@ -287,9 +289,10 @@ def load_ticket(model, args):
         if args.reverse_mask:
             current_mask = reverse_mask(current_mask)
         
-        prune_model_custom(model, current_mask)
+        
+        prune_random_ewp_add_back(model, current_mask)
 
-        check_sparsity(model)
+        check_sparsity(model, conv1=args.conv1)
 
 def warmup_lr(epoch, step, optimizer, one_epoch_step):
 

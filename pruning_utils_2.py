@@ -414,8 +414,16 @@ def prune_random_path(model, mask_dict):
 
 
 
-def prune_random_ewp(model, mask_dict):
+def prune_random_ewp_add_back(model, mask_dict):
 
+    n_zeros = 0
+    n_param = 0
+    for name,m in model.named_modules():
+        if isinstance(m, nn.Conv2d):
+            mask = mask_dict[name+'.weight_mask']
+            n_zeros += (mask == 0).float().sum().item()
+            n_param += mask.numel().item()
+            
     for _ in range(250):
         end_index = None
         for name,m in model.named_modules():
@@ -465,10 +473,32 @@ def prune_random_ewp(model, mask_dict):
                 mask_dict[name+'.weight_mask'][end_index, start_index, :, :] = 0
                 start_index = end_index
 
+    
+    mask_vector = torch.zeros(n_param)
+    real_n_zeros = 0
+    n_cur = 0
     for name,m in model.named_modules():
         if isinstance(m, nn.Conv2d):
             mask = mask_dict[name+'.weight_mask']
-            prune.CustomFromMask.apply(m, 'weight', mask=mask)
+            size = np.product(np.array(mask.shape))
+            mask_vector[n_cur:n_cur+size] = mask.view(-1)
+            n_cur += size
+            real_n_zeros += (mask == 0).float().sum()
+    
+    rand_vector = torch.randn(n_param)
+    rand_vector[mask_vector == 1] = np.inf
+    threshold, _ = torch.kthvalue(rand_vector, real_n_zeros - n_zeros)
+    mask_vector[rand_vector < threshold] = 1
+
+    n_cur = 0
+    for name,m in model.named_modules():
+        if isinstance(m, nn.Conv2d):
+            mask = mask_dict[name+'.weight_mask']
+            size = np.product(np.array(mask.shape))
+            new_mask = mask_vector[n_cur:n_cur+size].view(mask.shape)
+            n_cur += size
+            prune.CustomFromMask.apply(m, 'weight', mask=new_mask)
+
 
 def prune_random_betweeness(model, mask_dict):
 
