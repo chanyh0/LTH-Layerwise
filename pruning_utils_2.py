@@ -422,7 +422,7 @@ def prune_random_ewp_add_back(model, mask_dict):
         if isinstance(m, nn.Conv2d):
             mask = mask_dict[name+'.weight_mask']
             n_zeros += (mask == 0).float().sum().item()
-            n_param += mask.numel().item()
+            n_param += mask.numel()
             
     for _ in range(250):
         end_index = None
