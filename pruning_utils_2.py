@@ -424,7 +424,7 @@ def prune_random_ewp_add_back(model, mask_dict):
             n_zeros += (mask == 0).float().sum().item()
             n_param += mask.numel()
             
-    for _ in range(250):
+    for _ in range(150):
         end_index = None
         for name,m in model.named_modules():
             if isinstance(m, nn.Conv2d):
