@@ -483,7 +483,7 @@ def prune_random_ewp_add_back(model, mask_dict):
             size = np.product(np.array(mask.shape))
             mask_vector[n_cur:n_cur+size] = mask.view(-1)
             n_cur += size
-            real_n_zeros += (mask == 0).float().sum()
+            real_n_zeros += (mask == 0).float().sum().item()
     
     rand_vector = torch.randn(n_param)
     rand_vector[mask_vector == 1] = np.inf
