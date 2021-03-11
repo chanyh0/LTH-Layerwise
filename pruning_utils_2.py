@@ -534,7 +534,7 @@ def prune_random_betweeness(model, mask_dict):
 
     edges_betweenness = edge_betweenness_centrality(graph)
     edges_betweenness = sorted((value,key) for (key,value) in edges_betweenness.items())
-    for i in range(30000):
+    for i in range(20000):
         edge = edges_betweenness[-i]
         kernel = '.'.join(edge[1][0].split(".")[:-1])
         start_index = int(edge[1][0].split(".")[-1])
