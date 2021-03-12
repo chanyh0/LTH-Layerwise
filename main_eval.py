@@ -268,7 +268,7 @@ def load_ticket(model, args):
         if 'fc.0.weight' in loading_weight.keys():
             keys = list(loading_weight.keys())
             for key in keys:
-                if key.startswith('fc'):
+                if key.startswith('fc') or key.startswith('conv1'):
                     del loading_weight[key]
 
         for key in loading_weight.keys():
