@@ -1,0 +1,39 @@
+
+
+CUDA_VISIBLE_DEVICES=6 nohup python -u main_eval_random_path.py --data datasets/tiny-imagenet-200 --dataset tiny-imagenet --arch res18 --save_dir rpres18 --pretrained res_tiny_0.05/19checkpoint.pth.tar --mask_dir res_tiny_0.05/19checkpoint.pth.tar --seed 1 --conv1 --lr 0.1 --fc > res_tiny_extreme_random_path_250.out &
+
+CUDA_VISIBLE_DEVICES=7 nohup python -u main_eval_ewp.py --data datasets/tiny-imagenet-200 --dataset tiny-imagenet --arch res18 --save_dir rpres18 --pretrained res_tiny_0.05/19checkpoint.pth.tar --mask_dir res_tiny_0.05/19checkpoint.pth.tar --seed 1 --conv1 --lr 0.1 --fc > res_tiny_extreme_ewp_250.out &
+
+CUDA_VISIBLE_DEVICES=4 nohup python -u main_eval_random_path.py --data datasets/tiny-imagenet-200 --dataset tiny-imagenet --arch vgg16_bn --save_dir rpvgg --pretrained vgg_tiny_0.01/20checkpoint.pth.tar --mask_dir vgg_tiny_0.01/20checkpoint.pth.tar --seed 1 --conv1 --lr 0.1 --fc > vgg_tiny_extreme_random_path_250.out &
+
+CUDA_VISIBLE_DEVICES=6 nohup python -u main_eval_random_path.py --data ../data --dataset cifar100 --arch vgg16_bn --save_dir rpvggcifar100 --pretrained vgg_cifar100_0.05/26checkpoint.pth.tar --mask_dir vgg_cifar100_0.05/26checkpoint.pth.tar --seed 1 --conv1 --lr 0.1 --fc > vgg_cifar100_extreme_random_path_250.out &
+
+CUDA_VISIBLE_DEVICES=7 nohup python -u main_eval_ewp.py --data ../data --dataset cifar100 --arch vgg16_bn --save_dir ewpvggcifar100 --pretrained vgg_cifar100_0.05/26checkpoint.pth.tar --mask_dir vgg_cifar100_0.05/26checkpoint.pth.tar --seed 1 --conv1 --lr 0.1 --fc > vgg_cifar100_extreme_ewp_250.out &
+
+CUDA_VISIBLE_DEVICES=5 nohup python -u main_eval_random_path.py --data ../data --dataset cifar10 --arch vgg16_bn --save_dir rpvggcifar10 --pretrained vgg_cifar10_0.01/27checkpoint.pth.tar --mask_dir vgg_cifar10_0.01/27checkpoint.pth.tar --seed 1 --conv1 --lr 0.1 --fc > vgg_cifar10_extreme_random_path_250.out &
+
+CUDA_VISIBLE_DEVICES=6 nohup python -u main_eval_ewp.py --data ../data --dataset cifar10 --arch vgg16_bn --save_dir ewpvggcifar10 --pretrained vgg_cifar10_0.01/27checkpoint.pth.tar --mask_dir vgg_cifar10_0.01/27checkpoint.pth.tar --seed 1 --conv1 --lr 0.1 --fc > vgg_cifar10_extreme_ewp_250.out &
+
+CUDA_VISIBLE_DEVICES=4 nohup python -u main_eval_betweenness.py --data datasets/tiny-imagenet-200 --dataset tiny-imagenet --arch vgg16_bn --save_dir betweenvggtiny --pretrained vgg_tiny_0.01/20checkpoint.pth.tar --mask_dir vgg_tiny_0.01/20checkpoint.pth.tar --seed 1 --conv1 --lr 0.1 --fc > vgg_tiny_extreme_betweenness_5000.out &
+
+CUDA_VISIBLE_DEVICES=5 nohup python -u main_eval_betweenness.py --data ../data --dataset cifar10 --arch vgg16_bn --save_dir betweenvggcifar10 --pretrained vgg_cifar10_0.01/27checkpoint.pth.tar --mask_dir vgg_cifar10_0.01/27checkpoint.pth.tar --seed 1 --conv1 --lr 0.1 --fc > vgg_cifar10_extreme_betweenness_5000.out &
+
+CUDA_VISIBLE_DEVICES=6 nohup python -u main_eval_betweenness.py --data ../data --dataset cifar100 --arch vgg16_bn --save_dir betweenvggcifar100 --pretrained vgg_cifar100_0.05/26checkpoint.pth.tar --mask_dir vgg_cifar100_0.05/26checkpoint.pth.tar --seed 1 --conv1 --lr 0.1 --fc > vgg_cifar100_extreme_betweenness_5000.out &
+
+CUDA_VISIBLE_DEVICES=7 nohup python -u main_eval_betweenness.py --data datasets/tiny-imagenet-200 --dataset tiny-imagenet --arch res18 --save_dir betweenrestiny --pretrained res_tiny_0.05/19checkpoint.pth.tar --mask_dir res_tiny_0.05/19checkpoint.pth.tar --seed 1 --conv1 --lr 0.1 --fc > res_tiny_extreme_betweenness_5000.out &
+
+CUDA_VISIBLE_DEVICES=4 nohup python -u main_eval_ewp_add_back.py --data datasets/tiny-imagenet-200 --dataset tiny-imagenet --arch vgg16_bn --save_dir addback --pretrained vgg_tiny_0.01/20checkpoint.pth.tar --mask_dir vgg_tiny_0.01/20checkpoint.pth.tar --seed 1 --conv1 --lr 0.1 --fc > vgg_tiny_extreme_ewp_add_back.out &
+
+CUDA_VISIBLE_DEVICES=5 nohup python -u main_eval_ewp_add_back.py --data ../data --dataset cifar10 --arch vgg16_bn --save_dir rpvggcifar10 --pretrained vgg_cifar10_0.01/27checkpoint.pth.tar --mask_dir vgg_cifar10_0.01/27checkpoint.pth.tar --seed 1 --conv1 --lr 0.1 --fc > vgg_cifar10_extreme_ewp_add_back.out &
+
+CUDA_VISIBLE_DEVICES=6 nohup python -u main_eval_ewp_add_back.py --data ../data --dataset cifar100 --arch vgg16_bn --save_dir rpvggcifar100 --pretrained vgg_cifar100_0.05/26checkpoint.pth.tar --mask_dir vgg_cifar100_0.05/26checkpoint.pth.tar --seed 1 --conv1 --lr 0.1 --fc > vgg_cifar100_extreme_ewp_add_back.out &
+
+CUDA_VISIBLE_DEVICES=7 nohup python -u main_eval_ewp_add_back.py --data datasets/tiny-imagenet-200 --dataset tiny-imagenet --arch res18 --save_dir rpres18 --pretrained res_tiny_0.05/19checkpoint.pth.tar --mask_dir res_tiny_0.05/19checkpoint.pth.tar --seed 1 --conv1 --lr 0.1 --fc > res_tiny_extreme_ewp_add_back.out &
+
+CUDA_VISIBLE_DEVICES=4 nohup python -u main_eval_betweenness_add_back.py --data datasets/tiny-imagenet-200 --dataset tiny-imagenet --arch vgg16_bn --save_dir betweenvggtiny --pretrained vgg_tiny_0.01/20checkpoint.pth.tar --mask_dir vgg_tiny_0.01/20checkpoint.pth.tar --seed 1 --conv1 --lr 0.1 --fc > vgg_tiny_extreme_betweenness_2000_add_back.out &
+
+CUDA_VISIBLE_DEVICES=5 nohup python -u main_eval_betweenness_add_back.py --data ../data --dataset cifar10 --arch vgg16_bn --save_dir betweenvggcifar10 --pretrained vgg_cifar10_0.01/27checkpoint.pth.tar --mask_dir vgg_cifar10_0.01/27checkpoint.pth.tar --seed 1 --conv1 --lr 0.1 --fc > vgg_cifar10_extreme_betweenness_2000_add_back.out &
+
+CUDA_VISIBLE_DEVICES=6 nohup python -u main_eval_betweenness_add_back.py --data ../data --dataset cifar100 --arch vgg16_bn --save_dir betweenvggcifar100 --pretrained vgg_cifar100_0.05/26checkpoint.pth.tar --mask_dir vgg_cifar100_0.05/26checkpoint.pth.tar --seed 1 --conv1 --lr 0.1 --fc > vgg_cifar100_extreme_betweenness_2000_add_back.out &
+
+CUDA_VISIBLE_DEVICES=7 nohup python -u main_eval_betweenness_add_back.py --data datasets/tiny-imagenet-200 --dataset tiny-imagenet --arch res18 --save_dir betweenrestiny --pretrained res_tiny_0.05/19checkpoint.pth.tar --mask_dir res_tiny_0.05/19checkpoint.pth.tar --seed 1 --conv1 --lr 0.1 --fc > res_tiny_extreme_betweenness_2000_add_back.out &
