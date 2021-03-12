@@ -266,6 +266,8 @@ def load_ticket(model, args):
         loading_weight = extract_main_weight(initalization)
 
         for key in loading_weight.keys():
+            print(key)
+            print(model.state_dict().keys())
             assert key in model.state_dict().keys()
 
         print('*number of loading weight={}'.format(len(loading_weight.keys())))
