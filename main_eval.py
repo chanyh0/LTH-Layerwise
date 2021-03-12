@@ -265,6 +265,12 @@ def load_ticket(model, args):
 
         loading_weight = extract_main_weight(initalization)
 
+        if 'fc.0.weight' in loading_weight.keys():
+            keys = loading_weight.keys()
+            for key in keys:
+                if key.startswith('fc'):
+                    del loading_weight[key]
+
         for key in loading_weight.keys():
             print(key)
             #print(model.state_dict().keys())
