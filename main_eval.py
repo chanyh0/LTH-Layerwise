@@ -272,7 +272,12 @@ def load_ticket(model, args):
 
         print('*number of loading weight={}'.format(len(loading_weight.keys())))
         print('*number of model weight={}'.format(len(model.state_dict().keys())))
-        model.load_state_dict(loading_weight, strict=False)
+        try:
+            model.load_state_dict(loading_weight, strict=False)
+        except RuntimeError:
+            del loading_weight['fc.weight']
+            del loading_weight['fc.bias']
+
 
     # mask 
     if args.mask_dir:
