@@ -480,9 +480,12 @@ def prune_random_ewp_add_back(model, mask_dict):
     n_param = 0
     for name,m in model.named_modules():
         if isinstance(m, nn.Conv2d):
-            mask = mask_dict[name+'.weight_mask']
-            n_zeros += (mask == 0).float().sum().item()
-            n_param += mask.numel()
+            try:
+                mask = mask_dict[name+'.weight_mask']
+                n_zeros += (mask == 0).float().sum().item()
+                n_param += mask.numel()
+            except:
+                pass
             
     for _ in range(150):
         end_index = None
@@ -553,12 +556,14 @@ def prune_random_ewp_add_back(model, mask_dict):
     n_cur = 0
     for name,m in model.named_modules():
         if isinstance(m, nn.Conv2d):
-            mask = mask_dict[name+'.weight_mask']
-            size = np.product(np.array(mask.shape))
-            new_mask = mask_vector[n_cur:n_cur+size].view(mask.shape)
-            n_cur += size
-            prune.CustomFromMask.apply(m, 'weight', mask=new_mask.to(mask.device))
-
+            try:
+                mask = mask_dict[name+'.weight_mask']
+                size = np.product(np.array(mask.shape))
+                new_mask = mask_vector[n_cur:n_cur+size].view(mask.shape)
+                n_cur += size
+                prune.CustomFromMask.apply(m, 'weight', mask=new_mask.to(mask.device))
+            except:
+                pass
 
 def prune_random_betweeness(model, mask_dict):
             
