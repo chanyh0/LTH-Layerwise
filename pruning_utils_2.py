@@ -417,7 +417,11 @@ def prune_random_ewp(model, mask_dict):
         for name,m in model.named_modules():
             if isinstance(m, nn.Conv2d):
                 print('pruning layer with custom mask:', name)
-                mask = mask_dict[name+'.weight_mask']
+                try:
+                    mask = mask_dict[name+'.weight_mask']
+                except:
+                    if 'conv1' in name:
+                        continue
                 weight = m.weight * mask_dict[name+'.weight_mask'] 
                 weight = torch.sum(weight.abs(), [2,3]).cpu().detach().numpy()
                 try:
