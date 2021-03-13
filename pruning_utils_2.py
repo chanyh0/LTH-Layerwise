@@ -416,6 +416,101 @@ def prune_random_path(model, mask_dict):
                 except:
                     continue
                 prune.CustomFromMask.apply(m, 'weight', mask=mask)
+
+
+def prune_random_path_add_back(model, mask_dict):
+
+    n_zeros = 0
+    n_param = 0
+    for name,m in model.named_modules():
+        if isinstance(m, nn.Conv2d):
+            try:
+                mask = mask_dict[name+'.weight_mask']
+                n_zeros += (mask == 0).float().sum().item()
+                n_param += mask.numel()
+            except:
+                continue
+
+    for _ in range(150):
+        end_index = None
+        for name,m in model.named_modules():
+            if isinstance(m, nn.Conv2d):
+                print('pruning layer with custom mask:', name)
+                try:
+                    mask = mask_dict[name+'.weight_mask']
+                except:
+                    continue
+                weight = m.weight * mask_dict[name+'.weight_mask'] 
+                weight = torch.sum(weight.abs(), [2,3]).cpu().detach().numpy()
+                try:
+                    if end_index is None:
+                        start_index = np.random.randint(0, weight.shape[1] - 1)
+                        prob = weight[:, start_index]
+                        if np.abs(prob).sum() > 0:
+                            prob = (np.abs(prob)>0) / ((np.abs(prob)>0).sum())
+                        else:
+                            prob = np.zeros(prob.shape)
+                    else:
+                        prob = weight[:, start_index]
+                        if np.abs(prob).sum() > 0:
+                            prob = (np.abs(prob)>0) / ((np.abs(prob)>0).sum())
+                        else:
+                            prob = np.zeros(prob.shape)
+                except:
+                    start_index = np.random.randint(0, weight.shape[1] - 1)
+                    prob = weight[:, start_index]
+                    if np.abs(prob).sum() > 0:
+                        prob = (np.abs(prob)>0) / ((np.abs(prob)>0).sum())
+                    else:
+                        prob = np.zeros(prob.shape)
+                counter = 0
+                while prob.sum() == 0:
+                    start_index = np.random.randint(0, weight.shape[1] - 1)
+                    prob = weight[:, start_index]
+                    if np.abs(prob).sum() > 0:
+                        prob = (np.abs(prob)>0) / ((np.abs(prob)>0).sum())
+                    else:
+                        prob = np.zeros(prob.shape)
+                    counter = counter + 1
+                    
+                    if counter > 200000:
+                        prob = np.ones(prob.shape) / np.sum(np.ones(prob.shape))
+                end_index = np.random.choice(np.arange(weight.shape[0]), 1,
+                            p=np.array(prob))[0]
+                mask_dict[name+'.weight_mask'][end_index, start_index, :, :] = 0
+                start_index = end_index
+
+    mask_vector = torch.zeros(n_param)
+    real_n_zeros = 0
+    n_cur = 0
+    for name,m in model.named_modules():
+        if isinstance(m, nn.Conv2d):
+            try:
+                mask = mask_dict[name+'.weight_mask']
+            except:
+                continue
+            size = np.product(np.array(mask.shape))
+            mask_vector[n_cur:n_cur+size] = mask.view(-1)
+            n_cur += size
+            real_n_zeros += (mask == 0).float().sum().item()
+    
+    rand_vector = torch.randn(n_param)
+    rand_vector[mask_vector == 1] = np.inf
+    threshold, _ = torch.kthvalue(rand_vector, int(real_n_zeros - n_zeros))
+    mask_vector[rand_vector < threshold] = 1
+
+    n_cur = 0
+    for name,m in model.named_modules():
+        if isinstance(m, nn.Conv2d):
+            try:
+                mask = mask_dict[name+'.weight_mask']
+                size = np.product(np.array(mask.shape))
+                new_mask = mask_vector[n_cur:n_cur+size].view(mask.shape)
+                n_cur += size
+                prune.CustomFromMask.apply(m, 'weight', mask=new_mask.to(mask.device))
+            except:
+                pass
+                
                 
 def prune_random_ewp(model, mask_dict):       
     for _ in range(150):
