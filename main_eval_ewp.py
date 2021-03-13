@@ -267,12 +267,24 @@ def load_ticket(model, args):
 
         loading_weight = extract_main_weight(initalization, fc=args.fc, conv1=args.conv1)
 
+        if 'fc.0.weight' in loading_weight.keys():
+            keys = list(loading_weight.keys())
+            for key in keys:
+                if key.startswith('fc') or key.startswith('conv1'):
+                    del loading_weight[key]
+
         for key in loading_weight.keys():
+            print(key)
+            #print(model.state_dict().keys())
             assert key in model.state_dict().keys()
 
         print('*number of loading weight={}'.format(len(loading_weight.keys())))
         print('*number of model weight={}'.format(len(model.state_dict().keys())))
-        model.load_state_dict(loading_weight, strict=False)
+        try:
+            model.load_state_dict(loading_weight, strict=False)
+        except RuntimeError:
+            del loading_weight['fc.weight']
+            del loading_weight['fc.bias']
 
     # mask 
     if args.mask_dir:
