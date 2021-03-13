@@ -496,7 +496,7 @@ def prune_random_ewp_add_back(model, mask_dict):
                     mask = mask_dict[name+'.weight_mask']
                 except:
                     continue
-                
+
                 weight = m.weight * mask_dict[name+'.weight_mask'] 
                 weight = torch.sum(weight.abs(), [2,3]).cpu().detach().numpy()
                 try:
@@ -546,7 +546,10 @@ def prune_random_ewp_add_back(model, mask_dict):
     n_cur = 0
     for name,m in model.named_modules():
         if isinstance(m, nn.Conv2d):
-            mask = mask_dict[name+'.weight_mask']
+            try:
+                mask = mask_dict[name+'.weight_mask']
+            except:
+                continue
             size = np.product(np.array(mask.shape))
             mask_vector[n_cur:n_cur+size] = mask.view(-1)
             n_cur += size
