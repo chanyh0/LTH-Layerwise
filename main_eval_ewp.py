@@ -274,7 +274,6 @@ def load_ticket(model, args):
                     del loading_weight[key]
 
         for key in loading_weight.keys():
-            print(key)
             #print(model.state_dict().keys())
             assert key in model.state_dict().keys()
 
