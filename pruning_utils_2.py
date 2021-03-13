@@ -468,7 +468,10 @@ def prune_random_ewp(model, mask_dict):
     n_cur = 0
     for name,m in model.named_modules():
         if isinstance(m, nn.Conv2d):
-            prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'].to(mask.device))
+            try:
+                prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'])
+            except:
+                pass
 
 
 def prune_random_ewp_add_back(model, mask_dict):
