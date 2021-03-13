@@ -411,8 +411,7 @@ def prune_random_path(model, mask_dict):
                 mask = mask_dict[name+'.weight_mask']
                 prune.CustomFromMask.apply(m, 'weight', mask=mask)
                 
-def prune_random_ewps(model, mask_dict):
-s            
+def prune_random_ewp(model, mask_dict):       
     for _ in range(150):
         end_index = None
         for name,m in model.named_modules():
