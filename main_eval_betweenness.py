@@ -281,7 +281,6 @@ def load_ticket(model, args):
             del loading_weight['fc.weight']
             del loading_weight['fc.bias']
             del loading_weight['conv1.weight']
-            del loading_weight['conv1.bias']
             model.load_state_dict(loading_weight, strict=False)
 
     # mask 
