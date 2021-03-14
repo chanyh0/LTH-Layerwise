@@ -3,13 +3,20 @@ import torch.nn as nn
 import torch.nn.utils.prune as prune
 
 
-def pruning_model(model, px):
+def pruning_model(model, px, conv0=False):
 
     print('start unstructured pruning for all conv layers')
     parameters_to_prune =[]
-    for m in model.modules():
+    for name, m in model.named_modules():
         if isinstance(m, nn.Conv2d):
-            parameters_to_prune.append((m,'weight'))
+            if 'conv0' in name:
+                if not conv0:
+                    continue
+                else:
+                    parameters_to_prune.append((m,'weight'))
+            else:
+                parameters_to_prune.append((m,'weight'))
+
 
     parameters_to_prune = tuple(parameters_to_prune)
 

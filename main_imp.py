@@ -42,6 +42,7 @@ parser.add_argument('--save_dir', help='The directory used to save the trained m
 parser.add_argument('--gpu', type=int, default=0, help='gpu device id')
 parser.add_argument('--resume', action="store_true", help="resume from checkpoint")
 parser.add_argument('--checkpoint', type=str, default=None, help='checkpoint file')
+parser.add_argument('--init', type=str, default=None, help='init file')
 
 ##################################### training setting #################################################
 parser.add_argument('--batch_size', type=int, default=128, help='batch size')
@@ -61,10 +62,6 @@ parser.add_argument('--pretrained', default=None, type=str, help='pretrained wei
 parser.add_argument('--conv1', action="store_true", help="whether pruning&rewind conv1")
 parser.add_argument('--fc', action="store_true", help="whether rewind fc")
 parser.add_argument('--rewind_epoch', default=2, type=int, help='rewind checkpoint')
-parser.add_argument('--adv_simclr', action="store_true", help="loading weight from adv_simclr")
-parser.add_argument('--bn_idx', default=1, type=int, help='bn branch in adv simclr weight')
-parser.add_argument('--moco_m0', action="store_true", help="loading weight from moco m0")
-parser.add_argument('--std_simclr', action="store_true", help="loading weight from std_simclr")
 
 
 best_sa = 0
