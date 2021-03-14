@@ -725,7 +725,7 @@ def prune_random_betweeness(model, mask_dict):
     
     for name,m in model.named_modules():
         if isinstance(m, nn.Conv2d):
-             try:
+            try:
                 mask = mask_dict[kernel + '.weight_mask']
                 prune.CustomFromMask.apply(m, 'weight', mask=mask)
             except:
