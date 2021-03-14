@@ -687,7 +687,10 @@ def prune_random_betweeness(model, mask_dict):
 
     for name,m in model.named_modules():
         if isinstance(m, nn.Conv2d) and not 'downsample' in name:
-            mask = mask_dict[name+'.weight_mask']
+            try:
+                mask = mask_dict[name+'.weight_mask']
+            except:
+                continue
             #prune.CustomFromMask.apply(m, 'weight', mask=mask)
             weight = mask * m.weight
             weight = torch.sum(weight.abs(), [2, 3])
@@ -708,16 +711,26 @@ def prune_random_betweeness(model, mask_dict):
     edges_betweenness = edge_betweenness_centrality(graph)
     edges_betweenness = sorted((value,key) for (key,value) in edges_betweenness.items())
     for i in range(2000):
+        try:
+            mask = mask_dict[kernel + '.weight_mask']
+        except:
+            continue
         edge = edges_betweenness[-i]
         kernel = '.'.join(edge[1][0].split(".")[:-1])
         start_index = int(edge[1][0].split(".")[-1])
         end_index = int(edge[1][1].split(".")[-1])
-        mask_dict[kernel + '.weight_mask'][end_index, start_index] = 0
+        
+        mask[end_index, start_index] = 0
+        mask_dict[kernel + '.weight_mask'] = mask
     
     for name,m in model.named_modules():
         if isinstance(m, nn.Conv2d):
-            mask = mask_dict[name+'.weight_mask']
-            prune.CustomFromMask.apply(m, 'weight', mask=mask)
+             try:
+                mask = mask_dict[kernel + '.weight_mask']
+                prune.CustomFromMask.apply(m, 'weight', mask=mask)
+            except:
+                continue
+            
 
     
 

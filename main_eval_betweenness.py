@@ -252,7 +252,6 @@ def save_checkpoint(state, is_SA_best, save_path, filename='checkpoint.pth.tar')
         shutil.copyfile(filepath, os.path.join(save_path, 'model_SA_best.pth.tar'))
 
 def load_ticket(model, args):
-
     # weight 
     if args.pretrained:
 
@@ -264,15 +263,24 @@ def load_ticket(model, args):
         elif 'state_dict' in initalization.keys():
             print('loading from state_dict')
             initalization = initalization['state_dict']
-
+        
         loading_weight = extract_main_weight(initalization, fc=args.fc, conv1=args.conv1)
-
+        if 'fc.0.weight' in loading_weight.keys():
+            keys = list(loading_weight.keys())
+            for key in keys:
+                if key.startswith('fc') or key.startswith('conv1'):
+                    del loading_weight[key]
         for key in loading_weight.keys():
             assert key in model.state_dict().keys()
 
         print('*number of loading weight={}'.format(len(loading_weight.keys())))
         print('*number of model weight={}'.format(len(model.state_dict().keys())))
-        model.load_state_dict(loading_weight, strict=False)
+        try:
+            model.load_state_dict(loading_weight, strict=False)
+        except RuntimeError:
+            del loading_weight['fc.weight']
+            del loading_weight['fc.bias']
+            model.load_state_dict(loading_weight, strict=False)
 
     # mask 
     if args.mask_dir:
