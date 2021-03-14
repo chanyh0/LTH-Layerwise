@@ -280,6 +280,8 @@ def load_ticket(model, args):
         except RuntimeError:
             del loading_weight['fc.weight']
             del loading_weight['fc.bias']
+            del loading_weight['conv0.weight']
+            del loading_weight['conv0.bias']
             model.load_state_dict(loading_weight, strict=False)
 
     # mask 
