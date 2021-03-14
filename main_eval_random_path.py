@@ -275,11 +275,8 @@ def load_ticket(model, args):
         for key in loading_weight.keys():
             assert key in model.state_dict().keys()
 
-        for key in loading_weight.keys():
-            assert key in model.state_dict().keys()
-
         print('*number of loading weight={}'.format(len(loading_weight.keys())))
-        print('*number of model weight={}'.format(len(model.state)))
+        print('*number of model weight={}'.format(len(model.state_dict().keys())))
         try:
             model.load_state_dict(loading_weight, strict=False)
         except RuntimeError:
