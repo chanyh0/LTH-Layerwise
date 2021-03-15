@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=0 python -u main_imp_new.py --data datasets/cifar10 --dataset cifar10 --arch res50 --save_dir resnet50_cifar10_lt_0.1 --init LotteryTickets/cifar10_LT/random_init.pt --resume --checkpoint LotteryTickets/cifar10_LT/7_checkpoint.pt --seed 1 --lr 0.1 --fc --rate 0.1 > resnet50_cifar10_lt_0.1.out

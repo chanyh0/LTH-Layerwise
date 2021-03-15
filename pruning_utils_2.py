@@ -707,7 +707,7 @@ def prune_random_betweeness(model, mask_dict):
                         graph.add_node(end_name)
 
                     graph.add_edge(start_name, end_name, weight=weight[j, i])
-
+    
     edges_betweenness = edge_betweenness_centrality(graph)
     edges_betweenness = sorted((value,key) for (key,value) in edges_betweenness.items())
     for i in range(2000):
