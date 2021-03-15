@@ -206,7 +206,7 @@ def main():
         remain_weight = check_sparsity(model)
         current_mask = extract_mask(model.state_dict())
 
-        remove_prune(model)
+        remove_prune(model, conv1=False)
         #rewind weight to init
         if 'fc.0.weight' in initialization.keys():
             keys = list(initialization.keys())

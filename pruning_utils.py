@@ -39,11 +39,12 @@ def check_sparsity(model, report=False):
         print('remain weight = ', 100*(1-zero_sum/sum_list),'%')
     return 100*(1-zero_sum/sum_list), sum_list - zero_sum
 
-def remove_prune(model):
+def remove_prune(model, conv1=True):
     print('remove pruning')
-    for m in model.modules():
+    for name, m in model.named_modules():
         if isinstance(m, nn.Conv2d):
-            prune.remove(m,'weight')
+            if (name in 'conv1' and conv1) or (not name in 'conv1'):
+                prune.remove(m,'weight')
 
 def extract_mask(model_dict):
     new_dict = {}
