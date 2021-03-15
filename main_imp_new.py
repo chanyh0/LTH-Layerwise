@@ -95,6 +95,7 @@ def main():
     
     print(model.normalize)  
     new_initialization = model.state_dict()
+    initialization = torch.load(args.init)
     if args.resume:
         print('resume from checkpoint')
         checkpoint = torch.load(args.checkpoint, map_location = torch.device('cuda:'+str(args.gpu)))
