@@ -96,7 +96,13 @@ def main():
     print(model.normalize)  
     new_initialization = model.state_dict()
     initialization = torch.load(args.init)
-    model.load_state_dict(initialization)
+    try:
+        model.load_state_dict(initialization)
+    except:
+        initialization['fc.weight'] = new_initialization['fc.weight']
+        initialization['fc.bias'] = new_initialization['fc.bias']
+        initialization['conv1.weight'] = new_initialization['conv1.weight']
+        torch.save(initialization, args.init)
     if args.resume:
         print('resume from checkpoint')
         checkpoint = torch.load(args.checkpoint, map_location = torch.device('cuda:'+str(args.gpu)))
