@@ -104,9 +104,8 @@ def main():
         except:
             pass
         start_epoch = checkpoint['epoch']
-        
-        start_state = checkpoint['state']
-
+        start_state = 0
+        best_sa = checkpoint['best_prec1']
         if start_state>0:
             current_mask = extract_mask(checkpoint['state_dict'])
             prune_model_custom(model, current_mask)
