@@ -213,8 +213,11 @@ def main():
             for key in keys:
                 if key.startswith('fc') or key.startswith('conv1'):
                     del initialization[key]
+        try:
+            model.load_state_dict(initialization['state_dict'], strict=False)
+        except:
+            model.load_state_dict(initialization, strict=False)
 
-        model.load_state_dict(initialization['state_dict'], strict=False)
         prune_model_custom(model, current_mask)
         check_sparsity(model)
 
