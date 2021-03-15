@@ -120,6 +120,10 @@ def main():
         initialization = torch.load(args.init)
         print('loading state:', start_state)
         print('loading from epoch: ',start_epoch, 'best_sa=', best_sa)
+        all_result = {}
+        all_result['train'] = []
+        all_result['test_ta'] = []
+        all_result['ta'] = []
 
     else:
         all_result = {}
