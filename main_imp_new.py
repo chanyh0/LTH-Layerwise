@@ -100,10 +100,11 @@ def main():
         checkpoint = torch.load(args.checkpoint, map_location = torch.device('cuda:'+str(args.gpu)))
         try:
             best_sa = checkpoint['best_sa']
+            all_result = checkpoint['result']
         except:
             pass
         start_epoch = checkpoint['epoch']
-        all_result = checkpoint['result']
+        
         start_state = checkpoint['state']
 
         if start_state>0:
