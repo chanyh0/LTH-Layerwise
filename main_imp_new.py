@@ -103,7 +103,7 @@ def main():
         initialization['fc.bias'] = new_initialization['fc.bias']
         initialization['conv1.weight'] = new_initialization['conv1.weight']
         torch.save(initialization, args.init)
-        model.load_state_dict(initialization)
+        model.load_state_dict(initialization, strict=False)
 
     if args.resume:
         print('resume from checkpoint')
