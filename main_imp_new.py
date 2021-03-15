@@ -97,7 +97,7 @@ def main():
     new_initialization = model.state_dict()
     initialization = torch.load(args.init)
     try:
-        model.load_state_dict(initialization)
+        model.load_state_dict(initialization, strict=False)
     except:
         initialization['fc.weight'] = new_initialization['fc.weight']
         initialization['fc.bias'] = new_initialization['fc.bias']
