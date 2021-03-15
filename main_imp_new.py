@@ -94,7 +94,7 @@ def main():
     scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=decreasing_lr, gamma=0.1)
     
     print(model.normalize)  
-
+    new_initialization = model.state_dict()
     if args.resume:
         print('resume from checkpoint')
         checkpoint = torch.load(args.checkpoint, map_location = torch.device('cuda:'+str(args.gpu)))
@@ -216,9 +216,11 @@ def main():
         try:
             model.load_state_dict(initialization['state_dict'], strict=False)
         except:
-            del initialization['fc.weight']
-            del initialization['fc.bias']
+            initialization['fc.weight'] = new_initialization['fc.weight']
+            initialization['fc.bias'] = new_initialization['fc.bias']
+            initialization['conv1.weight'] = new_initialization['conv1.weight']
             model.load_state_dict(initialization, strict=False)
+            
 
         prune_model_custom(model, current_mask)
         check_sparsity(model)
