@@ -104,7 +104,7 @@ def main():
         except:
             pass
         start_epoch = checkpoint['epoch']
-        start_state = 0
+        start_state = 1
         best_sa = checkpoint['best_prec1']
         if start_state>0:
             current_mask = extract_mask(checkpoint['state_dict'])
