@@ -121,9 +121,9 @@ def main():
         print('loading state:', start_state)
         print('loading from epoch: ',start_epoch, 'best_sa=', best_sa)
         all_result = {}
-        all_result['train'] = []
-        all_result['test_ta'] = []
-        all_result['ta'] = []
+        all_result['train'] = [best_sa]
+        all_result['test_ta'] = [best_sa]
+        all_result['ta'] = [best_sa]
 
     else:
         all_result = {}
