@@ -216,6 +216,8 @@ def main():
         try:
             model.load_state_dict(initialization['state_dict'], strict=False)
         except:
+            del initialization['fc.weight']
+            del initialization['fc.bias']
             model.load_state_dict(initialization, strict=False)
 
         prune_model_custom(model, current_mask)
