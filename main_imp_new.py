@@ -88,36 +88,11 @@ def main():
     criterion = nn.CrossEntropyLoss()
     decreasing_lr = list(map(int, args.decreasing_lr.split(',')))
 
-    if args.prune_type == 'lt':
-        print('lottery tickets setting (rewind to random init')
-        initalization = deepcopy(model.state_dict())
-
-    elif args.prune_type == 'pt_trans':
-        print('pretrain tickets with {}'.format(args.pretrained))
-        pretrained_weight = torch.load(args.pretrained, map_location = torch.device('cuda:'+str(args.gpu)))
-        if 'state_dict' in pretrained_weight.keys():
-            pretrained_weight = pretrained_weight['state_dict']
-
-        if args.adv_simclr or args.std_simclr:
-            pretrained_weight = cvt_state_dict(pretrained_weight, args.adv_simclr, bn_idx=args.bn_idx)
-        elif args.moco_m0:
-            pretrained_weight = moco_state_dict(pretrained_weight)
-
-    elif args.prune_type == 'pt':
-        initalization = None
-    elif args.prune_type == 'rewind_lt':
-        initalization = None
-    else:
-        assert False
-
     optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay)
     scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=decreasing_lr, gamma=0.1)
     
-    if args.prune_type == 'pt_trans':
-        load_weight(model, pretrained_weight, args)
-        initalization = deepcopy(model.state_dict())
     print(model.normalize)  
 
     if args.resume:
@@ -139,7 +114,7 @@ def main():
         model.load_state_dict(checkpoint['state_dict'])
         optimizer.load_state_dict(checkpoint['optimizer'])
         scheduler.load_state_dict(checkpoint['scheduler'])
-        initalization = checkpoint['init_weight']
+        initialization = torch.load(args.init)
         print('loading state:', start_state)
         print('loading from epoch: ',start_epoch, 'best_sa=', best_sa)
 
@@ -171,7 +146,7 @@ def main():
                 if epoch == args.rewind_epoch:
                     torch.save(model.state_dict(), os.path.join(args.save_dir, 'epoch_{}_rewind_weight.pt'.format(epoch+1)))
                     if args.prune_type == 'rewind_lt':
-                        initalization = deepcopy(model.state_dict())
+                        initialization = deepcopy(model.state_dict())
 
             # evaluate on validation set
             tacc = validate(val_loader, model, criterion)
@@ -196,7 +171,7 @@ def main():
                 'best_sa': best_sa,
                 'optimizer': optimizer.state_dict(),
                 'scheduler': scheduler.state_dict(),
-                'init_weight': initalization
+                'init_weight': initialization
             }, is_SA_best=is_best_sa, pruning=state, save_path=args.save_dir)
         
             plt.plot(all_result['train'], label='train_acc')
@@ -226,13 +201,13 @@ def main():
 
         remove_prune(model)
         #rewind weight to init
-        if 'fc.0.weight' in initalization.keys():
-            keys = list(initalization.keys())
+        if 'fc.0.weight' in initialization.keys():
+            keys = list(initialization.keys())
             for key in keys:
                 if key.startswith('fc') or key.startswith('conv1'):
-                    del initalization[key]
+                    del initialization[key]
 
-        model.load_state_dict(initalization)
+        model.load_state_dict(initialization)
         prune_model_custom(model, current_mask)
         check_sparsity(model)
 
@@ -333,9 +308,9 @@ def save_checkpoint(state, is_SA_best, save_path, pruning, filename='checkpoint.
     if is_SA_best:
         shutil.copyfile(filepath, os.path.join(save_path, str(pruning)+'model_SA_best.pth.tar'))
 
-def load_weight(model, initalization, args): 
+def load_weight(model, initialization, args): 
     print('loading pretrained weight')
-    loading_weight = extract_main_weight(initalization)
+    loading_weight = extract_main_weight(initialization)
     
     for key in loading_weight.keys():
         if not (key in model.state_dict().keys()):
