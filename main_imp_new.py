@@ -123,7 +123,10 @@ def main():
     if args.resume:
         print('resume from checkpoint')
         checkpoint = torch.load(args.checkpoint, map_location = torch.device('cuda:'+str(args.gpu)))
-        best_sa = checkpoint['best_sa']
+        try:
+            best_sa = checkpoint['best_sa']
+        except:
+            pass
         start_epoch = checkpoint['epoch']
         all_result = checkpoint['result']
         start_state = checkpoint['state']
