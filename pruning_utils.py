@@ -43,7 +43,7 @@ def remove_prune(model, conv1=True):
     print('remove pruning')
     for name, m in model.named_modules():
         if isinstance(m, nn.Conv2d):
-            if (name in 'conv1' and conv1) or (not name in 'conv1'):
+            if ('conv1' in name and conv1) or (not 'conv1' in name):
                 prune.remove(m,'weight')
 
 def extract_mask(model_dict):
