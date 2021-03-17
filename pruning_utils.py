@@ -26,18 +26,27 @@ def pruning_model(model, px, conv1=False):
         amount=px,
     )
 
-def check_sparsity(model, report=False):
+
+def check_sparsity(model, conv1=True):
+    
     sum_list = 0
     zero_sum = 0
-    for m in model.modules():
+
+    for name,m in model.named_modules():
         if isinstance(m, nn.Conv2d):
-            sum_list = sum_list+float(m.weight.nelement())
-            zero_sum = zero_sum+float(torch.sum(m.weight == 0))     
-    if report:
-        print('report remain weight = ', 100*(1-zero_sum/sum_list),'%')
-    else:
-        print('remain weight = ', 100*(1-zero_sum/sum_list),'%')
-    return 100*(1-zero_sum/sum_list), sum_list - zero_sum
+            if name == 'conv1':
+                if conv1:
+                    sum_list = sum_list+float(m.weight.nelement())
+                    zero_sum = zero_sum+float(torch.sum(m.weight == 0))    
+                else:
+                    print('skip conv1 for sparsity checking')
+            else:
+                sum_list = sum_list+float(m.weight.nelement())
+                zero_sum = zero_sum+float(torch.sum(m.weight == 0))  
+
+    print('* remain weight = ', 100*(1-zero_sum/sum_list),'%')
+    
+    return 100*(1-zero_sum/sum_list)
 
 def remove_prune(model, conv1=True):
     print('remove pruning')

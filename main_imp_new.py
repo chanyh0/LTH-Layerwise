@@ -119,7 +119,7 @@ def main():
         if start_state>0:
             current_mask = extract_mask(checkpoint['state_dict'])
             prune_model_custom(model, current_mask)
-            check_sparsity(model)
+            check_sparsity(model, conv1=False)
             optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay)
@@ -152,7 +152,7 @@ def main():
         print('pruning state', state)
         print('******************************************')
         
-        check_sparsity(model)        
+        check_sparsity(model, conv1=False)        
         for epoch in range(start_epoch, args.epochs):
 
             print(optimizer.state_dict()['param_groups'][0]['lr'])
@@ -199,7 +199,7 @@ def main():
             plt.close()
 
         #report result
-        check_sparsity(model)
+        check_sparsity(model, conv1=False)
         print('* best SA={}'.format(all_result['test_ta'][np.argmax(np.array(all_result['ta']))]))
 
         all_result = {}
@@ -213,7 +213,7 @@ def main():
         assert args.init is not None
 
         pruning_model(model, args.rate, conv1=False)
-        remain_weight = check_sparsity(model)
+        remain_weight = check_sparsity(model, conv1=False)
         current_mask = extract_mask(model.state_dict())
 
         remove_prune(model, conv1=False)
@@ -233,7 +233,7 @@ def main():
             
 
         prune_model_custom(model, current_mask)
-        check_sparsity(model)
+        check_sparsity(model, conv1=False)
 
         optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                     momentum=args.momentum,
