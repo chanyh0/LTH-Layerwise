@@ -279,7 +279,7 @@ def check_sparsity(model, conv1=True):
     
     sum_list = 0
     zero_sum = 0
-    print(model.state_dict())
+    print(model.state_dict().keys())
     for name,m in model.named_modules():
         if isinstance(m, nn.Conv2d):
             print(name)
