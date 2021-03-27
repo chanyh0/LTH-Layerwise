@@ -282,6 +282,7 @@ def check_sparsity(model, conv1=True):
 
     for name,m in model.named_modules():
         if isinstance(m, nn.Conv2d):
+            print(name)
             if name == 'conv1':
                 if conv1:
                     sum_list = sum_list+float(m.weight_mask.nelement())
