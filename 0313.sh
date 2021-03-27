@@ -14,9 +14,11 @@ CUDA_VISIBLE_DEVICES=1 nohup python -u main_eval_ewp.py --data datasets/cifar100
 
 CUDA_VISIBLE_DEVICES=0 nohup python -u main_eval_ewp.py --data datasets/cifar100 --dataset cifar100 --arch res50 --save_dir resnet50_cifar100_mt_ewp --pretrained pretrained_model/moco.pt --mask_dir LotteryTickets/cifar100_MT/5_checkpoint.pt --seed 1 --conv1 --lr 0.1 --fc > resnet50_cifar100_mt_ewp.out &
 
-CUDA_VISIBLE_DEVICES=0 nohup python -u main_eval_ewp_add_back.py --data datasets/cifar100 --dataset cifar100 --arch res50 --save_dir resnet50_cifar100_lt_ewp_add_back --pretrained LotteryTickets/cifar100_LT/random_init.pt --mask_dir LotteryTickets/cifar100_LT/2_checkpoint.pt --seed 1 --conv1 --lr 0.1 --fc > resnet50_cifar100_lt_ewp_add_back.out &
+CUDA_VISIBLE_DEVICES=0 nohup python -u main_eval_random_path_add_back.py --data datasets/cifar100 --dataset cifar100 --arch res50 --save_dir resnet50_cifar100_mt_random_path_add_back --pretrained pretrained_model/moco.pt --mask_dir LotteryTickets/cifar100_MT/5_checkpoint.pt --seed 1 --conv1 --lr 0.1 --fc > resnet50_cifar100_mt_random_path_add_back.out &
 
-CUDA_VISIBLE_DEVICES=1 nohup python -u main_eval_ewp_add_back.py --data datasets/cifar100 --dataset cifar100 --arch res50 --save_dir resnet50_cifar100_st_ewp_add_back --pretrained pretrained_model/simclr_weight.pt --mask_dir LotteryTickets/cifar100_ST/9_checkpoint.pt --seed 1 --conv1 --lr 0.1 --fc > resnet50_cifar100_st_ewp_add_back.out &
+CUDA_VISIBLE_DEVICES=0 nohup python -u main_eval_betweenness.py --data datasets/cifar100 --dataset cifar100 --arch res50 --save_dir resnet50_cifar100_lt_betweenness --pretrained LotteryTickets/cifar100_LT/random_init.pt --mask_dir LotteryTickets/cifar100_LT/2_checkpoint.pt --seed 1 --conv1 --lr 0.1 --fc > resnet50_cifar100_lt_betweenness.out &
+
+CUDA_VISIBLE_DEVICES=1 nohup python -u main_eval_betweenness.py --data datasets/cifar100 --dataset cifar100 --arch res50 --save_dir resnet50_cifar100_st_betweenness --pretrained pretrained_model/simclr_weight.pt --mask_dir LotteryTickets/cifar100_ST/9_checkpoint.pt --seed 1 --conv1 --lr 0.1 --fc > resnet50_cifar100_st_betweenness.out &
 
 
 

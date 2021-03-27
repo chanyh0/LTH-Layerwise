@@ -284,13 +284,13 @@ def check_sparsity(model, conv1=True):
         if isinstance(m, nn.Conv2d):
             if name == 'conv1':
                 if conv1:
-                    sum_list = sum_list+float(m.weight.nelement())
-                    zero_sum = zero_sum+float(torch.sum(m.weight == 0))    
+                    sum_list = sum_list+float(m.weight_mask.nelement())
+                    zero_sum = zero_sum+float(torch.sum(m.weight_mask == 0))    
                 else:
                     print('skip conv1 for sparsity checking')
             else:
-                sum_list = sum_list+float(m.weight.nelement())
-                zero_sum = zero_sum+float(torch.sum(m.weight == 0))  
+                sum_list = sum_list+float(m.weight_mask.nelement())
+                zero_sum = zero_sum+float(torch.sum(m.weight_mask == 0))  
 
     print('* remain weight = ', 100*(1-zero_sum/sum_list),'%')
     
