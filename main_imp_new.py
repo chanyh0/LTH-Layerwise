@@ -96,6 +96,9 @@ def main():
     print(model.normalize)  
     new_initialization = copy.deepcopy(model.state_dict())
     initialization = torch.load(args.init)
+    initialization['normalize.mean'] = new_initialization['normalize.mean']
+    initialization['normalize.std'] = new_initialization['normalize.std']
+
     if not args.prune_type == 'lt':
         keys = list(initialization.keys())
         for key in keys:
