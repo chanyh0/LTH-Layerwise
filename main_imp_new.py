@@ -131,8 +131,8 @@ def main():
                                 weight_decay=args.weight_decay)
             scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=decreasing_lr, gamma=0.1)
         if 'normalize.mean' not in checkpoint['state_dict']:
-            checkpoint['state_dict']['normalze.mean'] = new_initialization['normalize.mean']
-            checkpoint['state_dict']['normalze.std'] = new_initialization['normalize.std']
+            checkpoint['state_dict']['normalize.mean'] = new_initialization['normalize.mean']
+            checkpoint['state_dict']['normalize.std'] = new_initialization['normalize.std']
         model.load_state_dict(checkpoint['state_dict'])
         optimizer.load_state_dict(checkpoint['optimizer'])
         scheduler.load_state_dict(checkpoint['scheduler'])
