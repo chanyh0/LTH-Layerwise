@@ -96,6 +96,9 @@ def main():
     print(model.normalize)  
     new_initialization = copy.deepcopy(model.state_dict())
     initialization = torch.load(args.init)
+    if 'state_dict' in initialization:
+        initialization = initialization['state_dict']
+        
     initialization['normalize.mean'] = new_initialization['normalize.mean']
     initialization['normalize.std'] = new_initialization['normalize.std']
 
