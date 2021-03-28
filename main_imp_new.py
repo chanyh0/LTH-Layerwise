@@ -94,16 +94,19 @@ def main():
     scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=decreasing_lr, gamma=0.1)
     
     print(model.normalize)  
-    new_initialization = model.state_dict()
+    new_initialization = copy.deepcopy(model.state_dict())
     initialization = torch.load(args.init)
-    try:
-        model.load_state_dict(initialization, strict=False)
-    except:
+    if not args.prune_type == 'lt':
+        keys = list(initialization.keys())
+        for key in keys:
+            if key.startswith('fc') or key.startswith('conv1'):
+                del initialization[key]
+
         initialization['fc.weight'] = new_initialization['fc.weight']
         initialization['fc.bias'] = new_initialization['fc.bias']
         initialization['conv1.weight'] = new_initialization['conv1.weight']
-        torch.save(initialization, args.init)
-        model.load_state_dict(initialization, strict=False)
+        model.load_state_dict(initialization)
+        
 
     if args.resume:
         print('resume from checkpoint')
@@ -124,10 +127,9 @@ def main():
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay)
             scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=decreasing_lr, gamma=0.1)
-        model.load_state_dict(checkpoint['state_dict'], strict=False)
+        model.load_state_dict(checkpoint['state_dict'])
         optimizer.load_state_dict(checkpoint['optimizer'])
         scheduler.load_state_dict(checkpoint['scheduler'])
-        initialization = torch.load(args.init)
         print('loading state:', start_state)
         print('loading from epoch: ',start_epoch, 'best_sa=', best_sa)
         all_result = {}
@@ -158,13 +160,6 @@ def main():
             print(optimizer.state_dict()['param_groups'][0]['lr'])
 
             acc = train(train_loader, model, criterion, optimizer, epoch)
-
-            if state == 0:
-                if epoch == args.rewind_epoch:
-                    torch.save(model.state_dict(), os.path.join(args.save_dir, 'epoch_{}_rewind_weight.pt'.format(epoch+1)))
-                    if args.prune_type == 'rewind_lt':
-                        initialization = deepcopy(model.state_dict())
-
             # evaluate on validation set
             tacc = validate(val_loader, model, criterion)
             # evaluate on test set
@@ -210,28 +205,13 @@ def main():
         best_sa = 0
         start_epoch = 0
 
-        assert args.init is not None
-
         pruning_model(model, args.rate, conv1=False)
         remain_weight = check_sparsity(model, conv1=False)
         current_mask = extract_mask(model.state_dict())
 
         remove_prune(model, conv1=False)
-        #rewind weight to init
-        if 'fc.0.weight' in initialization.keys():
-            keys = list(initialization.keys())
-            for key in keys:
-                if key.startswith('fc') or key.startswith('conv1'):
-                    del initialization[key]
-        try:
-            model.load_state_dict(initialization['state_dict'], strict=False)
-        except:
-            initialization['fc.weight'] = new_initialization['fc.weight']
-            initialization['fc.bias'] = new_initialization['fc.bias']
-            initialization['conv1.weight'] = new_initialization['conv1.weight']
-            model.load_state_dict(initialization, strict=False)
-            
 
+        model.load_state_dict(initialization)
         prune_model_custom(model, current_mask)
         check_sparsity(model, conv1=False)
 
@@ -343,7 +323,7 @@ def load_weight(model, initialization, args):
 
     print('*number of loading weight={}'.format(len(loading_weight.keys())))
     print('*number of model weight={}'.format(len(model.state_dict().keys())))
-    model.load_state_dict(loading_weight, strict=False)
+    model.load_state_dict(loading_weight)
 
 def warmup_lr(epoch, step, optimizer, one_epoch_step):
 
