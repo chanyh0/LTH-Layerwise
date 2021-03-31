@@ -61,6 +61,7 @@ parser.add_argument('--random-index', default=20, type=int)
 parser.add_argument('--random-sparsity', action="store_true")
 parser.add_argument('--random-sparsity-normal', action="store_true")
 parser.add_argument('--random-sparsity-reverse', action="store_true")
+parser.add_argument('--random-sparsity-one', action="store_true")
 
 
 
@@ -296,6 +297,8 @@ def load_ticket(model, args):
 
         elif args.random_sparsity_reverse:
             prune_model_custom_random_normal_reverse(model, current_mask, conv1=args.conv1, random_index=args.random_index)
+        elif args.random_sparsity_one:
+            prune_model_custom_one_random(model, current_mask, random_index=args.random_index)
         else:
             prune_model_custom(model, current_mask, conv1=args.conv1, random_index=args.random_index)
 
