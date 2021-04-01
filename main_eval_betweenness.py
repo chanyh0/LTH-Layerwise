@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import torch
 import torch.optim
 import torch.nn as nn
+from torch.serialization import load
 import torch.utils.data
 import torch.nn.functional as F
 import torchvision.models as models
@@ -265,23 +266,22 @@ def load_ticket(model, args):
             initalization = initalization['state_dict']
         
         loading_weight = extract_main_weight(initalization, fc=args.fc, conv1=args.conv1)
+        new_initialization = model.state_dict()
         if 'fc.0.weight' in loading_weight.keys():
             keys = list(loading_weight.keys())
             for key in keys:
-                if key.startswith('fc') or key.startswith('conv1'):
+                if key.startswith('fc.0') or key.startswith('conv1'):
                     del loading_weight[key]
+            
+            loading_weight['fc.weight'] = new_initialization['fc.weight']
+            loading_weight['fc.bias'] = new_initialization['fc.bias']
+
         for key in loading_weight.keys():
             assert key in model.state_dict().keys()
 
         print('*number of loading weight={}'.format(len(loading_weight.keys())))
         print('*number of model weight={}'.format(len(model.state_dict().keys())))
-        try:
-            model.load_state_dict(loading_weight)
-        except RuntimeError:
-            del loading_weight['fc.weight']
-            del loading_weight['fc.bias']
-            del loading_weight['conv1.weight']
-            model.load_state_dict(loading_weight)
+        model.load_state_dict(loading_weight)
 
     # mask 
     if args.mask_dir:
