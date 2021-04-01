@@ -276,12 +276,12 @@ def load_ticket(model, args):
         print('*number of loading weight={}'.format(len(loading_weight.keys())))
         print('*number of model weight={}'.format(len(model.state_dict().keys())))
         try:
-            model.load_state_dict(loading_weight, strict=False)
+            model.load_state_dict(loading_weight)
         except RuntimeError:
             del loading_weight['fc.weight']
             del loading_weight['fc.bias']
             del loading_weight['conv1.weight']
-            model.load_state_dict(loading_weight, strict=False)
+            model.load_state_dict(loading_weight)
 
     # mask 
     if args.mask_dir:
@@ -290,7 +290,7 @@ def load_ticket(model, args):
         if 'state_dict' in current_mask_weight.keys():
             current_mask_weight = current_mask_weight['state_dict']
         current_mask = extract_mask(current_mask_weight)
-
+        print(current_mask)
         if args.rewind_arch:
             print('mask add back')
             current_mask = mask_add_back(current_mask)
@@ -299,7 +299,7 @@ def load_ticket(model, args):
             current_mask = reverse_mask(current_mask)
         
         
-        prune_random_betweeness(model, current_mask)
+        prune_random_betweeness(model, current_mask, conv1=args.conv1)
 
         check_sparsity(model, conv1=args.conv1)
 
