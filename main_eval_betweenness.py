@@ -298,7 +298,6 @@ def load_ticket(model, args):
         if 'state_dict' in current_mask_weight.keys():
             current_mask_weight = current_mask_weight['state_dict']
         current_mask = extract_mask(current_mask_weight)
-        print(current_mask)
         if args.rewind_arch:
             print('mask add back')
             current_mask = mask_add_back(current_mask)
