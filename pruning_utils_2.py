@@ -674,7 +674,7 @@ def prune_random_ewp_add_back(model, mask_dict):
             except:
                 pass
 
-def prune_random_betweeness(model, mask_dict):
+def prune_random_betweeness(model, mask_dict, conv1=True):
             
     import networkx
 
