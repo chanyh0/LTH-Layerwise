@@ -305,7 +305,8 @@ def load_ticket(model, args):
         if args.reverse_mask:
             current_mask = reverse_mask(current_mask)
         
-        
+        print(current_mask)
+        raise NotADirectoryError
         prune_random_betweeness(model, current_mask, conv1=args.conv1)
 
         check_sparsity(model, conv1=args.conv1)

@@ -522,7 +522,7 @@ def prune_random_ewp(model, mask_dict):
                 try:
                     mask = mask_dict[name+'.weight_mask']
                 except:
-                    if 'conv1' in name:
+                    if name == 'conv1':
                         continue
                 weight = m.weight * mask_dict[name+'.weight_mask'] 
                 weight = torch.sum(weight.abs(), [2,3]).cpu().detach().numpy()
