@@ -674,7 +674,7 @@ def prune_random_ewp_add_back(model, mask_dict):
             except:
                 pass
 
-def prune_random_betweeness(model, mask_dict, conv1=True):
+def prune_random_betweeness(model, mask_dict, num_paths, conv1=True):
             
     import networkx
 
@@ -712,7 +712,7 @@ def prune_random_betweeness(model, mask_dict, conv1=True):
     edges_betweenness = edge_betweenness_centrality(graph, k=int(graph.number_of_nodes() / 100.0))
     edges_betweenness = sorted((value,key) for (key,value) in edges_betweenness.items())
     print(len(edges_betweenness))
-    for i in range(50000):
+    for i in range(num_paths):
         edge = edges_betweenness[-i]
         kernel = '.'.join(edge[1][0].split(".")[:-1])
         start_index = int(edge[1][0].split(".")[-1])
