@@ -719,10 +719,11 @@ def prune_random_betweeness(model, mask_dict, conv1=True):
         end_index = int(edge[1][1].split(".")[-1])
         try:
             mask = mask_dict[kernel + '.weight_mask']
+            mask[end_index, start_index] = 0
+            mask_dict[kernel + '.weight_mask'] = mask
         except:
             continue
-        mask[end_index, start_index] = 0
-        mask_dict[kernel + '.weight_mask'] = mask
+        
     
     for name,m in model.named_modules():
         if isinstance(m, nn.Conv2d):
