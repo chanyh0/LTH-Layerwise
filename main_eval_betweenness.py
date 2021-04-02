@@ -306,7 +306,11 @@ def load_ticket(model, args):
         if args.reverse_mask:
             current_mask = reverse_mask(current_mask)
         #check_sparsity(model, conv1=args.conv1)
-        prune_random_betweeness(model, current_mask, args.num_paths, conv1=args.conv1)
+        if args.arch == 'res18':
+            downsample = 100
+        else:
+            downsample = 1000
+        prune_random_betweeness(model, current_mask, int(args.num_paths), downsample=downsample, conv1=args.conv1)
 
         check_sparsity(model, conv1=args.conv1)
 
