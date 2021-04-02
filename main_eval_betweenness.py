@@ -308,7 +308,7 @@ def load_ticket(model, args):
         prune_random_betweeness(model, current_mask, conv1=args.conv1)
 
         check_sparsity(model, conv1=args.conv1)
-        raise NotImplementedError
+
 def warmup_lr(epoch, step, optimizer, one_epoch_step):
 
     overall_steps = args.warmup*one_epoch_step
