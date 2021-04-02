@@ -286,6 +286,7 @@ def load_ticket(model, args):
 
 
         for key in loading_weight.keys():
+            print(key)
             assert key in model.state_dict().keys()
 
         print('*number of loading weight={}'.format(len(loading_weight.keys())))
