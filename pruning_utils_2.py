@@ -711,7 +711,7 @@ def prune_random_betweeness(model, mask_dict, conv1=True):
     
     edges_betweenness = edge_betweenness_centrality(graph, k=int(graph.number_of_nodes() / 100.0))
     edges_betweenness = sorted((value,key) for (key,value) in edges_betweenness.items())
-    for i in range(20000):
+    for i in range(200000):
         try:
             mask = mask_dict[kernel + '.weight_mask']
         except:
