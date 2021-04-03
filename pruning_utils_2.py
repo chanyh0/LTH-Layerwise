@@ -513,8 +513,8 @@ def prune_random_path_add_back(model, mask_dict):
                 pass
                 
                 
-def prune_random_ewp(model, mask_dict):       
-    for _ in range(150):
+def prune_random_ewp(model, mask_dict, num_paths):       
+    for _ in range(num_paths):
         end_index = None
         for name,m in model.named_modules():
             if isinstance(m, nn.Conv2d):
