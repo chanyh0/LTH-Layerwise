@@ -359,9 +359,9 @@ def prune_model_custom_one_random(model, mask_dict, random_index = -1):
                 prune.RandomUnstructured.apply(m, 'weight', amount=(mask_dict[name+'.weight_mask']==0).sum().int().item() / mask_dict[name+'.weight_mask'].numel())
             index += 1
 
-def prune_random_path(model, mask_dict):
+def prune_random_path(model, mask_dict, num_paths):
 
-    for _ in range(150):
+    for _ in range(num_paths):
         end_index = None
         for name,m in model.named_modules():
             if isinstance(m, nn.Conv2d):
