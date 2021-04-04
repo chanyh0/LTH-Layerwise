@@ -94,13 +94,16 @@ def prune_ewp(model, mask_dict, num_paths, conv1=False):
     for _ in range(num_paths):
         end_index = None
         for name,m in model.named_modules():
-            print(name)
             if need_to_prune(name, m, conv1):
                 weight = m.weight * mask_dict[name+'.weight_mask'] 
                 weight = torch.sum(weight.abs(), [2,3]).cpu().detach().numpy()
                 if end_index is None:
                     start_index = np.random.randint(0, weight.shape[1] - 1)
-                prob = np.abs(weight[:, start_index])
+                try:
+                    prob = np.abs(weight[:, start_index])
+                except:
+                    start_index = np.random.randint(0, weight.shape[1] - 1)
+                    prob = np.abs(weight[:, start_index])
                 prob = prob / (prob.sum() + 1e-10)
                 
                 counter = 0
