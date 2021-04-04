@@ -89,7 +89,7 @@ def prune_random_path(model, mask_dict, num_paths, conv1=False):
                 start_index = end_index
     return new_mask_dict
 
-def prune_random_ewp(model, mask_dict, num_paths, conv1=False):
+def prune_ewp(model, mask_dict, num_paths, conv1=False):
     new_mask_dict = copy.deepcopy(mask_dict)       
     for _ in range(num_paths):
         end_index = None
@@ -119,7 +119,7 @@ def prune_random_ewp(model, mask_dict, num_paths, conv1=False):
 
     return new_mask_dict
  
-def prune_random_betweeness(model, mask_dict, num_paths, downsample=100, conv1=True):
+def prune_betweeness(model, mask_dict, num_paths, downsample=100, conv1=True):
     new_mask_dict = copy.deepcopy(mask_dict)
     graph = networkx.Graph()
     name_list = []
