@@ -23,8 +23,8 @@ def custom_prune(model, mask_dict, prune_type, num_paths=5000, conv1=False, add_
             n_zeros += (mask == 0).float().sum().item()
             n_param += mask.numel()
             n_after_zeros += (new_mask_dict[name+'.weight_mask'] == 0).float().sum().item()
-    print("Sparsity before: {}".format(n_zeros / n_param))
-    print("Sparsity after: {}".format(n_after_zeros / n_param))
+    print("Sparsity before: {}%".format((1 - n_zeros / n_param) * 100))
+    print("Sparsity after: {}%".format((1 - n_after_zeros / n_param) * 100))
     
     if add_back:
         mask_vector = torch.zeros(n_param)
