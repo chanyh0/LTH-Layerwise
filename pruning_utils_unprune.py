@@ -22,7 +22,7 @@ def prune(model, mask_dict, prune_type, num_paths=5000, conv1=False, add_back=Fa
             mask = mask_dict[name+'.weight_mask']
             n_zeros += (mask == 0).float().sum().item()
             n_param += mask.numel()
-            n_after_zeros += new_mask_dict[name+'.weight_mask']
+            n_after_zeros += (new_mask_dict[name+'.weight_mask'] == 0).float().sum().item()
     print("Sparsity before: {}".format(n_zeros / n_param))
     print("Sparsity after: {}".format(n_after_zeros / n_param))
     
