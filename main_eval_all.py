@@ -58,7 +58,7 @@ parser.add_argument('--fc', action="store_true", help="whether rewind fc")
 
 parser.add_argument('--type', type=str, default=None, choices=['ewp', 'random', 'betweenness'])
 parser.add_argument('--add-back', action="store_true", help="add back weights")
-parser.add_argument('--prune-type', type="str", choices=["lt", 'pt', 'st', 'mt'])
+parser.add_argument('--prune-type', type="str", choices=["lt", 'pt', 'st', 'mt', 'trained'])
 parser.add_argument('--num-paths', default=50000)
 
 
@@ -261,7 +261,7 @@ def load_ticket(model, args):
             loading_weight['normalize.std'] = new_initialization['normalize.std']
             loading_weight['normalize.mean'] = new_initialization['normalize.mean']
 
-        if not args.prune_type == 'lt':
+        if not (args.prune_type == 'lt' or args.prune_type == 'trained'):
             keys = list(loading_weight.keys())
             for key in keys:
                 if key.startswith('fc') or key.startswith('conv1'):
