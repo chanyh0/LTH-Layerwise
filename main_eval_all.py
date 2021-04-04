@@ -59,7 +59,7 @@ parser.add_argument('--fc', action="store_true", help="whether rewind fc")
 parser.add_argument('--type', type=str, default=None, choices=['ewp', 'random', 'betweenness'])
 parser.add_argument('--add-back', action="store_true", help="add back weights")
 parser.add_argument('--prune-type', type=str, choices=["lt", 'pt', 'st', 'mt', 'trained'])
-parser.add_argument('--num-paths', default=50000)
+parser.add_argument('--num-paths', default=50000, type=int)
 
 
 
