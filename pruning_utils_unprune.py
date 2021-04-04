@@ -39,14 +39,10 @@ def custom_prune(model, mask_dict, prune_type, num_paths=5000, conv1=False, add_
         rand_vector[mask_vector == 1] = np.inf
         threshold, _ = torch.kthvalue(rand_vector, int(n_after_zeros - n_zeros))
         mask_vector[rand_vector < threshold] = 1
-        for name,m in model.named_modules():
-            if need_to_prune(name, m, conv1):
-                mask = mask_dict[name + '.weight_mask']
-                prune.CustomFromMask.apply(m, 'weight', mask=mask)
         n_cur = 0
         for name,m in model.named_modules():
             if need_to_prune(name, m, conv1):
-                mask = mask_dict[name+'.weight_mask']
+                mask = new_mask_dict[name+'.weight_mask']
                 size = np.product(np.array(mask.shape))
                 new_mask = mask_vector[n_cur:n_cur+size].view(mask.shape)
                 n_cur += size
@@ -55,7 +51,7 @@ def custom_prune(model, mask_dict, prune_type, num_paths=5000, conv1=False, add_
     else:
         for name,m in model.named_modules():
             if need_to_prune(name, m, conv1):
-                mask = mask_dict[name + '.weight_mask']
+                mask = new_mask_dict[name + '.weight_mask']
                 prune.CustomFromMask.apply(m, 'weight', mask=mask)
 
 def prune_random_path(model, mask_dict, num_paths, conv1=False):
