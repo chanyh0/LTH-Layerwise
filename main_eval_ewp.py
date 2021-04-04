@@ -302,7 +302,7 @@ def load_ticket(model, args):
             current_mask = reverse_mask(current_mask)
         
         
-        prune_random_ewp(model, current_mask, args.num_paths)
+        prune_random_ewp(model, current_mask, int(args.num_paths))
 
         check_sparsity(model, conv1=args.conv1)
 
