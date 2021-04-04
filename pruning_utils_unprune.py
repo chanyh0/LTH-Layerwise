@@ -9,8 +9,8 @@ import torch.nn.utils.prune as prune
 import numpy as np
 
 def need_to_prune(name, m, conv1):
-    return isinstance(m, nn.Conv2d) \
-        and ((name == 'conv1' and conv1) or (name != 'conv1'))
+    return ((name == 'conv1' and conv1) or (name != 'conv1')) \
+        and isinstance(m, nn.Conv2d)
 
 def prune(model, mask_dict, prune_type, num_paths=5000, conv1=False, add_back=False):
     new_mask_dict = globals()['prune_' + prune_type](model, mask_dict, num_paths, conv1)
