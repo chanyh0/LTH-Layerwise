@@ -94,6 +94,7 @@ def prune_ewp(model, mask_dict, num_paths, conv1=False):
     for _ in range(num_paths):
         end_index = None
         for name,m in model.named_modules():
+            print(name)
             if need_to_prune(name, m, conv1):
                 weight = m.weight * mask_dict[name+'.weight_mask'] 
                 weight = torch.sum(weight.abs(), [2,3]).cpu().detach().numpy()
