@@ -13,7 +13,6 @@ from copy import deepcopy
 import matplotlib.pyplot as plt
 
 import torch
-from torch.nn.modules import module
 import torch.optim
 import torch.nn as nn
 import torch.utils.data
@@ -26,7 +25,8 @@ from torch.utils.data.sampler import SubsetRandomSampler
 from advertorch.utils import NormalizeByChannelMeanStd
 
 from utils import *
-from pruning_utils import *
+from pruning_utils_2 import *
+from pruning_utils_unprune import *
 
 parser = argparse.ArgumentParser(description='PyTorch Evaluation Tickets')
 
@@ -55,11 +55,11 @@ parser.add_argument('--pretrained', default=None, type=str, help='pretrained wei
 parser.add_argument('--mask_dir', default=None, type=str, help='mask direction for ticket')
 parser.add_argument('--conv1', action="store_true", help="whether pruning&rewind conv1")
 parser.add_argument('--fc', action="store_true", help="whether rewind fc")
-parser.add_argument('--reverse_mask', action="store_true", help="whether using reverse mask")
-parser.add_argument('--rewind_arch', action="store_true", help="mask add back")
 
-parser.add_argument('--random-index', default=20, type=int)
-parser.add_argument('--random-sparsity', action="store_true")
+parser.add_argument('--type', type=str, default=None, choices=['ewp', 'random', 'betweenness'])
+parser.add_argument('--add-back', action="store_true", help="add back weights")
+parser.add_argument('--prune-type', type="str", choices=["lt", 'pt', 'st', 'mt'])
+parser.add_argument('--num-paths', default=50000)
 
 
 
@@ -85,37 +85,29 @@ def main():
     model.cuda()
 
     #loading tickets
-    K = load_ticket(model, args)
+    load_ticket(model, args)
 
     criterion = nn.CrossEntropyLoss()
     decreasing_lr = list(map(int, args.decreasing_lr.split(',')))
 
-    if args.optim == 'sgd':
-        print('training with SGD optimizer')
-        optimizer = torch.optim.SGD(model.parameters(), args.lr,
+    optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                     momentum=args.momentum,
                                     weight_decay=args.weight_decay)
-    elif args.optim == 'adam':
-        print('training with Adam optimizer')
-        optimizer = torch.optim.Adam(model.parameters(), args.lr,
-                                    weight_decay=args.weight_decay) 
-
+ 
     scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=decreasing_lr, gamma=0.1)
-
 
     all_result = {}
     all_result['train'] = []
     all_result['test_ta'] = []
     all_result['ta'] = []
 
-    start_epoch = 0
-    print(model.normalize)  
-    remain_weight,_ = check_sparsity(model)
+    start_epoch = 0 
+    remain_weight = check_sparsity(model, conv1=args.conv1)
 
     for epoch in range(start_epoch, args.epochs):
 
         print(optimizer.state_dict()['param_groups'][0]['lr'])
-        acc = train(train_loader, model, criterion, optimizer, epoch, K)
+        acc = train(train_loader, model, criterion, optimizer, epoch)
 
         # evaluate on validation set
         tacc = validate(val_loader, model, criterion)
@@ -156,10 +148,10 @@ def main():
         plt.savefig(os.path.join(args.save_dir, 'net_train.png'))
         plt.close()
 
-    check_sparsity(model)
+    check_sparsity(model, conv1=args.conv1)
     print('* best SA={}'.format(all_result['test_ta'][np.argmax(np.array(all_result['ta']))]))
 
-def train(train_loader, model, criterion, optimizer, epoch, K):
+def train(train_loader, model, criterion, optimizer, epoch):
     
     losses = AverageMeter()
     top1 = AverageMeter()
@@ -168,7 +160,6 @@ def train(train_loader, model, criterion, optimizer, epoch, K):
     model.train()
 
     start = time.time()
-    m_grad = None
     for i, (image, target) in enumerate(train_loader):
 
         if epoch < args.warmup:
@@ -183,30 +174,6 @@ def train(train_loader, model, criterion, optimizer, epoch, K):
 
         optimizer.zero_grad()
         loss.backward()
-
-        all_grad = []
-        grad_index = [0]
-        for m in model.parameters():
-            if m.grad is not None:
-                grad_index.append( np.prod(np.array(m.grad.data.shape)) + grad_index[-1])
-                all_grad.append( m.grad.data.view(-1) )
-
-        all_grad = torch.cat(all_grad, 0)
-        if m_grad is None:
-            m_grad = all_grad
-        else:
-            all_grad = 0.9 * all_grad + 0.1 * m_grad
-
-        _, threshold = torch.kthvalue(all_grad.abs(), int(K))
-        all_grad[all_grad.abs() < threshold] = 0
-
-        index = 0
-        for m in model.parameters():
-            if m.grad is not None:
-                m.grad.data = -all_grad[grad_index[index]:grad_index[index + 1]].reshape(m.grad.data.shape)
-                #m.grad.data = m.grad.data - m.data
-                index += 1
-
         optimizer.step()
 
         output = output_clean.float()
@@ -276,7 +243,6 @@ def save_checkpoint(state, is_SA_best, save_path, filename='checkpoint.pth.tar')
         shutil.copyfile(filepath, os.path.join(save_path, 'model_SA_best.pth.tar'))
 
 def load_ticket(model, args):
-
     # weight 
     if args.pretrained:
 
@@ -288,15 +254,26 @@ def load_ticket(model, args):
         elif 'state_dict' in initalization.keys():
             print('loading from state_dict')
             initalization = initalization['state_dict']
-
+        
         loading_weight = extract_main_weight(initalization, fc=args.fc, conv1=args.conv1)
+        new_initialization = model.state_dict()
+        if not 'normalize.std' in loading_weight:
+            loading_weight['normalize.std'] = new_initialization['normalize.std']
+            loading_weight['normalize.mean'] = new_initialization['normalize.mean']
 
-        for key in loading_weight.keys():
-            assert key in model.state_dict().keys()
+        if not args.prune_type == 'lt':
+            keys = list(loading_weight.keys())
+            for key in keys:
+                if key.startswith('fc') or key.startswith('conv1'):
+                    del loading_weight[key]
+
+            loading_weight['fc.weight'] = new_initialization['fc.weight']
+            loading_weight['fc.bias'] = new_initialization['fc.bias']
+            loading_weight['conv1.weight'] = new_initialization['conv1.weight']
 
         print('*number of loading weight={}'.format(len(loading_weight.keys())))
         print('*number of model weight={}'.format(len(model.state_dict().keys())))
-        model.load_state_dict(loading_weight, strict=False)
+        model.load_state_dict(loading_weight)
 
     # mask 
     if args.mask_dir:
@@ -305,21 +282,16 @@ def load_ticket(model, args):
         if 'state_dict' in current_mask_weight.keys():
             current_mask_weight = current_mask_weight['state_dict']
         current_mask = extract_mask(current_mask_weight)
-
-        if args.rewind_arch:
-            print('mask add back')
-            current_mask = mask_add_back(current_mask)
-
-        if args.reverse_mask:
-            current_mask = reverse_mask(current_mask)
+        #check_sparsity(model, conv1=args.conv1)
+        if args.arch == 'res18':
+            downsample = 100
+        else:
+            downsample = 1000
         
-        prune_model_custom(model, current_mask, conv1=args.conv1)
+        prune(model, current_mask, args.type, args.num_paths, True, args.add_back)
+        #prune_random_betweeness(model, current_mask, int(args.num_paths), downsample=downsample, conv1=args.conv1)
 
-        _,sparsity = check_sparsity(model)
-
-        remove_prune(model)
-    
-        return sparsity
+        check_sparsity(model, conv1=args.conv1)
 
 def warmup_lr(epoch, step, optimizer, one_epoch_step):
 
