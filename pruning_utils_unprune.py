@@ -119,7 +119,7 @@ def prune_ewp(model, mask_dict, num_paths, conv1=False):
 
     return new_mask_dict
  
-def prune_betweenness(model, mask_dict, num_paths, downsample=100, conv1=True):
+def prune_betweenness(model, mask_dict, num_paths, conv1=False, downsample=100):
     new_mask_dict = copy.deepcopy(mask_dict)
     graph = networkx.Graph()
     name_list = []
