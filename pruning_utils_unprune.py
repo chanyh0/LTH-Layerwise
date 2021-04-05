@@ -65,7 +65,11 @@ def prune_random_path(model, mask_dict, num_paths, conv1=False):
                 weight = torch.sum(weight.abs(), [2,3]).cpu().detach().numpy()
                 if end_index is None:
                     start_index = np.random.randint(0, weight.shape[1] - 1)
-                prob = np.abs(weight[:, start_index]) > 0
+                try:
+                    prob = np.abs(weight[:, start_index]) > 0
+                except IndexError:
+                    start_index = np.random.randint(0, weight.shape[1] - 1)
+                    prob = np.abs(weight[:, start_index]) > 0
                 prob = prob / (prob.sum() + 1e-10)
 
                 counter = 0
