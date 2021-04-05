@@ -159,7 +159,9 @@ def prune_betweenness(model, mask_dict, num_paths, conv1=False, downsample=100):
         start_index = int(edge[1][0].split(".")[-1])
         end_index = int(edge[1][1].split(".")[-1])
         mask = mask_dict[kernel + '.weight_mask']
+        print(mask.mean())
         mask[end_index, start_index] = 0
+        print(mask.mean())
         new_mask_dict[kernel + '.weight_mask'] = mask
-
+        
     return new_mask_dict
