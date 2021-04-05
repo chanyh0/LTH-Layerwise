@@ -290,7 +290,7 @@ def load_ticket(model, args):
         
         custom_prune(model, current_mask, args.type, args.num_paths, args.conv1, args.add_back)
         #prune_random_betweeness(model, current_mask, int(args.num_paths), downsample=downsample, conv1=args.conv1)
-
+        raise NotImplementedError
         check_sparsity(model, conv1=args.conv1)
 
 def warmup_lr(epoch, step, optimizer, one_epoch_step):
