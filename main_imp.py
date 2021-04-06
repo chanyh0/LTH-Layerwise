@@ -223,7 +223,7 @@ def main():
         remain_weight = check_sparsity(model)
         current_mask = extract_mask(model.state_dict())
 
-        remove_prune(model)
+        remove_prune(model, conv1=args.conv1)
         #rewind weight to init
         model.load_state_dict(initalization)
         prune_model_custom(model, current_mask)
