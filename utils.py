@@ -1,11 +1,13 @@
 import copy 
 import torch
-import numpy as np 
+import numpy as np
+from torchvision.models import mobilenet 
 from models.resnet import resnet18, resnet50, resnet152, resnext101_32x8d, wide_resnet50_2, resnext50_32x4d
-from models.resnets import resnet20
+from models.resnets import resnet20, resnet56
 from models.densenet import densenet161
 from models.shufflenet import shufflenet_v2_x1_0
 from models.resnets_2fc import resnet20 as resnet20_2fc
+from models.mobilenet import MobileNet
 from advertorch.utils import NormalizeByChannelMeanStd
 from dataset import *
 from models.vgg import vgg16_bn
@@ -51,6 +53,9 @@ def setup_model_dataset(args):
     elif args.arch == 'vgg16_bn':
         print('build model: vgg16_bn')
         model = vgg16_bn(num_classes=classes)
+    elif args.arch == 'mobilenet':
+        print('build model: mobilenet')
+        model = MobileNet(num_classes=classes)
     else:
         raise ValueError('unknow model')
 

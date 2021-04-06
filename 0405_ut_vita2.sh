@@ -1,0 +1,6 @@
+CUDA_VISIBLE_DEVICES=0 nohup python -u main_imp_new.py --data datasets/cifar10 --dataset cifar10 --arch res50 --save_dir resnet50_cifar10_mt_0.1 --init pretrained_model/moco.pt --seed 7 --lr 0.1 --fc --rate 0.1 --pruning_times 5 --resume --checkpoint LotteryTickets/cifar10_MT/6_checkpoint.pt --prune_type mt > 0405_resnet50_cifar10_mt_0.1_seed7_gpu0.out &
+
+CUDA_VISIBLE_DEVICES=1 nohup python -u main_imp_new.py --data datasets/cifar10 --dataset cifar10 --arch res50 --save_dir resnet50_cifar10_mt_0.1 --init pretrained_model/moco.pt --seed 1 --lr 0.1 --fc --rate 0.1 --pruning_times 5 --resume --checkpoint LotteryTickets/cifar10_MT/6_checkpoint.pt --prune_type mt > 0405_resnet50_cifar10_mt_0.1_seed1_gpu1.out &
+
+
+CUDA_VISIBLE_DEVICES=2 nohup python -u main_imp_new.py --data datasets/cifar10 --dataset cifar10 --arch res50 --save_dir resnet50_cifar10_mt_0.1 --init pretrained_model/moco.pt --seed 13 --lr 0.1 --fc --rate 0.1 --pruning_times 5 --resume --checkpoint LotteryTickets/cifar10_MT/6_checkpoint.pt --prune_type mt > 0405_resnet50_cifar10_mt_0.1_seed13_gpu2.out &
