@@ -235,7 +235,7 @@ def main():
         pruning_model(model, args.rate)
         check_sparsity(model)
         current_mask = extract_mask(model.state_dict())
-        remove_prune(model)
+        remove_prune(model, conv1=args.conv1)
 
         #rewind weight to init
         model.load_state_dict(initalization)
