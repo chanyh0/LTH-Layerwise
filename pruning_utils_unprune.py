@@ -300,9 +300,6 @@ def prune_hessian_abs(model, mask_dict, num_paths, args):
     result = [torch.mul(-(w.data),h).abs() for w,h in zip(params,hv)]
     result_dict = {}
     result_flatten = []
-
-    if not args.conv1:
-        result = result[1:]
     for key, param in zip(mask_dict.keys(), result):
         param[mask_dict[key] == 1] = -np.inf
         result_flatten.append(param.view(-1))
