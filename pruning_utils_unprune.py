@@ -191,3 +191,109 @@ def prune_taylor1(model, mask_dict, num_paths, args):
         param[mask_dict[key] == 1] = -np.inf
         new_mask_dict[key][param > threshold] = 0
     return new_mask_dict
+
+def get_reverse_flatten_params_fun(params,get_count=False):
+    """
+    Returns a function which reshapes the flattened vector to its original hessian_shape
+    if get_count=True it returs total number of elements for the non-trivial(iterator) case
+    """
+    if isinstance(params,nn.Parameter):
+        def resize_param_fun(flatten_params):
+            return flatten_params.view(params.size())
+        return resize_param_fun
+    else:
+        list_of_sizes = []
+        def resize_param_fun(flatten_params):
+            c_sum = 0
+            for numel,size in list_of_sizes:
+                yield flatten_params[c_sum:c_sum+numel].view(size)
+                c_sum += numel
+
+        if get_count:
+            total_element_number = 0
+            for p in params:
+                total_element_number += p.nelement()
+                list_of_sizes.append((p.nelement(),p.size()))
+            return resize_param_fun,total_element_number
+        else:
+            for p in params:
+                list_of_sizes.append((p.nelement(),p.size()))
+            return resize_param_fun
+
+def flatten_params(params):
+    """
+    gets a iterator of Parameter/Variable/Tensor
+    returns: [0] returns flatten(1d) version with length N
+             [1] a generator function which accepts a Parameter/Variable/Tensor of length N
+             and returns a generator of Parameter/Variable/Tensor with same sizes in order as the params.
+    """
+    if isinstance(params,nn.Parameter):
+        return params.contiguous().view(-1)
+    else:
+        list_of_params = []
+        for p in params:
+            list_of_params.append(p.contiguous().view(-1))
+        return torch.cat(list_of_params)
+def hessian_vector_product(loss,params,vector,params_grad=None,retain_graph=False,flattened=False):
+    """
+    params: Case 1: Parameter
+                Then the param:vector should be a Tensor with same size. The result is same size as the Parameter.
+            Case 2: iterator of Parameters
+                This is allowed only when flattened=True.
+    loss: needed only params_grad is not provided
+    vector: Same size as the params_grad. If you are flattened without providing the params_grad note that your vector
+            match the size of the flattened parameters.
+    params_grad: is for preventing recalculation and to be able to use in hessian
+    flattened: if true then the params should be list of parameters. Then the hessian vector product is flattened.
+        In this setting I am not returning the reverse functon that flatten_params generate since
+        the only instance where I flatten is during the hessian and I get the same function during grad calcualtion.
+        Future use cases may require and one can return.
+    """
+
+    params = list(params)
+
+    
+    params_grad = torch.autograd.grad(loss, params, create_graph=True)
+    if flattened:
+        params_grad = flatten_params(params_grad)
+    else:
+        params_grad = params_grad[0]
+    if params_grad.is_cuda: vector= vector.cuda()
+    # import pdb;pdb.set_trace()
+    grad_vector_dot = torch.sum(params_grad * vector)
+    hv_params = torch.autograd.grad(grad_vector_dot, params,retain_graph=retain_graph)
+    if flattened:
+        hv_params = flatten_params(hv_params)
+    else:
+        hv_params = hv_params[0]
+
+    return hv_params.data
+
+def prune_hessian_abs(model, mask_dict, num_paths, args):
+    new_mask_dict = copy.deepcopy(mask_dict)
+    params = model.parameters()
+    params = list(params)
+    rev_f, n_elements = get_reverse_flatten_params_fun(params,get_count=True)
+    vector = flatten_params((-p.data.clone() for p in params))
+    if args.dataset == 'cifar10':
+        train_set_loader, _, _ = cifar10_dataloaders(batch_size= args.batch_size, data_dir =args.data)
+    elif args.dataset == 'cifar100':
+        train_set_loader, _, _ = cifar100_dataloaders(batch_size= args.batch_size, data_dir =args.data)
+    else:
+        raise NotImplementedError
+    image, label = next(train_set_loader)
+    loss = torch.nn.functional.cross_entropy_loss(image, label)
+    flat_hv = hessian_vector_product(loss,params,vector,retain_graph=True,flattened=True)
+    hv = rev_f(flat_hv)
+    result = [torch.mul(-(w.data),h).abs() for w,h in zip(params,hv)]
+    result_dict = {}
+    result_flatten = []
+    for key, param in zip(mask_dict.keys(), result):
+        param[mask_dict[key] == 1] = -np.inf
+        result_flatten.append(param.view(-1))
+    result_flatten = torch.cat(result_flatten, 0)
+    threshold = torch.kthvalue(result_flatten, result_flatten.numel() - num_paths)
+    for key, param in zip(mask_dict.keys(), result):
+        param[mask_dict[key] == 1] = -np.inf
+        new_mask_dict[key][param > threshold] = 0
+    return new_mask_dict
