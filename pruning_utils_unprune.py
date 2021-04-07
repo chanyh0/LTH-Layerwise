@@ -281,7 +281,7 @@ def prune_hessian_abs(model, mask_dict, num_paths, args):
         train_set_loader, _, _ = cifar100_dataloaders(batch_size= args.batch_size, data_dir =args.data)
     else:
         raise NotImplementedError
-    image, label = next(train_set_loader)
+    image, label = next(iter(train_set_loader))
     loss = torch.nn.functional.cross_entropy_loss(image, label)
     flat_hv = hessian_vector_product(loss,params,vector,retain_graph=True,flattened=True)
     hv = rev_f(flat_hv)
