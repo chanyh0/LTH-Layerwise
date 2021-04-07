@@ -280,7 +280,7 @@ def prune_hessian_abs(model, mask_dict, num_paths, args):
         if name[:-12] + 'weight_mask' in mask_dict:
             
             params.append(m)
-    
+    print(params)
     rev_f, n_elements = get_reverse_flatten_params_fun(params,get_count=True)
     vector = flatten_params((-p.data.clone() for p in params))
     if args.dataset == 'cifar10':
