@@ -274,6 +274,8 @@ def prune_hessian_abs(model, mask_dict, num_paths, args):
     new_mask_dict = copy.deepcopy(mask_dict)
     params = model.parameters()
     params = list(params)
+    if not args.conv1:
+        params = params[1:]
     rev_f, n_elements = get_reverse_flatten_params_fun(params,get_count=True)
     vector = flatten_params((-p.data.clone() for p in params))
     if args.dataset == 'cifar10':
