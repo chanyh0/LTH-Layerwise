@@ -308,5 +308,6 @@ def prune_hessian_abs(model, mask_dict, num_paths, args):
     print(threshold)
     for key, param in zip(mask_dict.keys(), result):
         param[mask_dict[key] == 1] = -np.inf
+        print(new_mask_dict[key][param > threshold])
         new_mask_dict[key][param > threshold] = 0
     return new_mask_dict
