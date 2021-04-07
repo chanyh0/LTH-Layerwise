@@ -278,8 +278,7 @@ def prune_hessian_abs(model, mask_dict, num_paths, args):
         #print(name[:-12] + 'weight_mask')
         #print(mask_dict.keys())
         print(name)
-        if name[:-12] + 'weight_mask' in mask_dict:
-            
+        if name + '_mask' in mask_dict:
             params.append(m)
     print(params)
     rev_f, n_elements = get_reverse_flatten_params_fun(params,get_count=True)
