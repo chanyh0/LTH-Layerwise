@@ -176,7 +176,7 @@ def prune_taylor1(model, mask_dict, num_paths, args):
         train_set_loader, _, _ = cifar100_dataloaders(batch_size= args.batch_size, data_dir =args.data)
     else:
         raise NotImplementedError
-    image, label = next(train_set_loader)
+    image, label = next(iter(train_set_loader))
     loss = torch.nn.functional.cross_entropy_loss(image, label)
     grads = torch.autograd.grad(loss, params, retain_graph=True)
     result = [torch.mul(w_fun(w.data),g.data) for w,g in zip(params,grads)]
