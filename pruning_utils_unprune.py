@@ -177,7 +177,8 @@ def prune_taylor1(model, mask_dict, num_paths, args):
     else:
         raise NotImplementedError
     image, label = next(iter(train_set_loader))
-    loss = torch.nn.functional.cross_entropy(image, label)
+    output = model(image)
+    loss = torch.nn.functional.cross_entropy(output, label)
     grads = torch.autograd.grad(loss, params, retain_graph=True)
     result = [torch.mul(w_fun(w.data),g.data) for w,g in zip(params,grads)]
     result_dict = {}
