@@ -304,7 +304,7 @@ def prune_hessian_abs(model, mask_dict, num_paths, args):
         param[mask_dict[key] == 1] = -np.inf
         result_flatten.append(param.view(-1))
     result_flatten = torch.cat(result_flatten, 0)
-    threshold = torch.kthvalue(result_flatten, result_flatten.numel() - num_paths)
+    threshold, _ = torch.kthvalue(result_flatten, result_flatten.numel() - num_paths)
     for key, param in zip(mask_dict.keys(), result):
         param[mask_dict[key] == 1] = -np.inf
         new_mask_dict[key][param > threshold] = 0
