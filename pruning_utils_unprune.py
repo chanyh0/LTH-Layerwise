@@ -283,7 +283,7 @@ def prune_hessian_abs(model, mask_dict, num_paths, args):
     else:
         raise NotImplementedError
     image, label = next(iter(train_set_loader))
-    if model.is_cuda():
+    if True:
         image = image.cuda()
         label = label.cuda()
     output = model(image)
