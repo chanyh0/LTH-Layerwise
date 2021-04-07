@@ -177,7 +177,7 @@ def prune_taylor1(model, mask_dict, num_paths, args):
     else:
         raise NotImplementedError
     image, label = next(iter(train_set_loader))
-    loss = torch.nn.functional.cross_entropy_loss(image, label)
+    loss = torch.nn.functional.cross_entropy(image, label)
     grads = torch.autograd.grad(loss, params, retain_graph=True)
     result = [torch.mul(w_fun(w.data),g.data) for w,g in zip(params,grads)]
     result_dict = {}
@@ -282,7 +282,7 @@ def prune_hessian_abs(model, mask_dict, num_paths, args):
     else:
         raise NotImplementedError
     image, label = next(iter(train_set_loader))
-    loss = torch.nn.functional.cross_entropy_loss(image, label)
+    loss = torch.nn.functional.cross_entropy(image, label)
     flat_hv = hessian_vector_product(loss,params,vector,retain_graph=True,flattened=True)
     hv = rev_f(flat_hv)
     result = [torch.mul(-(w.data),h).abs() for w,h in zip(params,hv)]
