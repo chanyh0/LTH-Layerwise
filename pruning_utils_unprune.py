@@ -14,7 +14,7 @@ def need_to_prune(name, m, conv1):
         and isinstance(m, nn.Conv2d)
 
 def custom_prune(model, mask_dict, prune_type, num_paths, args, add_back=False):
-    new_mask_dict = globals()['prune_' + prune_type](model, mask_dict, num_paths, args.conv1)
+    new_mask_dict = globals()['prune_' + prune_type](model, mask_dict, num_paths, args)
     n_zeros = 0
     n_param = 0
     n_after_zeros = 0
