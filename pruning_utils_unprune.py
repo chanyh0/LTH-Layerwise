@@ -274,8 +274,7 @@ def prune_hessian_abs(model, mask_dict, num_paths, args):
     new_mask_dict = copy.deepcopy(mask_dict)
     params = model.parameters()
     params = list(params)
-    if not args.conv1:
-        params = params[1:]
+    
     rev_f, n_elements = get_reverse_flatten_params_fun(params,get_count=True)
     vector = flatten_params((-p.data.clone() for p in params))
     if args.dataset == 'cifar10':
@@ -295,6 +294,9 @@ def prune_hessian_abs(model, mask_dict, num_paths, args):
     result = [torch.mul(-(w.data),h).abs() for w,h in zip(params,hv)]
     result_dict = {}
     result_flatten = []
+
+    if not args.conv1:
+        result = result[1:]
     for key, param in zip(mask_dict.keys(), result):
         param[mask_dict[key] == 1] = -np.inf
         result_flatten.append(param.view(-1))
