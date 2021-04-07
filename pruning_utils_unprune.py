@@ -298,6 +298,9 @@ def prune_hessian_abs(model, mask_dict, num_paths, args):
     if not args.conv1:
         result = result[1:]
     for key, param in zip(mask_dict.keys(), result):
+        print(key)
+        print(mask_dict[key].shape)
+        print(param.shape)
         param[mask_dict[key] == 1] = -np.inf
         result_flatten.append(param.view(-1))
     result_flatten = torch.cat(result_flatten, 0)
