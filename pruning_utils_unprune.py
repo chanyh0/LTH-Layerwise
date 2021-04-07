@@ -283,6 +283,8 @@ def prune_hessian_abs(model, mask_dict, num_paths, args):
     else:
         raise NotImplementedError
     image, label = next(iter(train_set_loader))
+    image = image.to(model.device)
+    label = label.to(model.device)
     output = model(image)
     loss = torch.nn.functional.cross_entropy(output, label)
     flat_hv = hessian_vector_product(loss,params,vector,retain_graph=True,flattened=True)
