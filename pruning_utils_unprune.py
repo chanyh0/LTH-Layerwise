@@ -272,8 +272,12 @@ def hessian_vector_product(loss,params,vector,params_grad=None,retain_graph=Fals
 
 def prune_hessian_abs(model, mask_dict, num_paths, args):
     new_mask_dict = copy.deepcopy(mask_dict)
-    params = model.parameters()
-    params = list(params)
+    named_params = model.named_parameters()
+    params = []
+    for name, m in named_params:
+        if name[:-12] + '.weight_mask' in mask_dict:
+            print(name[:-12] + '.weight_mask')
+            params.append(m)
     
     rev_f, n_elements = get_reverse_flatten_params_fun(params,get_count=True)
     vector = flatten_params((-p.data.clone() for p in params))
@@ -298,9 +302,6 @@ def prune_hessian_abs(model, mask_dict, num_paths, args):
     if not args.conv1:
         result = result[1:]
     for key, param in zip(mask_dict.keys(), result):
-        print(key)
-        print(mask_dict[key].shape)
-        print(param.shape)
         param[mask_dict[key] == 1] = -np.inf
         result_flatten.append(param.view(-1))
     result_flatten = torch.cat(result_flatten, 0)
