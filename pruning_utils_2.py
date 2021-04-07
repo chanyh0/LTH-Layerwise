@@ -3,6 +3,10 @@ import torch.nn as nn
 import torch.nn.utils.prune as prune
 import numpy as np
 
+def need_to_prune(name, m, conv1):
+    return ((name == 'conv1' and conv1) or (name != 'conv1')) \
+        and isinstance(m, nn.Conv2d)
+
 def pruning_model(model, px, conv1=True):
 
     print('start unstructured pruning')
@@ -30,7 +34,7 @@ def prune_model_custom(model, mask_dict, conv1=True, random_index=-1, hold_spars
     print('start unstructured pruning with custom mask')
     index = 0
     for name,m in model.named_modules():
-        if isinstance(m, nn.Conv2d):
+        if need_to_prune(name, m, conv1):
 
             print("{}: {}".format(index, name))
 

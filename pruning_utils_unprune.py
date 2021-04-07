@@ -7,18 +7,19 @@ import networkx
 import torch.nn as nn
 import torch.nn.utils.prune as prune
 import numpy as np
+from dataset import *
 
 def need_to_prune(name, m, conv1):
     return ((name == 'conv1' and conv1) or (name != 'conv1')) \
         and isinstance(m, nn.Conv2d)
 
-def custom_prune(model, mask_dict, prune_type, num_paths=5000, conv1=False, add_back=False):
-    new_mask_dict = globals()['prune_' + prune_type](model, mask_dict, num_paths, conv1)
+def custom_prune(model, mask_dict, prune_type, num_paths, args, add_back=False):
+    new_mask_dict = globals()['prune_' + prune_type](model, mask_dict, num_paths, args.conv1)
     n_zeros = 0
     n_param = 0
     n_after_zeros = 0
     for name,m in model.named_modules():
-        if need_to_prune(name, m, conv1):
+        if need_to_prune(name, m, args.conv1):
             mask = mask_dict[name+'.weight_mask']
             n_zeros += (mask == 0).float().sum().item()
             n_param += mask.numel()
@@ -30,7 +31,7 @@ def custom_prune(model, mask_dict, prune_type, num_paths=5000, conv1=False, add_
         mask_vector = torch.zeros(n_param)
         n_cur = 0
         for name,m in model.named_modules():
-            if need_to_prune(name, m, conv1):
+            if need_to_prune(name, m, args.conv1):
                 mask = new_mask_dict[name+'.weight_mask']
                 size = np.product(np.array(mask.shape))
                 mask_vector[n_cur:n_cur+size] = mask.view(-1)
@@ -41,7 +42,7 @@ def custom_prune(model, mask_dict, prune_type, num_paths=5000, conv1=False, add_
         mask_vector[rand_vector < threshold] = 1
         n_cur = 0
         for name,m in model.named_modules():
-            if need_to_prune(name, m, conv1):
+            if need_to_prune(name, m, args.conv1):
                 mask = new_mask_dict[name+'.weight_mask']
                 size = np.product(np.array(mask.shape))
                 new_mask = mask_vector[n_cur:n_cur+size].view(mask.shape).to(mask.device)
@@ -50,16 +51,16 @@ def custom_prune(model, mask_dict, prune_type, num_paths=5000, conv1=False, add_
                 prune.CustomFromMask.apply(m, 'weight', mask=new_mask)
     else:
         for name,m in model.named_modules():
-            if need_to_prune(name, m, conv1):
+            if need_to_prune(name, m, args.conv1):
                 mask = new_mask_dict[name + '.weight_mask']
                 prune.CustomFromMask.apply(m, 'weight', mask=mask)
 
-def prune_random_path(model, mask_dict, num_paths, conv1=False):
+def prune_random_path(model, mask_dict, num_paths, args):
     new_mask_dict = copy.deepcopy(mask_dict)
     for _ in range(num_paths):
         end_index = None
         for name,m in model.named_modules():
-            if need_to_prune(name, m, conv1):
+            if need_to_prune(name, m, args.conv1):
                 mask = mask_dict[name+'.weight_mask']
                 weight = m.weight * mask
                 weight = torch.sum(weight.abs(), [2,3]).cpu().detach().numpy()
@@ -89,12 +90,12 @@ def prune_random_path(model, mask_dict, num_paths, conv1=False):
                 start_index = end_index
     return new_mask_dict
 
-def prune_ewp(model, mask_dict, num_paths, conv1=False):
+def prune_ewp(model, mask_dict, num_paths, args):
     new_mask_dict = copy.deepcopy(mask_dict)       
     for _ in range(num_paths):
         end_index = None
         for name,m in model.named_modules():
-            if need_to_prune(name, m, conv1):
+            if need_to_prune(name, m, args.conv1):
                 weight = m.weight * mask_dict[name+'.weight_mask'] 
                 weight = torch.sum(weight.abs(), [2,3]).cpu().detach().numpy()
                 if end_index is None:
@@ -123,17 +124,17 @@ def prune_ewp(model, mask_dict, num_paths, conv1=False):
 
     return new_mask_dict
  
-def prune_betweenness(model, mask_dict, num_paths, conv1=False, downsample=100):
+def prune_betweenness(model, mask_dict, num_paths, args, downsample=100):
     new_mask_dict = copy.deepcopy(mask_dict)
     graph = networkx.Graph()
     name_list = []
 
     for name,m in model.named_modules():
-        if need_to_prune(name, m, conv1):
+        if need_to_prune(name, m, args.conv1):
             name_list.append(name)
 
     for name,m in model.named_modules():
-        if need_to_prune(name, m, conv1):
+        if need_to_prune(name, m, args.conv1):
             mask = mask_dict[name+'.weight_mask']
             weight = mask * m.weight
             weight = torch.sum(weight.abs(), [2, 3])
@@ -162,4 +163,31 @@ def prune_betweenness(model, mask_dict, num_paths, conv1=False, downsample=100):
         mask[end_index, start_index, :, :] = 0
         new_mask_dict[kernel + '.weight_mask'] = mask
         
+    return new_mask_dict
+
+def prune_taylor1(model, mask_dict, num_paths, args):
+    new_mask_dict = copy.deepcopy(mask_dict)
+    params = model.parameters()
+    params = list(params)
+    w_fun = lambda x: -x
+    if args.dataset == 'cifar10':
+        train_set_loader, _, _ = cifar10_dataloaders(batch_size= args.batch_size, data_dir =args.data)
+    elif args.dataset == 'cifar100':
+        train_set_loader, _, _ = cifar100_dataloaders(batch_size= args.batch_size, data_dir =args.data)
+    else:
+        raise NotImplementedError
+    image, label = next(train_set_loader)
+    loss = torch.nn.functional.cross_entropy_loss(image, label)
+    grads = torch.autograd.grad(loss, params, retain_graph=True)
+    result = [torch.mul(w_fun(w.data),g.data) for w,g in zip(params,grads)]
+    result_dict = {}
+    result_flatten = []
+    for key, param in zip(mask_dict.keys(), result):
+        param[mask_dict[key] == 1] = -np.inf
+        result_flatten.append(param.view(-1))
+    result_flatten = torch.cat(result_flatten, 0)
+    threshold = torch.kthvalue(result_flatten, result_flatten.numel() - num_paths)
+    for key, param in zip(mask_dict.keys(), result):
+        param[mask_dict[key] == 1] = -np.inf
+        new_mask_dict[key][param > threshold] = 0
     return new_mask_dict
