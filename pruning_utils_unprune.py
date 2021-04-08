@@ -281,9 +281,9 @@ def prune_hessian_abs(model, mask_dict, num_paths, args):
     rev_f, n_elements = get_reverse_flatten_params_fun(params,get_count=True)
     vector = flatten_params((-p.data.clone() for p in params))
     if args.dataset == 'cifar10':
-        train_set_loader, _, _ = cifar10_dataloaders(batch_size= args.batch_size, data_dir =args.data)
+        train_set_loader, _, _ = cifar10_dataloaders(batch_size= 1024, data_dir =args.data)
     elif args.dataset == 'cifar100':
-        train_set_loader, _, _ = cifar100_dataloaders(batch_size= args.batch_size, data_dir =args.data)
+        train_set_loader, _, _ = cifar100_dataloaders(batch_size= 1024, data_dir =args.data)
     else:
         raise NotImplementedError
     image, label = next(iter(train_set_loader))
