@@ -219,15 +219,15 @@ def main():
             print('* loading pretrained weight')
             initalization = torch.load(os.path.join(args.save_dir, '0model_SA_best.pth.tar'), map_location = torch.device('cuda:'+str(args.gpu)))['state_dict']
 
-        pruning_model(model, args.rate)
-        remain_weight = check_sparsity(model)
+        pruning_model(model, args.rate, conv1=args.conv1)
+        remain_weight = check_sparsity(model, conv1=args.conv1)
         current_mask = extract_mask(model.state_dict())
 
         remove_prune(model, conv1=args.conv1)
         #rewind weight to init
         model.load_state_dict(initalization)
         prune_model_custom(model, current_mask)
-        check_sparsity(model)
+        check_sparsity(model, conv1=args.conv1)
 
         optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                     momentum=args.momentum,

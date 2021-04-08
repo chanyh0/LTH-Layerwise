@@ -114,7 +114,7 @@ def prune_model_custom_random_normal(model, mask_dict, conv1=True, random_index=
     zeroes = {}
     uppers = {}
     for name,m in model.named_modules():
-        if isinstance(m, nn.Conv2d):
+        if need_to_prune(name, m, conv1):
             if index <= random_index:
                 random_zeroes[name] = (mask_dict[name+'.weight_mask'] == 0).sum().item()
                 uppers[name] = (mask_dict[name+'.weight_mask'].numel())
