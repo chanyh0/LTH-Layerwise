@@ -348,7 +348,7 @@ def prune_intgrads(model, mask_dict, num_paths, args):
             #print(output)
             loss = torch.nn.functional.cross_entropy(output, label)
 
-            grad = torch.autograd.grad(loss,[p])
+            grad = torch.autograd.grad(loss,p)
             grads.append(grad)
             p.data.div_(alpha)
         sums = torch.sum(torch.stack(grads), 0)
