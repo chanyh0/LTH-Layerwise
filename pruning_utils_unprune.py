@@ -351,7 +351,7 @@ def prune_intgrads(model, mask_dict, num_paths, args):
             grad = torch.autograd.grad(loss,[p])
             grads.append(grad)
             p.data.div_(alpha)
-        print(grads)
+        print(grads[0])
     
         raise NotImplementedError
     result = [abs(torch.mul(-(w.data),g.data)) for w,g in zip(params,grads)]
