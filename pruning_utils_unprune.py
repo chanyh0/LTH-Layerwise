@@ -318,3 +318,50 @@ def prune_taylor1_abs(model, mask_dict, num_paths, args):
         param[mask_dict[key] == 0] = -np.inf
         new_mask_dict[key][param > threshold] = 0
     return new_mask_dict
+
+def prune_intgrads(model, mask_dict, num_paths, args):
+    new_mask_dict = copy.deepcopy(mask_dict)
+    named_params = model.named_parameters()
+    params = []
+    params_name = []
+    for name, m in named_params:
+        if name + '_mask' in mask_dict:
+            params.append(m)
+            params_name.append(name)
+
+    if args.dataset == 'cifar10':
+        train_set_loader, _, _ = cifar10_dataloaders(batch_size=args.batch_size, data_dir =args.data)
+    elif args.dataset == 'cifar100':
+        train_set_loader, _, _ = cifar100_dataloaders(batch_size=args.batch_size, data_dir =args.data)
+    else:
+        raise NotImplementedError
+    image, label = next(iter(train_set_loader))
+    if True:
+        image = image.cuda()
+        label = label.cuda()
+    
+    for n, p in zip(params_name, params):
+        grads = []
+        for alpha in np.arange(0, 1.01, 0.01):
+            new_param = (p * alpha).clone()
+            getattr(model, n).weight = new_param
+            output = model(image)
+            loss = torch.nn.functional.cross_entropy(output, label)
+
+            grad = torch.autograd.grad(loss,[new_param],retain_graph=True)
+            grads.append(grad)
+        print(grads)
+    
+    raise NotImplementedError
+    result = [abs(torch.mul(-(w.data),g.data)) for w,g in zip(params,grads)]
+    result_dict = {}
+    result_flatten = []
+    for key, param in zip(mask_dict.keys(), result):
+        param[mask_dict[key] == 0] = -np.inf
+        result_flatten.append(param.view(-1))
+    result_flatten = torch.cat(result_flatten, 0)
+    threshold, _ = torch.kthvalue(result_flatten, result_flatten.numel() - num_paths)
+    for key, param in zip(mask_dict.keys(), result):
+        param[mask_dict[key] == 0] = -np.inf
+        new_mask_dict[key][param > threshold] = 0
+    return new_mask_dict
