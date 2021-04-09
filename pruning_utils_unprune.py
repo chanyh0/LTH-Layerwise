@@ -339,7 +339,7 @@ def prune_intgrads(model, mask_dict, num_paths, args):
     if True:
         image = image.cuda()
         label = label.cuda()
-    state_dict = model.state_dict()
+    result = []
     for n, p in zip(params_name, params):
         grads = []
         for alpha in np.arange(0.01, 1.01, 0.01):
@@ -351,10 +351,8 @@ def prune_intgrads(model, mask_dict, num_paths, args):
             grad = torch.autograd.grad(loss,[p])
             grads.append(grad)
             p.data.div_(alpha)
-        print(grads)
+        result.append(abs(torch.mul(p.data, 0.01 * torch.sum(grads))))
     
-        raise NotImplementedError
-    result = [abs(torch.mul(-(w.data),g.data)) for w,g in zip(params,grads)]
     result_dict = {}
     result_flatten = []
     for key, param in zip(mask_dict.keys(), result):
