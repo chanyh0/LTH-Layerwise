@@ -165,34 +165,6 @@ def prune_betweenness(model, mask_dict, num_paths, args, downsample=100):
         
     return new_mask_dict
 
-def prune_taylor1(model, mask_dict, num_paths, args):
-    new_mask_dict = copy.deepcopy(mask_dict)
-    params = model.parameters()
-    params = list(params)
-    w_fun = lambda x: -x
-    if args.dataset == 'cifar10':
-        train_set_loader, _, _ = cifar10_dataloaders(batch_size= args.batch_size, data_dir =args.data)
-    elif args.dataset == 'cifar100':
-        train_set_loader, _, _ = cifar100_dataloaders(batch_size= args.batch_size, data_dir =args.data)
-    else:
-        raise NotImplementedError
-    image, label = next(iter(train_set_loader))
-    output = model(image)
-    loss = torch.nn.functional.cross_entropy(output, label)
-    grads = torch.autograd.grad(loss, params, retain_graph=True)
-    result = [torch.mul(w_fun(w.data),g.data) for w,g in zip(params,grads)]
-    result_dict = {}
-    result_flatten = []
-    for key, param in zip(mask_dict.keys(), result):
-        param[mask_dict[key] == 1] = -np.inf
-        result_flatten.append(param.view(-1))
-    result_flatten = torch.cat(result_flatten, 0)
-    threshold = torch.kthvalue(result_flatten, result_flatten.numel() - num_paths)
-    for key, param in zip(mask_dict.keys(), result):
-        param[mask_dict[key] == 1] = -np.inf
-        new_mask_dict[key][param > threshold] = 0
-    return new_mask_dict
-
 def get_reverse_flatten_params_fun(params,get_count=False):
     """
     Returns a function which reshapes the flattened vector to its original hessian_shape
@@ -295,6 +267,46 @@ def prune_hessian_abs(model, mask_dict, num_paths, args):
     flat_hv = hessian_vector_product(loss,params,vector,retain_graph=True,flattened=True)
     hv = rev_f(flat_hv)
     result = [torch.mul(-(w.data),h).abs() for w,h in zip(params,hv)]
+    result_dict = {}
+    result_flatten = []
+    for key, param in zip(mask_dict.keys(), result):
+        param[mask_dict[key] == 0] = -np.inf
+        result_flatten.append(param.view(-1))
+    result_flatten = torch.cat(result_flatten, 0)
+    threshold, _ = torch.kthvalue(result_flatten, result_flatten.numel() - num_paths)
+    for key, param in zip(mask_dict.keys(), result):
+        param[mask_dict[key] == 0] = -np.inf
+        new_mask_dict[key][param > threshold] = 0
+    return new_mask_dict
+
+
+
+
+
+def prune_taylor1(model, mask_dict, num_paths, args):
+    new_mask_dict = copy.deepcopy(mask_dict)
+    named_params = model.named_parameters()
+    params = []
+    for name, m in named_params:
+        if name + '_mask' in mask_dict:
+            params.append(m)
+
+    rev_f, n_elements = get_reverse_flatten_params_fun(params,get_count=True)
+    vector = flatten_params((-p.data.clone() for p in params))
+    if args.dataset == 'cifar10':
+        train_set_loader, _, _ = cifar10_dataloaders(batch_size=args.batch_size, data_dir =args.data)
+    elif args.dataset == 'cifar100':
+        train_set_loader, _, _ = cifar100_dataloaders(batch_size=args.batch_size, data_dir =args.data)
+    else:
+        raise NotImplementedError
+    image, label = next(iter(train_set_loader))
+    if True:
+        image = image.cuda()
+        label = label.cuda()
+    output = model(image)
+    loss = torch.nn.functional.cross_entropy(output, label)
+    grads = torch.autograd.grad(loss,params,retain_graph=True)
+    result = [torch.mul(-(w.data),g.data) for w,g in zip(params,grads)]
     result_dict = {}
     result_flatten = []
     for key, param in zip(mask_dict.keys(), result):
