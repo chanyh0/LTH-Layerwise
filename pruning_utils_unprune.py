@@ -306,7 +306,7 @@ def prune_taylor1(model, mask_dict, num_paths, args):
     output = model(image)
     loss = torch.nn.functional.cross_entropy(output, label)
     grads = torch.autograd.grad(loss,params,retain_graph=True)
-    result = [torch.mul(-(w.data),g.data) for w,g in zip(params,grads)]
+    result = [abs(torch.mul(-(w.data),g.data)) for w,g in zip(params,grads)]
     result_dict = {}
     result_flatten = []
     for key, param in zip(mask_dict.keys(), result):
