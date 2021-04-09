@@ -344,7 +344,7 @@ def prune_intgrads(model, mask_dict, num_paths, args):
         grads = []
         for alpha in np.arange(0, 1.01, 0.01):
             new_param = (p * alpha).clone()
-            getattr(model, n).weight = new_param
+            getattr(model, n[:-7]).weight = new_param
             output = model(image)
             loss = torch.nn.functional.cross_entropy(output, label)
 
