@@ -339,17 +339,17 @@ def prune_intgrads(model, mask_dict, num_paths, args):
     if True:
         image = image.cuda()
         label = label.cuda()
-    
+    state_dict = model.state_dict()
     for n, p in zip(params_name, params):
         grads = []
         for alpha in np.arange(0, 1.01, 0.01):
-            new_param = (p * alpha).clone()
-            getattr(model, n[:-7]).weight = new_param
+            p.mul_(alpha)
             output = model(image)
             loss = torch.nn.functional.cross_entropy(output, label)
 
-            grad = torch.autograd.grad(loss,[new_param],retain_graph=True)
+            grad = torch.autograd.grad(loss,[p])
             grads.append(grad)
+            p.div_(alpha)
         print(grads)
     
     raise NotImplementedError
