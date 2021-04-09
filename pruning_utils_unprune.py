@@ -345,6 +345,7 @@ def prune_intgrads(model, mask_dict, num_paths, args):
         for alpha in np.arange(0, 1.01, 0.01):
             p.data.mul_(alpha)
             output = model(image)
+            print(output)
             loss = torch.nn.functional.cross_entropy(output, label)
 
             grad = torch.autograd.grad(loss,[p])
@@ -352,7 +353,7 @@ def prune_intgrads(model, mask_dict, num_paths, args):
             p.data.div_(alpha)
         print(grads)
     
-    raise NotImplementedError
+        raise NotImplementedError
     result = [abs(torch.mul(-(w.data),g.data)) for w,g in zip(params,grads)]
     result_dict = {}
     result_flatten = []
