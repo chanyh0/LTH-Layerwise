@@ -351,7 +351,7 @@ def prune_intgrads(model, mask_dict, num_paths, args):
             grad = torch.autograd.grad(loss,[p])
             grads.append(grad)
             p.data.div_(alpha)
-        result.append(abs(torch.mul(p.data, 0.01 * torch.sum(grads))))
+        result.append(abs(torch.mul(p.data, 0.01 * torch.sum(torch.stack(grads), 0))))
     
     result_dict = {}
     result_flatten = []
