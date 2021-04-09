@@ -342,7 +342,7 @@ def prune_intgrads(model, mask_dict, num_paths, args):
     state_dict = model.state_dict()
     for n, p in zip(params_name, params):
         grads = []
-        for alpha in np.arange(0, 1.01, 0.01):
+        for alpha in np.arange(0.01, 1.01, 0.01):
             p.data.mul_(alpha)
             output = model(image)
             print(output)
