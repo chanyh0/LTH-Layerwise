@@ -343,13 +343,13 @@ def prune_intgrads(model, mask_dict, num_paths, args):
     for n, p in zip(params_name, params):
         grads = []
         for alpha in np.arange(0, 1.01, 0.01):
-            p.mul_(alpha)
+            p.data.mul_(alpha)
             output = model(image)
             loss = torch.nn.functional.cross_entropy(output, label)
 
             grad = torch.autograd.grad(loss,[p])
             grads.append(grad)
-            p.div_(alpha)
+            p.data.div_(alpha)
         print(grads)
     
     raise NotImplementedError
