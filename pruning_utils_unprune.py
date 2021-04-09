@@ -283,7 +283,7 @@ def prune_hessian_abs(model, mask_dict, num_paths, args):
 
 
 
-def prune_taylor1(model, mask_dict, num_paths, args):
+def prune_taylor1_abs(model, mask_dict, num_paths, args):
     new_mask_dict = copy.deepcopy(mask_dict)
     named_params = model.named_parameters()
     params = []
