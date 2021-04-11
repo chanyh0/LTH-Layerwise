@@ -66,7 +66,7 @@ class ResNet12(nn.Module):
         self.layer4 = self._make_layer(channels[3])
         self.pool = nn.AdaptiveAvgPool2d(1)
         self.out_dim = channels[3]
-        self.fc = torch.nn.Linear(self.out_dim, num_classes)
+        self.fc = nn.Linear(self.out_dim, num_classes)
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode='fan_out',
