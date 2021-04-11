@@ -366,3 +366,6 @@ def prune_intgrads(model, mask_dict, num_paths, args):
         param[mask_dict[key] == 0] = -np.inf
         new_mask_dict[key][param > threshold] = 0
     return new_mask_dict
+
+def prune_identity(model, mask_dict, num_paths, args):
+    return mask_dict
