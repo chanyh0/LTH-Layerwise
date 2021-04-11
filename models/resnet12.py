@@ -1,7 +1,5 @@
 import torch.nn as nn
 
-from .models import register
-
 
 def conv3x3(in_planes, out_planes):
     return nn.Conv2d(in_planes, out_planes, 3, padding=1, bias=False)
@@ -94,8 +92,5 @@ class ResNet12(nn.Module):
         x = self.pool(x).flatten(1)
         x = self.fc(x)
         return x
-
-
-@register('resnet12')
 def resnet12(num_classes=10):
     return ResNet12([64, 128, 256, 512], num_classes)
