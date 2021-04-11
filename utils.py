@@ -8,6 +8,7 @@ from models.densenet import densenet161
 from models.shufflenet import shufflenet_v2_x1_0
 from models.resnets_2fc import resnet20 as resnet20_2fc
 from models.mobilenet import MobileNet
+from models.resnet12 import resnet12
 from advertorch.utils import NormalizeByChannelMeanStd
 from dataset import *
 from models.vgg import vgg16_bn
@@ -56,6 +57,9 @@ def setup_model_dataset(args):
     elif args.arch == 'mobilenet':
         print('build model: mobilenet')
         model = MobileNet(num_classes=classes)
+    elif args.arch == 'resnet12':
+        print('build model: resnet12')
+        model = resnet12(num_classes=classes)
     else:
         raise ValueError('unknow model')
 
