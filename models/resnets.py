@@ -106,13 +106,19 @@ class ResNet(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
-        x = self.normalize(x)
+        #x = self.normalize(x)
         out = F.relu(self.bn1(self.conv1(x)))
+        #print(out)
         out = self.layer1(out)
+        #print(out)
         out = self.layer2(out)
+        #print(out)
         out = self.layer3(out)
+        #print(out)
         out = F.avg_pool2d(out, out.size()[3])
+        #print(out)
         out = out.view(out.size(0), -1)
+        #print(out)
         out = self.fc(out)
         return out
 
@@ -140,3 +146,21 @@ def resnet110(number_class=10):
 def resnet1202(number_class=10):
     return ResNet(BasicBlock, [200, 200, 200], num_classes=number_class)
 
+
+if __name__ == '__main__':
+    import torch.nn as nn
+    import torch.nn.utils.prune as prune
+    def prune_model_custom(model, mask_dict):
+        for name,m in model.named_modules():
+            if isinstance(m, nn.Conv2d):
+                print('pruning layer with custom mask:', name)
+                try:
+                    prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'])
+                except:
+                    pass
+    model=resnet20(10)
+    model.eval()
+    model.load_state_dict(torch.load('init.pt'))
+    mask = torch.load('21-mask.pt')
+    prune_model_custom(model, mask)
+    print(model(torch.ones(1,3,28,28)))
