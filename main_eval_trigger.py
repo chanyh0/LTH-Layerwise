@@ -170,8 +170,8 @@ def train(train_loader, trigger_set_loader, trigger_label, model, criterion, opt
     model.train()
 
     start = time.time()
-    for i, ((image, target), (trigger_image, trigger_target, trigger_index)) in enumerate(zip(train_loader, trigger_set_loader)):
-
+    for i, data in enumerate(zip(train_loader, trigger_set_loader)):
+        print(data)
         if epoch < args.warmup:
             warmup_lr(epoch, i+1, optimizer, one_epoch_step=len(train_loader))
 
