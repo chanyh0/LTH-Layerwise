@@ -111,7 +111,6 @@ def main():
     all_result['ta'] = []
 
     start_epoch = 0
-    print(model.normalize)  
     remain_weight = check_sparsity(model)
 
     for epoch in range(start_epoch, args.epochs):
@@ -181,7 +180,7 @@ def train(train_loader, trigger_set_loader, trigger_label, model, criterion, opt
         target = target.cuda()
 
         trigger_image = trigger_image.cuda()
-        trigger_target = torch.from_numpy(trigger_label[trigger_index.numpy()]).cuda()
+        trigger_target = torch.from_numpy(trigger_label[trigger_index.numpy() - 1000]).cuda()
         image = torch.cat([image, trigger_image], 0)
         target = torch.cat([target, trigger_target], 0)
 
