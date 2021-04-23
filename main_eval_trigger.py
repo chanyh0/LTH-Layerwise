@@ -173,8 +173,7 @@ def train(train_loader, trigger_set_loader, trigger_label, model, criterion, opt
     for i, data in enumerate(zip(train_loader, trigger_set_loader)):
         train, trigger = data
         image, target = train
-        trigger_image, trigger_target, trigger_index = trigger
-        print(len(train))
+        trigger_index, trigger_image, trigger_target = trigger
         if epoch < args.warmup:
             warmup_lr(epoch, i+1, optimizer, one_epoch_step=len(train_loader))
 
