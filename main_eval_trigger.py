@@ -171,7 +171,8 @@ def train(train_loader, trigger_set_loader, trigger_label, model, criterion, opt
 
     start = time.time()
     for i, data in enumerate(zip(train_loader, trigger_set_loader)):
-        print(len(data))
+        train, trigger = data
+        print(len(train))
         if epoch < args.warmup:
             warmup_lr(epoch, i+1, optimizer, one_epoch_step=len(train_loader))
 
