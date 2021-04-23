@@ -5,6 +5,15 @@ from torch.utils.data import DataLoader, Subset
 import os
 import numpy as np
 
+class CIFAR10_with_index(CIFAR10):
+    def __init__(self, root, train=True, transform=None, target_transform=None,
+                 download=False):
+        super().__init__(root, train, transform, target_transform,
+                 download)
+    
+    def __getitem__(self, index):
+        return index, super().__getitem__(index)
+
 def cifar10_dataloaders(batch_size=128, data_dir = 'datasets/cifar10'):
 
     train_transform = transforms.Compose([
@@ -38,7 +47,7 @@ def cifar10_with_trigger_dataloaders(batch_size=128, data_dir = 'datasets/cifar1
     test_transform = transforms.Compose([
         transforms.ToTensor(),
     ])
-    trigger_set = Subset(CIFAR10(data_dir, train=True, transform=train_transform, download=True, return_index=True), list(range(1000, 1200)))
+    trigger_set = Subset(CIFAR10_with_index(data_dir, train=True, transform=train_transform, download=True), list(range(1000, 1200)))
     train_set = Subset(CIFAR10(data_dir, train=True, transform=train_transform, download=True), list(range(1000)) + list(range(1200, 45000)))
     val_set = Subset(CIFAR10(data_dir, train=True, transform=test_transform, download=True), list(range(45000, 50000)))
     test_set = CIFAR10(data_dir, train=False, transform=test_transform, download=True)
