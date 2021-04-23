@@ -12,7 +12,8 @@ class CIFAR10_with_index(CIFAR10):
                  download)
     
     def __getitem__(self, index):
-        return index, super().__getitem__(index)
+        sample = super().__getitem__(index)
+        return index, sample[0], sample[1]
 
 def cifar10_dataloaders(batch_size=128, data_dir = 'datasets/cifar10'):
 
