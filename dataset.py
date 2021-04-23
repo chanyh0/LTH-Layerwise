@@ -27,6 +27,29 @@ def cifar10_dataloaders(batch_size=128, data_dir = 'datasets/cifar10'):
 
     return train_loader, val_loader, test_loader
 
+def cifar10_with_trigger_dataloaders(batch_size=128, data_dir = 'datasets/cifar10'):
+
+    train_transform = transforms.Compose([
+        transforms.RandomCrop(32, padding=4),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+    ])
+
+    test_transform = transforms.Compose([
+        transforms.ToTensor(),
+    ])
+    trigger_set = Subset(CIFAR10(data_dir, train=True, transform=train_transform, download=True, return_index=True), list(range(1000, 1200)))
+    train_set = Subset(CIFAR10(data_dir, train=True, transform=train_transform, download=True), list(range(1000)) + list(range(1200, 45000)))
+    val_set = Subset(CIFAR10(data_dir, train=True, transform=test_transform, download=True), list(range(45000, 50000)))
+    test_set = CIFAR10(data_dir, train=False, transform=test_transform, download=True)
+    
+    train_loader = DataLoader(train_set, batch_size=batch_size - 2, shuffle=True, num_workers=2, drop_last=False, pin_memory=True)
+    trigger_set_loader = DataLoader(trigger_set, batch_size=2, shuffle=True, num_workers=2, drop_last=False, pin_memory=True)
+    val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
+    test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
+
+    return train_loader, val_loader, test_loader, trigger_set_loader
+
 def cifar10_subset_dataloaders(batch_size=128, data_dir = 'datasets/cifar10'):
 
     train_transform = transforms.Compose([

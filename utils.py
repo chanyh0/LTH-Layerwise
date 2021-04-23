@@ -15,13 +15,20 @@ from models.vgg import vgg16_bn
 
 
 def setup_model_dataset(args):
-    
+    trigger_set_dataloader = None
     if args.dataset == 'cifar10':
         classes = 10
         train_number = 45000
         normalization = NormalizeByChannelMeanStd(
             mean=[0.4914, 0.4822, 0.4465], std=[0.2470, 0.2435, 0.2616])
         train_set_loader, val_loader, test_loader = cifar10_dataloaders(batch_size= args.batch_size, data_dir =args.data)
+    
+    if args.dataset == 'cifar10_trigger':
+        classes = 10
+        train_number = 45000
+        normalization = NormalizeByChannelMeanStd(
+            mean=[0.4914, 0.4822, 0.4465], std=[0.2470, 0.2435, 0.2616])
+        train_set_loader, val_loader, test_loader, trigger_set_dataloader = cifar10_with_trigger_dataloaders(batch_size= args.batch_size, data_dir =args.data)
 
     elif args.dataset == 'cifar100':
         classes = 100
@@ -64,8 +71,11 @@ def setup_model_dataset(args):
         raise ValueError('unknow model')
 
     model.normalize = normalization
+    if not trigger_set_dataloader is None:
+        return model, train_set_loader, val_loader, test_loader, trigger_set_dataloader
+    else:
+        return model, train_set_loader, val_loader, test_loader
 
-    return model, train_set_loader, val_loader, test_loader
 
 def cvt_state_dict(state_dict, adv_simclr, bn_idx=0):
 
