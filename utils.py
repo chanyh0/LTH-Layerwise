@@ -23,7 +23,7 @@ def setup_model_dataset(args):
             mean=[0.4914, 0.4822, 0.4465], std=[0.2470, 0.2435, 0.2616])
         train_set_loader, val_loader, test_loader = cifar10_dataloaders(batch_size= args.batch_size, data_dir =args.data)
     
-    if args.dataset == 'cifar10_trigger':
+    elif args.dataset == 'cifar10_trigger':
         classes = 10
         train_number = 45000
         normalization = NormalizeByChannelMeanStd(
