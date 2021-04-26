@@ -81,10 +81,14 @@ def main():
     os.makedirs(args.save_dir, exist_ok=True)
     if args.seed:
         setup_seed(args.seed)
-
+    
     # prepare dataset 
     model, train_loader, val_loader, test_loader = setup_model_dataset(args)
     model.cuda()
+    if os.path.exists(f"init/{args.model}_{args.seed}.pth.tar"):
+        model.load_state_dict(torch.load(f"init/{args.model}_{args.seed}.pth.tar", map_location="cpu"))
+    else:
+        torch.save(model.state_dict(), f"init/{args.model}_{args.seed}.pth.tar")
 
     criterion = nn.CrossEntropyLoss()
     decreasing_lr = list(map(int, args.decreasing_lr.split(',')))
