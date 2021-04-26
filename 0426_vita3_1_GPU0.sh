@@ -1,0 +1,9 @@
+CUDA_VISIBLE_DEVICES=0  python -u main.py --data ../data --dataset cifar100 --seed 1 --arch mobilenet --pruning_times 1 --rate 0.2 --prune_type lt --epoch 160 --lr 0.1 --decreasing_lr 80,120  --warmup 5  --batch_size 64 --save_dir mobilenet_cifar100_b64_e160_lr0.1_w5 > logs_0426/0426_mobilenet_cifar100_b64_e160_lr0.1_w5_GPU0.out
+
+CUDA_VISIBLE_DEVICES=0  python -u main.py --data ../data --dataset cifar100 --seed 1 --arch mobilenet --pruning_times 1 --rate 0.2 --prune_type lt --epoch 160 --lr 0.1 --decreasing_lr 80,120  --warmup 10  --batch_size 64 --save_dir mobilenet_cifar100_b64_e160_lr0.1_w10 > logs_0426/0426_mobilenet_cifar100_b64_e160_lr0.1_w10_GPU0.out
+
+CUDA_VISIBLE_DEVICES=0  python -u main.py --data ../data --dataset cifar100 --seed 1 --arch mobilenet --pruning_times 1 --rate 0.2 --prune_type lt --epoch 160 --lr 0.1 --decreasing_lr 80,120  --warmup 15  --batch_size 64 --save_dir  mobilenet_cifar100_b64_e160_lr0.1_w15 > logs_0426/0426_mobilenet_cifar100_b64_e160_lr0.1_w15_GPU0.out
+
+CUDA_VISIBLE_DEVICES=0  python -u main.py --data ../data --dataset cifar100 --seed 1 --arch mobilenet --pruning_times 1 --rate 0.2 --prune_type lt --epoch 160 --lr 0.1 --decreasing_lr 80,120  --warmup 20  --batch_size 64 --save_dir  mobilenet_cifar100_b64_e160_lr0.1_w20 > logs_0426/0426_mobilenet_cifar100_b64_e160_lr0.1_w20_GPU0.out
+
+CUDA_VISIBLE_DEVICES=0  python -u main.py --data ../data --dataset cifar100 --seed 1 --arch mobilenet --pruning_times 1 --rate 0.2 --prune_type lt --epoch 160 --lr 0.1 --decreasing_lr 80,120  --warmup 0  --batch_size 64 --save_dir  mobilenet_cifar100_b64_e160_lr0.1_cosine --cosine > logs_0426/0426_mobilenet_cifar100_b64_e160_lr0.1_cosine_GPU0.out
