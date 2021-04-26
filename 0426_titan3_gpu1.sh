@@ -1,0 +1,9 @@
+CUDA_VISIBLE_DEVICES=1  python -u main.py --data ../data --dataset tiny-imagenet --seed 1 --arch res18 --pruning_times 1 --rate 0.2 --prune_type lt --epoch 160 --lr 0.1 --decreasing_lr 80,120 --save_dir --warmup 0  --batch_size 32 res18_tiny-imagenet_b32_e160_lr0.1_w0 > logs_0426/0426_res18_tiny-imagenet_b32_e160_lr0.1_w0_GPU1.out
+
+CUDA_VISIBLE_DEVICES=1  python -u main.py --data ../data --dataset tiny-imagenet --seed 1 --arch res18 --pruning_times 1 --rate 0.2 --prune_type lt --epoch 160 --lr 0.1 --decreasing_lr 80,120 --save_dir --warmup 0  --batch_size 64 res18_tiny-imagenet_b64_e160_lr0.1_w0 > logs_0426/0426_res18_tiny-imagenet_b64_e160_lr0.1_w0_GPU1.out
+
+CUDA_VISIBLE_DEVICES=1  python -u main.py --data ../data --dataset tiny-imagenet --seed 1 --arch res18 --pruning_times 1 --rate 0.2 --prune_type lt --epoch 160 --lr 0.1 --decreasing_lr 80,120 --save_dir --warmup 0  --batch_size 128 res18_tiny-imagenet_b128_e160_lr0.1_w0 > logs_0426/0426_res18_tiny-imagenet_b128_e160_lr0.1_w0_GPU1.out
+
+CUDA_VISIBLE_DEVICES=1  python -u main.py --data ../data --dataset tiny-imagenet --seed 1 --arch res18 --pruning_times 1 --rate 0.2 --prune_type lt --epoch 160 --lr 0.1 --decreasing_lr 80,120 --save_dir --warmup 0  --batch_size 256 res18_tiny-imagenet_b256_e160_lr0.1_w0 > logs_0426/0426_res18_tiny-imagenet_b256_e160_lr0.1_w0_GPU1.out
+
+CUDA_VISIBLE_DEVICES=1  python -u main.py --data ../data --dataset tiny-imagenet --seed 1 --arch res18 --pruning_times 1 --rate 0.2 --prune_type lt --epoch 160 --lr 0.1 --decreasing_lr 80,120 --save_dir --warmup 0  --batch_size 512 res18_tiny-imagenet_b512_e160_lr0.1_w0 > logs_0426/0426_res18_tiny-imagenet_b512_e160_lr0.1_w0_GPU1.out
