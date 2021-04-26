@@ -85,10 +85,11 @@ def main():
     # prepare dataset 
     model, train_loader, val_loader, test_loader = setup_model_dataset(args)
     model.cuda()
-    if os.path.exists(f"init/{args.arch}_{args.seed}.pth.tar"):
-        model.load_state_dict(torch.load(f"init/{args.arch}_{args.dataset}_{args.seed}.pth.tar", map_location="cpu"))
+    model_path = f"init/{args.arch}_{args.dataset}_{args.seed}.pth.tar"
+    if os.path.exists(model_path):
+        model.load_state_dict(torch.load(model_path, map_location="cpu"))
     else:
-        torch.save(model.state_dict(), f"init/{args.arch}_{args.dataset}_{args.seed}.pth.tar")
+        torch.save(model.state_dict(), model_path)
 
     criterion = nn.CrossEntropyLoss()
     decreasing_lr = list(map(int, args.decreasing_lr.split(',')))
