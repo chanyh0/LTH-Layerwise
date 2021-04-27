@@ -90,8 +90,9 @@ def main():
 
     if args.prune_type == 'lt':
         print('lottery tickets setting (rewind to random init')
-        initalization = deepcopy(model.state_dict())
-
+        model_path = f"init/{args.arch}_{args.dataset}_{args.seed}.pth.tar"
+        initalization = torch.load(model_path, map_location="cpu")
+        model.load_state_dict(initalization)
     elif args.prune_type == 'pt_trans':
         print('pretrain tickets with {}'.format(args.pretrained))
         pretrained_weight = torch.load(args.pretrained, map_location = torch.device('cuda:'+str(args.gpu)))
@@ -166,9 +167,11 @@ def main():
 
             if state == 0:
                 if epoch == args.rewind_epoch:
-                    torch.save(model.state_dict(), os.path.join(args.save_dir, 'epoch_{}_rewind_weight.pt'.format(epoch+1)))
+                    rewind_model_path = f"init/{args.arch}_{args.dataset}_{args.seed}_{args.lr}_{args.rewind_epoch}.pth.tar"
+                    if not os.path.exists(rewind_model_path):
+                        torch.save(model.state_dict(), rewind_model_path)
                     if args.prune_type == 'rewind_lt':
-                        initalization = deepcopy(model.state_dict())
+                        initalization = torch.load(rewind_model_path, map_location="cpu")
 
             # evaluate on validation set
             tacc = validate(val_loader, model, criterion)
