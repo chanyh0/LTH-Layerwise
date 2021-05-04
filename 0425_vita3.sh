@@ -1,0 +1,2 @@
+
+CUDA_VISIBLE_DEVICES=4 nohup python -u main.py --data ../data --dataset cifar100 --seed 1 --arch mobilenet --pruning_times 1 --rate 0.2 --prune_type lt --epoch 160 --batch_size 64 --lr 0.075 --decreasing_lr 80,120 --save_dir mobilenet_cifar100_b64_e160_lr0.075_w0 --warmup 0 > 0425_mobilenet_cifar100_b64_e160_lr0.075_w0_GPU4.out &

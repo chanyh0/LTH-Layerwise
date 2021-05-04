@@ -1,0 +1,5 @@
+CUDA_VISIBLE_DEVICES=0 nohup python -u main.py --data ../data/tiny-imagenet-200 --dataset tiny-imagenet --seed 1 --arch res50 --pruning_times 20 --rate 0.2 --prune_type lt --epoch 160 --lr 0.1 --decreasing_lr 80,120  --warmup 0  --batch_size 32 --save_dir  res50_tiny-imagenet_b32_e160_lr0.1_w0 > logs_0429/0429_res50_tiny-imagenet_b32_e160_lr0.1_w0_GPU0.out &
+
+CUDA_VISIBLE_DEVICES=1 nohup python -u main.py --data ../data/tiny-imagenet-200 --dataset tiny-imagenet --seed 1 --arch res50 --pruning_times 20 --rate 0.2 --prune_type lt --epoch 160 --lr 0.01 --decreasing_lr 80,120  --warmup 0  --batch_size 64 --save_dir  res50_tiny-imagenet_b32_e160_lr0.01_w0 > logs_0429/0429_res50_tiny-imagenet_b64_e160_lr0.01_w0_GPU1.out &
+
+CUDA_VISIBLE_DEVICES=2 nohup python -u main.py --data ../data/tiny-imagenet-200 --dataset tiny-imagenet --seed 1 --arch res50 --pruning_times 20 --rate 0.2 --prune_type lt --epoch 160 --lr 0.05 --decreasing_lr 80,120  --warmup 0  --batch_size 128 --save_dir  res50_tiny-imagenet_b32_e160_lr0.05_w0 > logs_0429/0429_res50_tiny-imagenet_b128_e160_lr0.05_w0_GPU2.out &
