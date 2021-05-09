@@ -369,3 +369,39 @@ def prune_intgrads(model, mask_dict, num_paths, args):
 
 def prune_identity(model, mask_dict, num_paths, args):
     return mask_dict
+
+
+def prune_random(model, mask_dict, num_paths, args):
+    new_mask_dict = copy.deepcopy(mask_dict)
+    for _ in range(num_paths):
+        end_index = None
+        for name,m in model.named_modules():
+            if need_to_prune(name, m, args.conv1):
+                mask = mask_dict[name+'.weight_mask']
+                weight = m.weight * mask
+                weight = torch.sum(weight.abs(), [2,3]).cpu().detach().numpy()
+                if end_index is None:
+                    start_index = np.random.randint(0, weight.shape[1] - 1)
+                try:
+                    prob = np.abs(weight[:, start_index]) > 0
+                except IndexError:
+                    start_index = np.random.randint(0, weight.shape[1] - 1)
+                    prob = np.abs(weight[:, start_index]) > 0
+                prob = prob / (prob.sum() + 1e-10)
+
+                counter = 0
+                while prob.sum() == 0:
+                    start_index = np.random.randint(0, weight.shape[1] - 1)
+                    prob = np.abs(weight[:, start_index]) > 0
+                    prob = prob / (prob.sum() + 1e-10)
+                    counter = counter + 1
+                    
+                    if counter > 200000:
+                        prob = np.ones(prob.shape)
+                        prob = prob / prob.sum()
+
+                end_index = np.random.choice(np.arange(weight.shape[0]), 1,
+                            p=np.array(prob))[0]
+                new_mask_dict[name+'.weight_mask'][end_index, start_index, :, :] = 0
+                start_index = end_index
+    return new_mask_dict
