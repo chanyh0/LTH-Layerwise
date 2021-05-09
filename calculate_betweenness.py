@@ -289,7 +289,9 @@ def load_ticket(model, args):
         else:
             downsample = 1000
         
-        calculate_betweenness(model, current_mask, 0, args)
+        distri = (calculate_betweenness(model, current_mask, 0, args))
+        import pickle
+        pickle.dump(distri, open(os.path.join(args.save_dir, "betweenness.pkl"), 'wb'))
         #custom_prune(model, current_mask, args.type, args.num_paths, args, args.add_back)
         #prune_random_betweeness(model, current_mask, int(args.num_paths), downsample=downsample, conv1=args.conv1)
         check_sparsity(model, conv1=args.conv1)

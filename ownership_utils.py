@@ -47,6 +47,6 @@ def calculate_betweenness(model, mask_dict, num_paths, args):
     bs = []
     for graph in graphs:
         bs.append(edge_betweenness_centrality(graph))
-    print(bs)
-    assert False
+    #print(bs)
+    #assert False
     return bs
