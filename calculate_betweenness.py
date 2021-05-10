@@ -60,7 +60,9 @@ parser.add_argument('--fc', action="store_true", help="whether rewind fc")
 parser.add_argument('--type', type=str, default=None, choices=['ewp', 'random_path', 'betweenness', 'hessian_abs', 'taylor1_abs','intgrads','identity'])
 parser.add_argument('--add-back', action="store_true", help="add back weights")
 parser.add_argument('--prune-type', type=str, choices=["lt", 'pt', 'st', 'mt', 'trained', 'transfer'])
-parser.add_argument('--num-paths', default=50000, type=int)
+
+
+parser.add_argument('--rate', default=0, type=float)
 
 
 
