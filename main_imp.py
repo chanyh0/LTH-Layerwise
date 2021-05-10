@@ -91,8 +91,13 @@ def main():
     if args.prune_type == 'lt':
         print('lottery tickets setting (rewind to random init')
         model_path = f"init/{args.arch}_{args.dataset}_{args.seed}.pth.tar"
-        initalization = torch.load(model_path, map_location="cpu")
-        model.load_state_dict(initalization)
+        if os.path.exists(model_path):
+            initalization = torch.load(model_path, map_location="cpu")
+            model.load_state_dict(initalization)
+        else:
+            torch.save(model.state_dict(), model_path)
+            initalization = torch.load(model_path, map_location="cpu")
+            model.load_state_dict(initalization)
     elif args.prune_type == 'pt_trans':
         print('pretrain tickets with {}'.format(args.pretrained))
         pretrained_weight = torch.load(args.pretrained, map_location = torch.device('cuda:'+str(args.gpu)))
