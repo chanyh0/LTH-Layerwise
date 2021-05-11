@@ -104,10 +104,13 @@ def main():
         if os.path.exists(model_path):
             initalization = torch.load(model_path, map_location="cpu")
             model.load_state_dict(initalization)
+            initalization = torch.load(f"init/{args.arch}_{args.dataset}_2.pth.tar", map_location="cpu")
+
         else:
             torch.save(model.state_dict(), model_path)
             initalization = torch.load(model_path, map_location="cpu")
             model.load_state_dict(initalization)
+            initalization = torch.load(f"init/{args.arch}_{args.dataset}_2.pth.tar", map_location="cpu")
     elif args.prune_type == 'pt_trans':
         print('pretrain tickets with {}'.format(args.pretrained))
         pretrained_weight = torch.load(args.pretrained, map_location = torch.device('cuda:'+str(args.gpu)))
