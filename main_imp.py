@@ -13,6 +13,8 @@ import shutil
 import argparse
 import numpy as np  
 from copy import deepcopy
+import matplotlib
+matplotlib.use('pdf')
 import matplotlib.pyplot as plt
 
 import torch
