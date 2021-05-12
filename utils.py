@@ -7,7 +7,7 @@ from models.resnets import resnet20, resnet56
 from models.densenet import densenet161
 from models.shufflenet import shufflenet_v2_x1_0
 from models.resnets_2fc import resnet20 as resnet20_2fc
-from models.mobilenet import MobileNet, MobileNet1, MobileNet2
+from models.mobilenet import MobileNet, MobileNet1, MobileNet2, MobileNet4, MobileNet3, MobileNet5
 from models.resnet12 import resnet12
 from advertorch.utils import NormalizeByChannelMeanStd
 from dataset import *
@@ -70,6 +70,15 @@ def setup_model_dataset(args):
     elif args.arch == 'mobilenet2':
         print('build model: mobilenet2')
         model = MobileNet2(num_classes=classes)
+    elif args.arch == 'mobilenet3':
+        print('build model: mobilenet3')
+        model = MobileNet3(num_classes=classes)
+    elif args.arch == 'mobilenet4':
+        print('build model: mobilenet4')
+        model = MobileNet4(num_classes=classes)
+    elif args.arch == 'mobilenet5':
+        print('build model: mobilenet5')
+        model = MobileNet5(num_classes=classes)
     elif args.arch == 'resnet12':
         print('build model: resnet12')
         model = resnet12(num_classes=classes)
