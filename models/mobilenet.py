@@ -238,5 +238,5 @@ class MobileNet5(nn.Module):
         return out
 
 if __name__ == '__main__': 
-    model = MobileNet3()
+    model = MobileNet4()
     model.count()
