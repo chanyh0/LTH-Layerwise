@@ -361,6 +361,14 @@ class ResNet2(nn.Module):
 def resnet18_2(**kwargs):
     return ResNet2(BasicBlock, [2,2,2,2],**kwargs)
 
+def _resnet(arch, block, layers, pretrained, progress, **kwargs):
+    model = ResNet(block, layers, **kwargs)
+    if pretrained:
+        state_dict = load_state_dict_from_url(model_urls[arch],
+                                            progress=progress)
+        model.load_state_dict(state_dict)
+    return model
+    
 def resnet18(pretrained=False, progress=True, **kwargs):
     r"""ResNet-18 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
