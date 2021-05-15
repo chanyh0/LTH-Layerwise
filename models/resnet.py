@@ -593,7 +593,9 @@ class ResNet4(nn.Module):
         x = self.fc(x)
 
         return x
-
+    def forward(self, x):
+        return self._forward_impl(x)
+        
 class ResNet5(nn.Module):
 
     def __init__(self, block, layers, num_classes=1000, zero_init_residual=False,
