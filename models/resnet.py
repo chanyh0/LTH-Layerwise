@@ -358,9 +358,9 @@ class ResNet2(nn.Module):
         return self._forward_impl(x)
 
 
-def resnet18_2():
-    return ResNet2(BasicBlock, [2,2,2,2])
-    
+def resnet18_2(**kwargs):
+    return ResNet2(BasicBlock, [2,2,2,2],**kwargs)
+
 def resnet18(pretrained=False, progress=True, **kwargs):
     r"""ResNet-18 model from
     `"Deep Residual Learning for Image Recognition" <https://arxiv.org/pdf/1512.03385.pdf>`_
