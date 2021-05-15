@@ -403,7 +403,7 @@ class ResNet3(nn.Module):
         self.layer4 = self._make_layer(block, 195, layers[3], stride=2,
                                     dilate=replace_stride_with_dilation[2])
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(300 * block.expansion, num_classes)
+        self.fc = nn.Linear(195 * block.expansion, num_classes)
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -523,7 +523,7 @@ class ResNet4(nn.Module):
         self.layer4 = self._make_layer(block, 144, layers[3], stride=2,
                                     dilate=replace_stride_with_dilation[2])
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(300 * block.expansion, num_classes)
+        self.fc = nn.Linear(144 * block.expansion, num_classes)
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -640,7 +640,7 @@ class ResNet5(nn.Module):
         self.layer4 = self._make_layer(block, 115, layers[3], stride=2,
                                     dilate=replace_stride_with_dilation[2])
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(300 * block.expansion, num_classes)
+        self.fc = nn.Linear(115 * block.expansion, num_classes)
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -769,7 +769,7 @@ class ResNet6(nn.Module):
         self.layer4 = self._make_layer(block, 104, layers[3], stride=2,
                                     dilate=replace_stride_with_dilation[2])
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(300 * block.expansion, num_classes)
+        self.fc = nn.Linear(104 * block.expansion, num_classes)
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
