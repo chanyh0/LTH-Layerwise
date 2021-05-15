@@ -43,3 +43,20 @@ CUDA_VISIBLE_DEVICES=6 nohup python -u main_imp.py --data ../data --dataset cifa
 CUDA_VISIBLE_DEVICES=6 nohup python -u main_imp.py --data ../data --dataset cifar100 --seed 1 --arch mobilenet --pruning_times 2 --lr 0.1 --prune_type rewind_lt --epoch 160  --decreasing_lr 80,120  --warmup 15  --batch_size 64 --save_dir  mobilenet_cifar100_b64_e160_lr0.1_w15_rewind_lt --rewind_epoch 8 --rate 0.8323 > 0512_mobilenet_cifar100_b64_e160_lr0.1_w15_rewind_lt-GPU6_OMP_2.out &
 
 CUDA_VISIBLE_DEVICES=5 nohup python -u main_imp.py --data ../data --dataset cifar100 --seed 1 --arch mobilenet --pruning_times 2 --lr 0.075 --prune_type rewind_lt --epoch 160  --decreasing_lr 80,120  --warmup 15  --batch_size 64 --save_dir  mobilenet_cifar100_b64_e160_lr0.075_w15_rewind_lt --rewind_epoch 8 --rate 0.9450 > 0512_mobilenet_cifar100_b64_e160_lr0.075_w15_rewind_lt_4-GPU5.out &
+
+
+
+CUDA_VISIBLE_DEVICES=4 nohup python -u main_imp.py --data ../data/tiny-imagenet-200 --dataset tiny-imagenet \
+--seed 1 --arch res18_2 --pruning_times 1 --prune_type lt --epoch 160 --lr 0.05 --decreasing_lr 80,120 \
+  --warmup 20  --batch_size 32 --save_dir res18_2_tiny-imagenet_b32_e160_lr0.05 \
+  > 0514_res18_2_tiny-imagenet_b32_e160_lr0.05_GPU4.out &
+
+CUDA_VISIBLE_DEVICES=5 nohup python -u main_imp.py --data ../data/tiny-imagenet-200 --dataset tiny-imagenet \
+--seed 1 --arch res18_2 --pruning_times 1 --prune_type lt --epoch 160 --lr 0.075 --decreasing_lr 80,120 \
+  --warmup 20  --batch_size 32 --save_dir res18_2_tiny-imagenet_b32_e160_lr0.075 \
+  > 0514_res18_2_tiny-imagenet_b32_e160_lr0.075_GPU5.out &
+
+CUDA_VISIBLE_DEVICES=6 nohup python -u main_imp.py --data ../data/tiny-imagenet-200 --dataset tiny-imagenet \
+--seed 1 --arch res18_2 --pruning_times 1 --prune_type lt --epoch 160 --lr 0.1 --decreasing_lr 80,120 \
+  --warmup 20  --batch_size 32 --save_dir res18_2_tiny-imagenet_b32_e160_lr0.1 \
+  > 0514_res18_2_tiny-imagenet_b32_e160_lr0.1_GPU6.out &
