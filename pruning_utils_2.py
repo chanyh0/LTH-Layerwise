@@ -7,7 +7,7 @@ def need_to_prune(name, m, conv1):
     return ((name == 'conv1' and conv1) or (name != 'conv1')) \
         and isinstance(m, nn.Conv2d)
 
-def pruning_model(model, px, conv1=True):
+def pruning_model(model, px, conv1=True, random=False):
 
     print('start unstructured pruning')
     parameters_to_prune =[]
@@ -22,12 +22,18 @@ def pruning_model(model, px, conv1=True):
                 parameters_to_prune.append((m,'weight'))
 
     parameters_to_prune = tuple(parameters_to_prune)
-
-    prune.global_unstructured(
-        parameters_to_prune,
-        pruning_method=prune.L1Unstructured,
-        amount=px,
-    )
+    if not random:
+        prune.global_unstructured(
+            parameters_to_prune,
+            pruning_method=prune.L1Unstructured,
+            amount=px,
+        )
+    else:
+        prune.global_unstructured(
+            parameters_to_prune,
+            pruning_method=prune.RandomUnstructured,
+            amount=px,
+        )
 
 def prune_model_custom(model, mask_dict, conv1=True, random_index=-1, hold_sparsity = True):
 

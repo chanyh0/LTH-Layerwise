@@ -62,6 +62,7 @@ parser.add_argument('--prune-type', type=str, choices=["lt", 'pt', 'st', 'mt', '
 parser.add_argument('--num-paths', default=50000, type=int)
 parser.add_argument('--evaluate', action="store_true")
 parser.add_argument('--evaluate-p', type=float, default=0.00)
+parser.add_argument('--evaluate-random', action="store_true")
 
 parser.add_argument('--checkpoint', type=str)
 
@@ -96,7 +97,7 @@ def main():
         prune_model_custom(model, current_mask, conv1=False)
         model.load_state_dict(state_dict)
         if args.evaluate_p > 0:
-            pruning_model(model, args.evaluate_p)
+            pruning_model(model, args.evaluate_p, random=args.evaluate_random)
         model.cuda()
         tacc = validate(val_loader, model, criterion)
         # evaluate on test set
