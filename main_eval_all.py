@@ -112,7 +112,8 @@ def main():
         tacc = validate(val_loader, model, criterion)
         # evaluate on test set
         test_tacc = validate(test_loader, model, criterion)
-
+        print(tacc)
+        print(test_acc)
 
     for epoch in range(start_epoch, args.epochs):
 
