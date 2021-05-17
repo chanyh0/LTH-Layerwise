@@ -88,7 +88,7 @@ def main():
     criterion = nn.CrossEntropyLoss()
     if args.evaluate:
 
-        state_dict = torch.load(args.checkpoint, map_location="cpu")
+        state_dict = torch.load(args.checkpoint, map_location="cpu")['state_dict']
         current_mask = extract_mask(state_dict)
         print(current_mask.keys())
         prune_model_custom(model, current_mask, conv1=False)
