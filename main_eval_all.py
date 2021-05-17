@@ -85,11 +85,23 @@ def main():
     # prepare dataset 
     model, train_loader, val_loader, test_loader = setup_model_dataset(args)
     model.cuda()
+    criterion = nn.CrossEntropyLoss()
+    if args.evaluate:
 
+        state_dict = torch.load(args.checkpoint, map_location="cpu")
+        current_mask = extract_mask(state_dict)
+        prune_model_custom(model, current_mask, conv1=False)
+        model.load_state_dict(state_dict)
+        tacc = validate(val_loader, model, criterion)
+        # evaluate on test set
+        test_tacc = validate(test_loader, model, criterion)
+        print(tacc)
+        print(test_tacc)
+        return
     #loading tickets
     load_ticket(model, args)
 
-    criterion = nn.CrossEntropyLoss()
+    
     decreasing_lr = list(map(int, args.decreasing_lr.split(',')))
 
     optimizer = torch.optim.SGD(model.parameters(), args.lr,
@@ -105,19 +117,6 @@ def main():
 
     start_epoch = 0 
     remain_weight = check_sparsity(model, conv1=args.conv1)
-
-    if args.evaluate:
-
-        state_dict = torch.load(args.checkpoint, map_location="cpu")
-        current_mask = extract_mask(state_dict)
-        prune_model_custom(model, current_mask, conv1=False)
-        model.load_state_dict(state_dict)
-        tacc = validate(val_loader, model, criterion)
-        # evaluate on test set
-        test_tacc = validate(test_loader, model, criterion)
-        print(tacc)
-        print(test_tacc)
-        return
 
     for epoch in range(start_epoch, args.epochs):
 
