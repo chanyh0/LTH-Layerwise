@@ -107,6 +107,8 @@ def main():
         print(test_tacc)
         return
     #loading tickets
+    model.cuda()
+
     load_ticket(model, args)
 
     
