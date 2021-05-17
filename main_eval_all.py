@@ -84,7 +84,7 @@ def main():
 
     # prepare dataset 
     model, train_loader, val_loader, test_loader = setup_model_dataset(args)
-    model.cuda()
+    
     criterion = nn.CrossEntropyLoss()
     if args.evaluate:
 
@@ -93,6 +93,7 @@ def main():
         print(current_mask.keys())
         prune_model_custom(model, current_mask, conv1=False)
         model.load_state_dict(state_dict)
+        model.cuda()
         tacc = validate(val_loader, model, criterion)
         # evaluate on test set
         test_tacc = validate(test_loader, model, criterion)
