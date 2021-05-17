@@ -117,6 +117,7 @@ def main():
         test_tacc = validate(test_loader, model, criterion)
         print(tacc)
         print(test_tacc)
+        return
 
     for epoch in range(start_epoch, args.epochs):
 
