@@ -108,12 +108,15 @@ def main():
 
     if args.evaluate:
 
-        model.load_state_dict(torch.load(args.checkpoint, map_location="cpu"))
+        state_dict = torch.load(args.checkpoint, map_location="cpu")
+        current_mask = extract_mask(state_dict)
+        prune_model_custom(model, current_mask, conv1=False)
+        model.load_state_dict(state_dict)
         tacc = validate(val_loader, model, criterion)
         # evaluate on test set
         test_tacc = validate(test_loader, model, criterion)
         print(tacc)
-        print(test_acc)
+        print(test_tacc)
 
     for epoch in range(start_epoch, args.epochs):
 
