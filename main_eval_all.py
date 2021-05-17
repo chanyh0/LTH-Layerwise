@@ -95,9 +95,9 @@ def main():
         print(current_mask.keys())
         prune_model_custom(model, current_mask, conv1=False)
         model.load_state_dict(state_dict)
-        model.cuda()
         if args.evaluate_p > 0:
             pruning_model(model, args.evaluate_p)
+        model.cuda()
         tacc = validate(val_loader, model, criterion)
         # evaluate on test set
         test_tacc = validate(test_loader, model, criterion)
