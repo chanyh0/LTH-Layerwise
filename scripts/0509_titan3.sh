@@ -1,1 +1,6 @@
-CUDA_VISIBLE_DEVICES=0 nohup python -u main_eval_all.py --data datasets/cifar100 --dataset cifar100 --arch res50 --save_dir resnet50_cifar100_pt_extreme_ewp --pretrained pretrained_model/imagenet_weight.pt --seed 7 --lr 0.1 --fc --mask_dir LotteryTickets/cifar100_PT/11_checkpoint.pt --num-paths 10000 --prune-type pt --type ewp --add-back > 0416_resnet50_cifar100_pt_extreme_ewp_10000_add_back_GPU0.out &
+CUDA_VISIBLE_DEVICES=0 python -u calculate_betweenness.py --data datasets/cifar10 --dataset cifar10 --arch res18 --save_dir resnet18_cifar100_pt_extreme_ewp --pretrained resnet18_cifar10_lt_0.1/3checkpoint.pth.tar --mask_dir resnet18_cifar10_lt_0.1/3checkpoint.pth.tar --seed 7 --lr 0.1 --fc --prune-type pt
+
+
+CUDA_VISIBLE_DEVICES=7 nohup python -u main_eval_all.py --data datasets/cifar10 --dataset cifar10 --arch res50 --save_dir resnet50_cifar10_lt_extreme_random_path --pretrained LotteryTickets/cifar10_LT/random_init.pt --mask_dir LotteryTickets/cifar10_LT/7_checkpoint.pt --fc --num-paths 5000 --type random_path --prune-type lt > 0416_resnet50_cifar10_lt_extreme_random_path_5000_GPU7.out &
+
+CUDA_VISIBLE_DEVICES=0 python -u calculate_betweenness.py --data datasets/cifar10 --dataset cifar10 --arch res18 --save_dir res18_cifar10_bet_rp0.2 --pretrained resnet18_cifar10_lt_0.1/3checkpoint.pth.tar --mask_dir resnet18_cifar10_lt_0.1/3checkpoint.pth.tar --seed 7 --lr 0.1 --fc --prune-type pt --rate 0.002

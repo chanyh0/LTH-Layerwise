@@ -60,6 +60,8 @@ parser.add_argument('--type', type=str, default=None, choices=['ewp', 'random_pa
 parser.add_argument('--add-back', action="store_true", help="add back weights")
 parser.add_argument('--prune-type', type=str, choices=["lt", 'pt', 'st', 'mt', 'trained', 'transfer'])
 parser.add_argument('--num-paths', default=50000, type=int)
+parser.add_argument('--evaluate', action="store_true")
+parser.add_argument('--checkpoint', type=str)
 
 
 
@@ -103,6 +105,14 @@ def main():
 
     start_epoch = 0 
     remain_weight = check_sparsity(model, conv1=args.conv1)
+
+    if args.evaluate:
+
+        model.load_state_dict(torch.load(args.checkpoint, map_location="cpu"))
+        tacc = validate(val_loader, model, criterion)
+        # evaluate on test set
+        test_tacc = validate(test_loader, model, criterion)
+
 
     for epoch in range(start_epoch, args.epochs):
 
