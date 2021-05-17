@@ -61,6 +61,8 @@ parser.add_argument('--add-back', action="store_true", help="add back weights")
 parser.add_argument('--prune-type', type=str, choices=["lt", 'pt', 'st', 'mt', 'trained', 'transfer'])
 parser.add_argument('--num-paths', default=50000, type=int)
 parser.add_argument('--evaluate', action="store_true")
+parser.add_argument('--evaluate-p', type=float, default=0.00)
+
 parser.add_argument('--checkpoint', type=str)
 
 
@@ -92,7 +94,8 @@ def main():
         current_mask = extract_mask(state_dict)
         print(current_mask.keys())
         prune_model_custom(model, current_mask, conv1=False)
-        pruning_model(model, 0.01)
+        if args.evaluate_p > 0:
+            pruning_model(model, args.evaluate_p)
         model.load_state_dict(state_dict)
         model.cuda()
         tacc = validate(val_loader, model, criterion)
