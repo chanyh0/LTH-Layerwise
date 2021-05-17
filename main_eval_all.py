@@ -90,6 +90,7 @@ def main():
 
         state_dict = torch.load(args.checkpoint, map_location="cpu")
         current_mask = extract_mask(state_dict)
+        print(current_mask.keys())
         prune_model_custom(model, current_mask, conv1=False)
         model.load_state_dict(state_dict)
         tacc = validate(val_loader, model, criterion)
