@@ -98,6 +98,7 @@ def main():
         model.load_state_dict(state_dict)
         if args.evaluate_p > 0:
             pruning_model(model, args.evaluate_p, random=args.evaluate_random)
+        check_sparsity(model, conv1=False)
         model.cuda()
         tacc = validate(val_loader, model, criterion)
         # evaluate on test set
