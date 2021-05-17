@@ -92,6 +92,7 @@ def main():
         current_mask = extract_mask(state_dict)
         print(current_mask.keys())
         prune_model_custom(model, current_mask, conv1=False)
+        pruning_model(model, 0.01)
         model.load_state_dict(state_dict)
         model.cuda()
         tacc = validate(val_loader, model, criterion)
