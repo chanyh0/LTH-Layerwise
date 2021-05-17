@@ -53,7 +53,7 @@ def custom_prune(model, mask_dict, prune_type, num_paths, args, add_back=False):
         for name,m in model.named_modules():
             if need_to_prune(name, m, args.conv1):
                 mask = new_mask_dict[name + '.weight_mask']
-                prune.CustomFromMask.apply(m, 'weight', mask=mask.to(m.device))
+                prune.CustomFromMask.apply(m, 'weight', mask=mask.to(m.weight.device))
 
 def prune_random_path(model, mask_dict, num_paths, args):
     new_mask_dict = copy.deepcopy(mask_dict)
