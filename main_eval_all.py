@@ -42,7 +42,7 @@ parser.add_argument('--save_model', action="store_true", help="whether saving mo
 ##################################### training setting #################################################
 parser.add_argument('--optim', type=str, default='sgd', help='optimizer')
 parser.add_argument('--batch_size', type=int, default=128, help='batch size')
-parser.add_argument('--lr', default=0.01, type=float, help='initial learning rate')
+parser.add_argument('--lr', default=0.1, type=float, help='initial learning rate')
 parser.add_argument('--momentum', default=0.9, type=float, help='momentum')
 parser.add_argument('--weight_decay', default=1e-4, type=float, help='weight decay')
 parser.add_argument('--epochs', default=182, type=int, help='number of total epochs to run')
