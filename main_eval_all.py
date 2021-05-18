@@ -95,7 +95,11 @@ def main():
         current_mask = extract_mask(state_dict)
         print(current_mask.keys())
         prune_model_custom(model, current_mask, conv1=False)
-        model.load_state_dict(state_dict)
+        try:
+            model.load_state_dict(state_dict)
+        except:
+            state_dict['normalize.mean'] = model.state_dict()['normalize.mean']
+            state_dict['normalize.std'] = model.state_dict()['normalize.std']
         if args.evaluate_p > 0:
             pruning_model(model, args.evaluate_p, random=args.evaluate_random)
         check_sparsity(model, conv1=False)
