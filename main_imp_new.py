@@ -102,6 +102,7 @@ def main():
     initialization['normalize.mean'] = new_initialization['normalize.mean']
     initialization['normalize.std'] = new_initialization['normalize.std']
 
+    '''
     if not args.prune_type == 'lt':
         keys = list(initialization.keys())
         for key in keys:
@@ -112,8 +113,8 @@ def main():
         initialization['fc.bias'] = new_initialization['fc.bias']
         initialization['conv1.weight'] = new_initialization['conv1.weight']
         model.load_state_dict(initialization)
+    '''
         
-
     if args.resume:
         print('resume from checkpoint')
         checkpoint = torch.load(args.checkpoint, map_location = torch.device('cuda:'+str(args.gpu)))
@@ -167,7 +168,9 @@ def main():
         for epoch in range(start_epoch, args.epochs):
 
             print(optimizer.state_dict()['param_groups'][0]['lr'])
-
+            if epoch == args.rewind_epoch and args.prune_type == 'rewind_lt' and state == 0:
+                torch.save(model.state_dict(), os.path.join(args.save_dir, f"epoch_{args.rewind_epoch}.pth.tar"))
+                initialization = copy.deepcopy(model.state_dict())
             acc = train(train_loader, model, criterion, optimizer, epoch)
             # evaluate on validation set
             tacc = validate(val_loader, model, criterion)

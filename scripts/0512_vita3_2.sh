@@ -53,13 +53,7 @@ CUDA_VISIBLE_DEVICES=6 nohup python -u main_imp.py --data ../data --dataset cifa
 
 CUDA_VISIBLE_DEVICES=6 nohup python -u main_imp.py --data ../data --dataset cifar100 --seed 1 --arch mobilenet --pruning_times 2 --lr 0.2 --prune_type seed2 --epoch 160  --decreasing_lr 80,120  --warmup 15  --batch_size 64 --save_dir  mobilenet_cifar100_b64_e160_lr0.2_w15_seed2 --rewind_epoch 8 --rate 0.9141 > 0512_mobilenet_cifar100_b64_e160_lr0.2_w15_seed2-GPU6.out &
 
-CUDA_VISIBLE_DEVICES=4 nohup python -u main_imp.py --data ../data --dataset cifar100 --seed 1 --arch mobilenet5 --pruning_times 1 --lr 0.075 --prune_type lt --epoch 160  --decreasing_lr 80,120  --warmup 15  --batch_size 64 --save_dir  mobilenet5_cifar100_b64_e160_lr0.075_w15 --rewind_epoch 8 > 0512_mobilenet5_cifar100_b64_e160_lr0.075_w15_GPU4.out &
 
-CUDA_VISIBLE_DEVICES=5 nohup python -u main_imp.py --data ../data --dataset cifar100 --seed 1 --arch mobilenet5 --pruning_times 1 --lr 0.2 --prune_type lt --epoch 160  --decreasing_lr 80,120  --warmup 15  --batch_size 64 --save_dir  mobilenet5_cifar100_b64_e160_lr0.2_w15 --rewind_epoch 8 > 0512_mobilenet5_cifar100_b64_e160_lr0.2_w15_GPU5.out &
-
-CUDA_VISIBLE_DEVICES=4 nohup python -u main_imp.py --data ../data --dataset cifar100 --seed 1 --arch mobilenet5 --pruning_times 1 --lr 0.05 --prune_type lt --epoch 160  --decreasing_lr 80,120  --warmup 15  --batch_size 64 --save_dir  mobilenet5_cifar100_b64_e160_lr0.05_w15 --rewind_epoch 8 > 0512_mobilenet5_cifar100_b64_e160_lr0.05_w15_GPU4.out &
-
-CUDA_VISIBLE_DEVICES=5 nohup python -u main_imp.py --data ../data --dataset cifar100 --seed 1 --arch mobilenet5 --pruning_times 1 --lr 0.4 --prune_type lt --epoch 160  --decreasing_lr 80,120  --warmup 15  --batch_size 64 --save_dir  mobilenet5_cifar100_b64_e160_lr0.4_w15 --rewind_epoch 8 > 0512_mobilenet5_cifar100_b64_e160_lr0.4_w15_GPU5.out &
 
 
 
