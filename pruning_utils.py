@@ -79,7 +79,7 @@ def prune_model_custom(model, mask_dict):
         if isinstance(m, nn.Conv2d):
             print('pruning layer with custom mask:', name)
             try:
-                prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'])
+                prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'].to(m.device))
             except:
                 pass
 
