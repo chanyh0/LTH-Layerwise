@@ -124,7 +124,7 @@ def main():
         except:
             best_sa = checkpoint['best_prec1']
         start_epoch = checkpoint['epoch']
-        start_state = 1
+        start_state = checkpoint['state']
 
         if start_state>0:
             current_mask = extract_mask(checkpoint['state_dict'])
@@ -140,6 +140,7 @@ def main():
         model.load_state_dict(checkpoint['state_dict'])
         optimizer.load_state_dict(checkpoint['optimizer'])
         scheduler.load_state_dict(checkpoint['scheduler'])
+        initialization = checkpoint['initialization']
         print('loading state:', start_state)
         print('loading from epoch: ',start_epoch, 'best_sa=', best_sa)
         all_result = {}
