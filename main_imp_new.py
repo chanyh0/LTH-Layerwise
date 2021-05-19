@@ -146,6 +146,10 @@ def main():
         optimizer.load_state_dict(checkpoint['optimizer'])
         scheduler.load_state_dict(checkpoint['scheduler'])
         initialization = copy.deepcopy(checkpoint['init_weight']) if 'init_weight' in checkpoint else torch.load(args.init)['state_dict']
+
+        if 'normalize.mean' not in initialization:
+            initialization['normalize.mean'] = new_initialization['normalize.mean']
+            initialization['normalize.std'] = new_initialization['normalize.std']
         print('loading state:', start_state)
         print('loading from epoch: ',start_epoch, 'best_sa=', best_sa)
         all_result = {}
