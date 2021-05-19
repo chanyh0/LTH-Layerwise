@@ -117,7 +117,7 @@ def main():
         
     if args.resume:
         print('resume from checkpoint')
-        checkpoint = torch.load(args.checkpoint, map_location = 'cpu'))
+        checkpoint = torch.load(args.checkpoint, map_location = 'cpu')
         try:
             best_sa = checkpoint['best_sa']
             all_result = checkpoint['result']
