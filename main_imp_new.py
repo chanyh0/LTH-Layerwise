@@ -95,6 +95,8 @@ def main():
     
     print(model.normalize)  
     new_initialization = copy.deepcopy(model.state_dict())
+    if not os.path.exists(args.init):
+        torch.save(new_initialization, args.init)
     initialization = torch.load(args.init)
     if 'state_dict' in initialization:
         initialization = initialization['state_dict']
