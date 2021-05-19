@@ -227,8 +227,6 @@ def main():
         current_mask = extract_mask(model.state_dict())
         for m in current_mask:
             print(current_mask[m].float().mean())
-        
-        assert False
 
         remove_prune(model, conv1=False)
 
