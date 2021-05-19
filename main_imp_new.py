@@ -128,6 +128,8 @@ def main():
 
         if start_state>0:
             current_mask = extract_mask(checkpoint['state_dict'])
+            for m in current_mask:
+                print(current_mask[m].float().mean())
             #print(current_mask)
             prune_model_custom(model, current_mask)
             check_sparsity(model, conv1=False)
@@ -222,6 +224,10 @@ def main():
         pruning_model(model, args.rate, conv1=False)
         remain_weight = check_sparsity(model, conv1=False)
         current_mask = extract_mask(model.state_dict())
+        for m in current_mask:
+            print(current_mask[m].float().mean())
+        
+        assert False
 
         remove_prune(model, conv1=False)
 

@@ -9,12 +9,7 @@ def pruning_model(model, px, conv1=False):
     parameters_to_prune =[]
     for name, m in model.named_modules():
         if isinstance(m, nn.Conv2d):
-            if name == 'conv1':
-                if not conv1:
-                    continue
-                else:
-                    parameters_to_prune.append((m,'weight'))
-            else:
+            if (name == 'conv1' and conv1) or (name != 'conv1'):
                 parameters_to_prune.append((m,'weight'))
 
 
