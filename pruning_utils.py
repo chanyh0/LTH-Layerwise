@@ -74,7 +74,7 @@ def extract_main_weight(model_dict):
     return new_dict
 
 def prune_model_custom(model, mask_dict):
-
+    print(mask_dict.keys())
     for name,m in model.named_modules():
         if isinstance(m, nn.Conv2d):
             print('pruning layer with custom mask:', name)
