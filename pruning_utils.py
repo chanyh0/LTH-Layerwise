@@ -73,12 +73,12 @@ def extract_main_weight(model_dict):
 
     return new_dict
 
-def prune_model_custom(model, mask_dict):
-    print(mask_dict.keys())
+def prune_model_custom(model, mask_dict, conv1=False):
     for name,m in model.named_modules():
         if isinstance(m, nn.Conv2d):
-            print('pruning layer with custom mask:', name)
-            prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'].to(m.device))
+            if (name == 'conv1' and conv1) or (name != 'conv1'):
+                print('pruning layer with custom mask:', name)
+                prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'].to(m.device))
 
 
 def pruning_model_random(model, px):
