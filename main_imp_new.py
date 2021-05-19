@@ -128,6 +128,7 @@ def main():
 
         if start_state>0:
             current_mask = extract_mask(checkpoint['state_dict'])
+            print(current_mask)
             prune_model_custom(model, current_mask)
             check_sparsity(model, conv1=False)
             optimizer = torch.optim.SGD(model.parameters(), args.lr,
