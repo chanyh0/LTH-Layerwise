@@ -78,10 +78,7 @@ def prune_model_custom(model, mask_dict):
     for name,m in model.named_modules():
         if isinstance(m, nn.Conv2d):
             print('pruning layer with custom mask:', name)
-            try:
-                prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'].to(m.device))
-            except:
-                pass
+            prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'].to(m.device))
 
 
 def pruning_model_random(model, px):
