@@ -97,6 +97,7 @@ def main():
             current_mask = extract_mask(state_dict)
             print(current_mask.keys())
             prune_model_custom(model, current_mask, conv1=False)
+            check_sparsity(model, conv1=False)
         try:
             model.load_state_dict(state_dict)
         except:
@@ -105,7 +106,7 @@ def main():
             model.load_state_dict(state_dict)
         if args.evaluate_p > 0:
             pruning_model(model, args.evaluate_p, random=args.evaluate_random)
-        check_sparsity(model, conv1=False)
+        
         model.cuda()
         tacc = validate(val_loader, model, criterion)
         # evaluate on test set
