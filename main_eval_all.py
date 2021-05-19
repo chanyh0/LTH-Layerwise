@@ -63,6 +63,7 @@ parser.add_argument('--num-paths', default=50000, type=int)
 parser.add_argument('--evaluate', action="store_true")
 parser.add_argument('--evaluate-p', type=float, default=0.00)
 parser.add_argument('--evaluate-random', action="store_true")
+parser.add_argument('--evaluate-full', action="store_true")
 
 parser.add_argument('--checkpoint', type=str)
 
@@ -92,14 +93,16 @@ def main():
     if args.evaluate:
 
         state_dict = torch.load(args.checkpoint, map_location="cpu")['state_dict']
-        current_mask = extract_mask(state_dict)
-        print(current_mask.keys())
-        prune_model_custom(model, current_mask, conv1=False)
+        if not args.evaluate_full:
+            current_mask = extract_mask(state_dict)
+            print(current_mask.keys())
+            prune_model_custom(model, current_mask, conv1=False)
         try:
             model.load_state_dict(state_dict)
         except:
             state_dict['normalize.mean'] = model.state_dict()['normalize.mean']
             state_dict['normalize.std'] = model.state_dict()['normalize.std']
+            model.load_state_dict(state_dict)
         if args.evaluate_p > 0:
             pruning_model(model, args.evaluate_p, random=args.evaluate_random)
         check_sparsity(model, conv1=False)
