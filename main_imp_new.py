@@ -210,6 +210,7 @@ def main():
             plt.close()
 
         #report result
+        validate(val_loader, model, criterion) # extra forward
         check_sparsity(model, conv1=False)
         print('* best SA={}'.format(all_result['test_ta'][np.argmax(np.array(all_result['ta']))]))
 
