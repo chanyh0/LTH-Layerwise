@@ -145,7 +145,7 @@ def main():
         model.load_state_dict(checkpoint['state_dict'])
         optimizer.load_state_dict(checkpoint['optimizer'])
         scheduler.load_state_dict(checkpoint['scheduler'])
-        initialization = copy.deepcopy(checkpoint['init_weight'])
+        initialization = copy.deepcopy(checkpoint['init_weight']) if 'init_weight' in checkpoint else torch.load(args.init)
         print('loading state:', start_state)
         print('loading from epoch: ',start_epoch, 'best_sa=', best_sa)
         all_result = {}
