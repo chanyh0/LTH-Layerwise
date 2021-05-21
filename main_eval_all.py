@@ -104,6 +104,7 @@ def main():
             state_dict['normalize.mean'] = model.state_dict()['normalize.mean']
             state_dict['normalize.std'] = model.state_dict()['normalize.std']
             model.load_state_dict(state_dict)
+        validate(val_loader, model, criterion)
         if args.evaluate_p > 0:
             pruning_model(model, args.evaluate_p, random=args.evaluate_random)
         
