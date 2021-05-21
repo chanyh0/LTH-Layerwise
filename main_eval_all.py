@@ -104,11 +104,12 @@ def main():
             state_dict['normalize.mean'] = model.state_dict()['normalize.mean']
             state_dict['normalize.std'] = model.state_dict()['normalize.std']
             model.load_state_dict(state_dict)
+        model.cuda()
         validate(val_loader, model, criterion)
         if args.evaluate_p > 0:
             pruning_model(model, args.evaluate_p, random=args.evaluate_random)
         
-        model.cuda()
+        
         tacc = validate(val_loader, model, criterion)
         # evaluate on test set
         test_tacc = validate(test_loader, model, criterion)
