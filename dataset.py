@@ -1,9 +1,40 @@
 from torchvision import transforms
 from torchvision.datasets import CIFAR10, CIFAR100, FashionMNIST, ImageFolder
 from torch.utils.data import DataLoader, Subset
+from helpers.consts import *
+from helpers.ImageFolderCustomClass import ImageFolderCustomClass
 
 import os
+import torch
 import numpy as np
+
+def _getdatatransformswm():
+    transform_wm = transforms.Compose([
+        transforms.CenterCrop(32),
+        transforms.ToTensor(),
+        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+    ])
+    return transform_wm
+
+def getwmloader(wm_path='data/', batch_size=2, labels_path='labels_cifar.txt'):
+    transform_wm = _getdatatransformswm()
+    # load watermark images
+    wmloader = None
+
+    wmset = ImageFolderCustomClass(
+        wm_path,
+        transform_wm)
+    img_nlbl = []
+    wm_targets = np.loadtxt(os.path.join(wm_path, labels_path))
+    for idx, (path, target) in enumerate(wmset.imgs):
+        img_nlbl.append((path, int(wm_targets[idx])))
+    wmset.imgs = img_nlbl
+
+    wmloader = torch.utils.data.DataLoader(
+        wmset, batch_size=batch_size, shuffle=True,
+        num_workers=4, pin_memory=True)
+
+    return wmloader
 
 class CIFAR10_with_index(CIFAR10):
     def __init__(self, root, train=True, transform=None, target_transform=None,
@@ -48,13 +79,12 @@ def cifar10_with_trigger_dataloaders(batch_size=128, data_dir = 'datasets/cifar1
     test_transform = transforms.Compose([
         transforms.ToTensor(),
     ])
-    trigger_set = Subset(CIFAR10_with_index(data_dir, train=True, transform=train_transform, download=True), list(range(1000, 1200)))
-    train_set = Subset(CIFAR10(data_dir, train=True, transform=train_transform, download=True), list(range(1000)) + list(range(1200, 45000)))
+    train_set = Subset(CIFAR10(data_dir, train=True, transform=train_transform, download=True), list(range(45000)))
     val_set = Subset(CIFAR10(data_dir, train=True, transform=test_transform, download=True), list(range(45000, 50000)))
     test_set = CIFAR10(data_dir, train=False, transform=test_transform, download=True)
-    
+    trigger_set = None
     train_loader = DataLoader(train_set, batch_size=batch_size - 2, shuffle=True, num_workers=2, drop_last=False, pin_memory=True)
-    trigger_set_loader = DataLoader(trigger_set, batch_size=2, shuffle=True, num_workers=2, drop_last=False, pin_memory=True)
+    trigger_set_loader = getwmloader()
     val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
     test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
 
