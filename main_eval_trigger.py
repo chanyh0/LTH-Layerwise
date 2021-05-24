@@ -172,10 +172,10 @@ def train(train_loader, trigger_set_loader, trigger_label, model, criterion, opt
     trigger_iter = iter(trigger_set_loader)
     for i, (image, target) in enumerate(train_loader):
         try:
-            trigger_index, trigger_image, trigger_target = next(trigger_iter)
+            trigger_image, trigger_target = next(trigger_iter)
         except:
             trigger_iter = iter(trigger_set_loader)
-            trigger_index, trigger_image, trigger_target = next(trigger_iter)
+            trigger_image, trigger_target = next(trigger_iter)
             
         if epoch < args.warmup:
             warmup_lr(epoch, i+1, optimizer, one_epoch_step=len(train_loader))
@@ -184,7 +184,7 @@ def train(train_loader, trigger_set_loader, trigger_label, model, criterion, opt
         target = target.cuda()
 
         trigger_image = trigger_image.cuda()
-        trigger_target = torch.from_numpy(trigger_label[trigger_index.numpy() - 1000]).cuda()
+        trigger_target = torch.from_numpy(trigger_label).cuda()
         image = torch.cat([image, trigger_image], 0)
         target = torch.cat([target, trigger_target], 0)
 
