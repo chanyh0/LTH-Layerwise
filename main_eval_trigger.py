@@ -184,7 +184,7 @@ def train(train_loader, trigger_set_loader, trigger_label, model, criterion, opt
         target = target.cuda()
 
         trigger_image = trigger_image.cuda()
-        trigger_target = torch.from_numpy(trigger_target).cuda()
+        trigger_target = trigger_target.cuda()
         image = torch.cat([image, trigger_image], 0)
         target = torch.cat([target, trigger_target], 0)
 
