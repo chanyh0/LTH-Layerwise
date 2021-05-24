@@ -16,7 +16,7 @@ def _getdatatransformswm():
     ])
     return transform_wm
 
-def getwmloader(wm_path='data/', batch_size=2, labels_path='labels_cifar.txt'):
+def getwmloader(wm_path='data/trigger_set', batch_size=2, labels_path='labels_cifar.txt'):
     transform_wm = _getdatatransformswm()
     # load watermark images
     wmloader = None
