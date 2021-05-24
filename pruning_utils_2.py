@@ -35,7 +35,7 @@ def pruning_model(model, px, conv1=True, random=False):
             amount=px,
         )
 
-def prune_model_custom(model, mask_dict, conv1=True, random_index=-1, hold_sparsity = True):
+def prune_model_custom(model, mask_dict, conv1=False, random_index=-1, hold_sparsity = True):
 
     print('start unstructured pruning with custom mask')
     index = 0
