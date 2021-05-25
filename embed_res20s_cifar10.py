@@ -75,7 +75,6 @@ real_mask = mask[max_name].numpy()[r - code.shape[0] // 2: r - code.shape[0] // 
 real_mask_one = (real_mask == 1).sum()
 real_mask_flat = ((real_mask).sum((2,3)) > 0).astype(float)
 print(real_mask_flat.shape)
-(real_mask_flat == code).astype(float).mean()
 
 
 
