@@ -158,6 +158,10 @@ def main():
         optimizer.load_state_dict(checkpoint['optimizer'])
         scheduler.load_state_dict(checkpoint['scheduler'])
         initalization = checkpoint['init_weight']
+        if args.prune_type == 'seed2':
+            model_path = f"init/{args.arch}_{args.dataset}_{args.seed}.pth.tar"
+            initalization = torch.load(model_path, map_location="cpu")
+            model.load_state_dict(initalization)
         print('loading state:', start_state)
         print('loading from epoch: ',start_epoch, 'best_sa=', best_sa)
 
