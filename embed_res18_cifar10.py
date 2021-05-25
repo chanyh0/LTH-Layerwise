@@ -38,17 +38,23 @@ qr.make(fit=True)
 
 img = qr.make_image(fill_color="black", back_color="white")
 code = np.array(img)
-from scipy.signal import correlate2d
 max_sim = 0
+h,w = code.shape[0],code.shape[1]
 for name in mask:
     if not 'layer3' in name:
         continue
     mask_ = mask[name].sum((2,3)).numpy() > 0
     mask_ = mask_.astype(float)
-    sim = np.max(correlate2d(mask_, code, mode='same') / code.size)
-    if sim > max_sim:
+    sim = np.zeros((mask_.shape[0] - code.shape[0] + 1, mask_.shape[1] - code.shape[1] + 1))
+    for i in range(sim.shape[0]):
+        for j in range(sim.shape[1]):
+            sim[i,j] = (mask_[i:i+h,j:j+w] == code).mean()
+
+    if np.max(sim) > max_sim:
         max_name = name
-        max_sim = sim
+        max_sim = np.max(sim)
+print(max_name)
+print(max_sim)
 #max_name = 'layer2.0.conv2.weight_mask' # override
 import sys
 if len(sys.argv) > 1:
@@ -57,8 +63,11 @@ print(mask.keys())
 print(max_name)
 mask_ = mask[max_name].sum((2,3)).numpy() > 0
 mask_ = mask_.astype(float)
-corr = correlate2d(mask_, code, mode='same') / code.size
-r, c = np.where(corr == np.max(corr))
+sim = np.zeros((mask_.shape[0] - code.shape[0] + 1, mask_.shape[1] - code.shape[1] + 1))
+for i in range(sim.shape[0]):
+    for j in range(sim.shape[1]):
+        sim[i,j] = (mask_[i:i+h,j:j+w] == code).mean()
+r, c = np.where(sim == np.max(sim))
 print(r,c)
 r = r[0]
 c = c[0]
