@@ -71,6 +71,7 @@ r, c = np.where(sim == np.max(sim))
 
 r = r[0]
 c = c[0]
+print(r,c)
 real_mask = mask[max_name].numpy()[r - code.shape[0] // 2: r - code.shape[0] // 2 + code.shape[0], c- code.shape[0] // 2 : c- code.shape[0] // 2+ code.shape[0]].copy()
 real_mask_one = (real_mask == 1).sum()
 real_mask_flat = ((real_mask).sum((2,3)) > 0).astype(float)
