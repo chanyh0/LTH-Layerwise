@@ -202,7 +202,7 @@ def tiny_imagenet_dataloaders(batch_size=64, data_dir = 'datasets/tiny-imagenet-
     val_set = Subset(ImageFolder(train_path, transform=test_transform), split_permutation[90000:])
     test_set = ImageFolder(val_path, transform=test_transform)
 
-    train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=2, pin_memory=True)
+    train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=8, pin_memory=True)
     val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
     test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
 
