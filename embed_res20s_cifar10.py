@@ -39,6 +39,7 @@ img = qr.make_image(fill_color="black", back_color="white")
 code = np.array(img)
 from scipy.signal import correlate2d
 h,w = code.shape[0],code.shape[1]
+max_sim = 0
 for name in mask:
     if not 'layer3' in name:
         continue
