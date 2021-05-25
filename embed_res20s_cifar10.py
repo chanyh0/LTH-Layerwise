@@ -32,7 +32,7 @@ qr = qrcode.QRCode(
     box_size=1,
     border=0,
 )
-qr.add_data('Th1sIs4siGNaTurE')
+qr.add_data('signature')
 qr.make()
 
 img = qr.make_image(fill_color="black", back_color="white")
