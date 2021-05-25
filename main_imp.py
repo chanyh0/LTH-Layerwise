@@ -130,7 +130,7 @@ def main():
         initalization = None
     else:
         assert False
-
+    
     optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay)
@@ -162,6 +162,7 @@ def main():
             model_path = f"init/{args.arch}_{args.dataset}_{args.seed}.pth.tar"
             initalization = torch.load(model_path, map_location="cpu")
             model.load_state_dict(initalization)
+            model.cuda()
         print('loading state:', start_state)
         print('loading from epoch: ',start_epoch, 'best_sa=', best_sa)
 
