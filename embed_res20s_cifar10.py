@@ -33,7 +33,7 @@ qr = qrcode.QRCode(
     border=0,
 )
 qr.add_data('Th1sIs4siGNaTurE')
-qr.make(fit=True)
+qr.make()
 
 img = qr.make_image(fill_color="black", back_color="white")
 code = np.array(img)
@@ -47,7 +47,9 @@ for name in mask:
         max_name = name
         max_sim = sim
 
-max_name = 'layer2.1.conv1.weight_mask' # override
+import sys
+if len(sys.argv) > 1:
+    max_name = sys.argv[1]
 print(mask[max_name].shape)
 print(code.shape)
 print(max_name)
@@ -55,6 +57,7 @@ mask_ = mask[max_name].sum((2,3)).numpy() > 0
 mask_ = mask_.astype(float)
 corr = correlate2d(mask_, code, mode="same") / code.size
 print(corr.shape)
+
 r, c = np.where(corr == np.max(corr))
 print(r,c)
 r = r[0]
@@ -83,7 +86,7 @@ real_mask_one_new = (real_mask == 1).sum()
 real_mask_flat_new = (real_mask).sum((2,3))
 diff = real_mask_one_new - real_mask_one
 print(diff)
-'''
+
 if (diff > 0):
     # remove some connections
     real_mask_flat_greater_0 = np.where(real_mask_flat_new > 1)
@@ -98,7 +101,7 @@ else:
     for i in range(pos.shape[1]):
         p = pos[:, i]
         real_mask[p[0], p[1], p[2], p[3]] = 1
-'''
+
 
 import matplotlib.pyplot as plt
 

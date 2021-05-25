@@ -47,7 +47,9 @@ for name in mask:
         max_name = name
         max_sim = sim
 print(max_name)
-max_name = 'layer2.2.conv2.weight_mask' # override
+import sys
+if len(sys.argv) > 1:
+    max_name = sys.argv[1]
 print(mask[max_name].shape)
 print(code.shape)
 print(max_name)
