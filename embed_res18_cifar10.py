@@ -115,7 +115,7 @@ else:
 import matplotlib.pyplot as plt
 
 
-mask[max_name][r - code.shape[0] // 2: r - code.shape[0] // 2 + code.shape[0], c - code.shape[0] // 2: c - code.shape[0] // 2 + code.shape[0]] = torch.from_numpy(real_mask)
+mask[max_name][r:r+h, c:c+w] = torch.from_numpy(real_mask)
 
 
 vis = mask[max_name].sum((2,3)).numpy() > 0
