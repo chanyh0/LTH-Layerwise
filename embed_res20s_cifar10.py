@@ -72,7 +72,7 @@ r, c = np.where(sim == np.max(sim))
 r = r[0]
 c = c[0]
 print(r,c)
-real_mask = mask[max_name].numpy()[r - code.shape[0] // 2: r - code.shape[0] // 2 + code.shape[0], c- code.shape[0] // 2 : c- code.shape[0] // 2+ code.shape[0]].copy()
+real_mask = mask[max_name].numpy()[r:r+h, c:c+w].copy()
 real_mask_one = (real_mask == 1).sum()
 real_mask_flat = ((real_mask).sum((2,3)) > 0).astype(float)
 print(real_mask_flat.shape)
@@ -115,7 +115,7 @@ else:
 import matplotlib.pyplot as plt
 
 
-mask[max_name][r - code.shape[0] // 2: r - code.shape[0] // 2 + code.shape[0], c - code.shape[0] // 2: c - code.shape[0] // 2 + code.shape[0]] = torch.from_numpy(real_mask)
+mask[max_name][r:r+h, c:c+w] = torch.from_numpy(real_mask)
 
 
 vis = mask[max_name].sum((2,3)).numpy() > 0
