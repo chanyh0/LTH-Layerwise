@@ -27,7 +27,7 @@ mask = extract_mask(a['state_dict'])
 check_sparsity(mask)
 import qrcode
 qr = qrcode.QRCode(
-    version=1,
+    version=3,
     error_correction=qrcode.constants.ERROR_CORRECT_H,
     box_size=1,
     border=0,
@@ -41,10 +41,10 @@ from scipy.signal import correlate2d
 h,w = code.shape[0],code.shape[1]
 max_sim = 0
 for name in mask:
-    if not 'layer3' in name:
-        continue
     mask_ = mask[name].sum((2,3)).numpy() > 0
     mask_ = mask_.astype(float)
+    if (mask_.shape[0] - code.shape[0] < 0) or (mask_.shape[1] - code.shape[1] < 0):
+        continue
     sim = np.zeros((mask_.shape[0] - code.shape[0] + 1, mask_.shape[1] - code.shape[1] + 1))
     for i in range(sim.shape[0]):
         for j in range(sim.shape[1]):

@@ -28,23 +28,24 @@ mask = extract_mask(a['state_dict'])
 check_sparsity(mask)
 import qrcode
 qr = qrcode.QRCode(
-    version=1,
+    version=3,
     error_correction=qrcode.constants.ERROR_CORRECT_H,
     box_size=1,
     border=0,
 )
 qr.add_data('signature')
-qr.make(fit=True)
+qr.make()
 
 img = qr.make_image(fill_color="black", back_color="white")
 code = np.array(img)
-max_sim = 0
+from scipy.signal import correlate2d
 h,w = code.shape[0],code.shape[1]
+max_sim = 0
 for name in mask:
-    if not 'layer3' in name:
-        continue
     mask_ = mask[name].sum((2,3)).numpy() > 0
     mask_ = mask_.astype(float)
+    if (mask_.shape[0] - code.shape[0] < 0) or (mask_.shape[1] - code.shape[1] < 0):
+        continue
     sim = np.zeros((mask_.shape[0] - code.shape[0] + 1, mask_.shape[1] - code.shape[1] + 1))
     for i in range(sim.shape[0]):
         for j in range(sim.shape[1]):
@@ -68,14 +69,14 @@ for i in range(sim.shape[0]):
     for j in range(sim.shape[1]):
         sim[i,j] = (mask_[i:i+h,j:j+w] == code).mean()
 r, c = np.where(sim == np.max(sim))
-print(r,c)
+
 r = r[0]
 c = c[0]
-real_mask = mask[max_name].numpy()[r - code.shape[0] // 2: r - code.shape[0] // 2 + code.shape[0], c - code.shape[0] // 2: c - code.shape[0] // 2 + code.shape[0]].copy()
+print(r,c)
+real_mask = mask[max_name].numpy()[r:r+h, c:c+w].copy()
 real_mask_one = (real_mask == 1).sum()
 real_mask_flat = ((real_mask).sum((2,3)) > 0).astype(float)
-
-(real_mask_flat == code).astype(float).mean()
+print(real_mask_flat.shape)
 
 
 
