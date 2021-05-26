@@ -84,10 +84,10 @@ print(real_mask_flat.shape)
 for i in range(code.shape[0]):
     for j in range(code.shape[1]):
         if code[i,j] == 1 and real_mask_flat[i,j] == 0:
-            _ = np.array([0] * 9)
+            _ = np.array([0] * real_mask[i,j].size)
             _[0] = 1
             new_mask = np.random.permutation(_)
-            real_mask[i,j] = new_mask.reshape((3, 3))
+            real_mask[i,j] = new_mask.reshape(real_mask[i,j].shape)
             real_mask_flat[i,j] == 1
         elif code[i,j] == 0 and real_mask_flat[i,j] == 1:
             real_mask[i,j] = 0
