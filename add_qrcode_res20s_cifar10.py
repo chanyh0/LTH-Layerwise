@@ -122,6 +122,7 @@ def main():
     for i in range(recover.shape[1]):
         mask[recover[0][i], recover[1][i]] = 1
         current_mask[args.max_name + ".weight_mask"][recover[0][i], recover[1][i], recover[2][i], recover[3][i]] = 1
+        state_dict[args.max_name + ".weight_orig"][recover[0][i], recover[1][i], recover[2][i], recover[3][i]] = torch.randn()
 
     mask = mask.int().numpy()
     plt.imshow(mask)
