@@ -405,3 +405,28 @@ def prune_random(model, mask_dict, num_paths, args):
                 new_mask_dict[name+'.weight_mask'][end_index, start_index, :, :] = 0
                 start_index = end_index
     return new_mask_dict
+
+
+
+def prune_omp(model, mask_dict, num_paths, args):
+    new_mask_dict = copy.deepcopy(mask_dict)
+    named_params = model.named_parameters()
+    params = []
+    for name, m in named_params:
+        if name + '_mask' in mask_dict:
+            params.append(m)
+
+    rev_f, n_elements = get_reverse_flatten_params_fun(params,get_count=True)
+    vector = flatten_params((-p.data.clone() for p in params))
+    result = [w.data.abs() for w in params]
+    result_dict = {}
+    result_flatten = []
+    for key, param in zip(mask_dict.keys(), result):
+        param[mask_dict[key] == 0] = -np.inf
+        result_flatten.append(param.view(-1))
+    result_flatten = torch.cat(result_flatten, 0)
+    threshold, _ = torch.kthvalue(result_flatten, result_flatten.numel() - num_paths)
+    for key, param in zip(mask_dict.keys(), result):
+        param[mask_dict[key] == 0] = -np.inf
+        new_mask_dict[key][param > threshold] = 0
+    return new_mask_dict
