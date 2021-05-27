@@ -120,6 +120,8 @@ def main():
 
     recover = non_zeros[:, np.random.permutation(non_zeros.shape[1])[:to_select]]
     print(state_dict[args.max_name + ".weight_orig"].std())
+    print(state_dict[args.max_name + ".weight_orig"].mean())
+
     assert False
     print(recover.shape)
     for i in range(recover.shape[1]):
