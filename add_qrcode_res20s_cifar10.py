@@ -155,6 +155,7 @@ def main():
     plt.savefig(f'ownership/{args.arch}_{args.dataset}_qrcode_add_{args.evaluate_p}.png')
 
     remove_prune(model, False)
+    validate(test_loader, model, criterion)
     prune_model_custom(model, current_mask)
     check_sparsity(model, False)
     validate(test_loader, model, criterion)
