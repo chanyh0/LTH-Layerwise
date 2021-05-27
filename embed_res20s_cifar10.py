@@ -72,8 +72,8 @@ for i in range(sim.shape[0]):
 r, c = np.where(sim == np.max(sim))
 #r=2
 #c=3
-#r = r[0]
-#c = c[0]
+r = r[0]
+c = c[0]
 
 print(r,c)
 real_mask = mask[max_name].numpy()[r:r+h, c:c+w].copy()
