@@ -156,7 +156,7 @@ def main():
 
     remove_prune(model, False)
     model.load_state_dict(state_dict)
-    
+    validate(test_loader, model, criterion)
     prune_model_custom(model, current_mask)
     check_sparsity(model, False)
     validate(test_loader, model, criterion)
