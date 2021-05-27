@@ -109,7 +109,7 @@ def main():
     check_sparsity(model, conv1=False)
     state = model.state_dict()
 
-    mask = state[args.max_name + ".weight_mask"].copy()
+    mask = state[args.max_name + ".weight_mask"].clone()
     mask = mask.sum((2,3)) > 0
     
     non_zeros = np.stack(np.where(state[args.max_name + ".weight_mask"] == 0))
