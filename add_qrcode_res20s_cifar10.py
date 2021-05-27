@@ -133,6 +133,7 @@ def main():
             state_dict[args.max_name + ".weight_orig"][recover[0][i], recover[1][i], recover[2][i], recover[3][i]] = w
             count_success += 1
     print(count_success / recover.shape[1])
+    assert False
     mask = mask.int().numpy()
     plt.imshow(mask)
     plt.savefig(f'ownership/{args.arch}_{args.dataset}_qrcode_add_{args.evaluate_p}.png')
