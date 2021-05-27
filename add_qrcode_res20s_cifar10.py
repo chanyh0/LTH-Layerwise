@@ -111,7 +111,7 @@ def main():
 
     mask = state[args.max_name + ".weight_mask"].clone()
     mask = mask.sum((2,3)) > 0
-    min_weight = (state[args.max_name + ".weight_orig"] * state[args.max_name + ".weight_mask"]).min()
+    min_weight = (state[args.max_name + ".weight_orig"] * state[args.max_name + ".weight_mask"]).abs().min()
     print(min_weight)
     non_zeros = np.stack(np.where(state[args.max_name + ".weight_mask"] == 0))
     print(non_zeros.shape)
@@ -119,16 +119,20 @@ def main():
     to_select = int(non_zeros.shape[1] * args.evaluate_p)
 
     recover = non_zeros[:, np.random.permutation(non_zeros.shape[1])[:to_select]]
-    print(state_dict[args.max_name + ".weight_orig"].std())
-    print(state_dict[args.max_name + ".weight_orig"].mean())
+    #print(state_dict[args.max_name + ".weight_orig"].std())
+    #print(state_dict[args.max_name + ".weight_orig"].mean())
 
-    assert False
+    #assert False
     print(recover.shape)
+    count_success = 0
     for i in range(recover.shape[1]):
         mask[recover[0][i], recover[1][i]] = 1
-        current_mask[args.max_name + ".weight_mask"][recover[0][i], recover[1][i], recover[2][i], recover[3][i]] = 1
-        state_dict[args.max_name + ".weight_orig"][recover[0][i], recover[1][i], recover[2][i], recover[3][i]] = torch.randn(1) / 10
-
+        w = torch.randn(1) * 0.1
+        if (w.abs() >= min_weight):
+            current_mask[args.max_name + ".weight_mask"][recover[0][i], recover[1][i], recover[2][i], recover[3][i]] = 1
+            state_dict[args.max_name + ".weight_orig"][recover[0][i], recover[1][i], recover[2][i], recover[3][i]] = w
+            count_success += 1
+    print(count_success / recover.shape[1])
     mask = mask.int().numpy()
     plt.imshow(mask)
     plt.savefig(f'ownership/{args.arch}_{args.dataset}_qrcode_add_{args.evaluate_p}.png')
