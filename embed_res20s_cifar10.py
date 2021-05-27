@@ -95,7 +95,7 @@ for i in range(code.shape[0]):
             real_mask[i,j] = 0
             real_mask_flat[i,j] == 0
 
-original_mask = mask[max_name][r:r+h, c:c+w].clone()
+original_mask = mask[max_name][r:r+h, c:c+w].clone().numpy()
 real_mask[0:9, 0:9] = original_mask[0:9, 0:9]
 real_mask[-9:,:9] = original_mask[-9:,:9]
 real_mask[:9,-9:] = original_mask[:9,-9:]
