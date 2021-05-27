@@ -70,9 +70,11 @@ for i in range(sim.shape[0]):
     for j in range(sim.shape[1]):
         sim[i,j] = (mask_[i:i+h,j:j+w] == code).mean()
 r, c = np.where(sim == np.max(sim))
-
+#r=2
+#c=3
 r = r[0]
 c = c[0]
+
 print(r,c)
 real_mask = mask[max_name].numpy()[r:r+h, c:c+w].copy()
 real_mask_one = (real_mask == 1).sum()
@@ -93,10 +95,20 @@ for i in range(code.shape[0]):
             real_mask[i,j] = 0
             real_mask_flat[i,j] == 0
 
+original_mask = mask[max_name][r:r+h, c:c+w].clone().numpy()
+real_mask[0:9, 0:9] = original_mask[0:9, 0:9]
+real_mask[-9:,:9] = original_mask[-9:,:9]
+real_mask[:9,-9:] = original_mask[:9,-9:]
+real_mask[20:25, 20:25] = original_mask[20:25, 20:25]
+real_mask[-8, 4 * 3 + 9] = 1
+real_mask[6] = original_mask[6]
+real_mask[:, 6] = original_mask[:, 6]
+
 real_mask_one_new = (real_mask == 1).sum()
 real_mask_flat_new = (real_mask).sum((2,3))
 diff = real_mask_one_new - real_mask_one
 print(diff)
+
 if (diff > 0):
     # remove some connections
     real_mask_flat_greater_0 = np.where(real_mask_flat_new > 1)
@@ -116,7 +128,7 @@ else:
 import matplotlib.pyplot as plt
 
 
-mask[max_name][r - code.shape[0] // 2: r - code.shape[0] // 2 + code.shape[0], c - code.shape[0] // 2: c - code.shape[0] // 2 + code.shape[0]] = torch.from_numpy(real_mask)
+mask[max_name][r:r+h, c:c+w] = torch.from_numpy(real_mask)
 
 
 vis = mask[max_name].sum((2,3)).numpy() > 0
