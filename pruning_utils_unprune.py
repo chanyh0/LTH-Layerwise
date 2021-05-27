@@ -47,7 +47,7 @@ def custom_prune(model, mask_dict, prune_type, num_paths, args, add_back=False):
                 size = np.product(np.array(mask.shape))
                 new_mask = mask_vector[n_cur:n_cur+size].view(mask.shape).to(mask.device)
                 n_cur += size
-                m.weight.data = torch.where((new_mask - mask).bool(), m.weight.data, torch.randn(mask.shape, device=mask.device) / 100)
+                m.weight.data = torch.where((new_mask - mask).bool(), torch.randn(mask.shape, device=mask.device) / 100, m.weight.data)
                 prune.CustomFromMask.apply(m, 'weight', mask=new_mask)
     else:
         for name,m in model.named_modules():
