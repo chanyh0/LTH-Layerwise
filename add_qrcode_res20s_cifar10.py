@@ -79,8 +79,8 @@ def main():
     print('conv1 included for prune and rewind: {}'.format(args.conv1))
     print('fc included for rewind: {}'.format(args.fc))
     print('*'*50)
-    torch.manual_seed(1)
-    np.random.seed(1)
+    torch.manual_seed(2)
+    np.random.seed(2)
 
     os.makedirs(args.save_dir, exist_ok=True)
     if args.seed:
