@@ -57,7 +57,7 @@ for name in mask:
         max_sim = np.max(sim)
 print(max_name)
 print(max_sim)
-#max_name = 'layer2.0.conv2.weight_mask' # override
+max_name = 'layer2.1.conv1.weight_mask' # override
 import sys
 if len(sys.argv) > 1:
     max_name = sys.argv[1]
