@@ -79,6 +79,8 @@ def main():
     print('conv1 included for prune and rewind: {}'.format(args.conv1))
     print('fc included for rewind: {}'.format(args.fc))
     print('*'*50)
+    torch.manual_seed(1)
+    np.random.seed(1)
 
     os.makedirs(args.save_dir, exist_ok=True)
     if args.seed:
@@ -92,7 +94,21 @@ def main():
 
     state_dict = torch.load(args.checkpoint, map_location="cpu")['state_dict']
     current_mask = extract_mask(state_dict)
+    masks = []
+    for name in current_mask:
+        masks.append(current_mask[name].view(-1))
     
+    masks = torch.cat(masks, 0)
+    masks[masks == 0] = torch.rand((masks == 0).sum())
+    masks[masks < 1 - args.evaluate_p] = 0
+    masks[masks > 1 - args.evaluate_p] = 1
+    count = 0
+    for name in current_mask:
+        current_mask[name] = masks[count:count+current_mask[name].nelement()].view(current_mask[name].shape)
+        count += current_mask[name].nelement()
+        
+        state_dict[name[:-12] + '.weight_orig'] = torch.where(state_dict[name] == current_mask[name], state_dict[name[:-12] + '.weight_orig'], torch.randn(state_dict[name[:-12] + '.weight_orig'].shape) * 0.1)
+        state_dict[name] = current_mask[name]
     prune_model_custom(model, current_mask, conv1=False)
     check_sparsity(model, conv1=False)
     try:
@@ -103,45 +119,21 @@ def main():
         model.load_state_dict(state_dict)
 
     #validate(val_loader, model, criterion)
+    check_sparsity(model, conv1=False)
     #if args.evaluate_p > 0:
     #    pruning_model(model, args.evaluate_p, random=args.evaluate_random)
+
     validate(test_loader, model, criterion)
     check_sparsity(model, conv1=False)
     state = model.state_dict()
 
     mask = state[args.max_name + ".weight_mask"].clone()
     mask = mask.sum((2,3)) > 0
-
-    prod = state[args.max_name + ".weight_orig"] * state[args.max_name + ".weight_mask"]
-    prod[prod == 0] = 10000000
-    min_weight = prod.abs().min()
-    print(min_weight)
-    non_zeros = np.stack(np.where(state[args.max_name + ".weight_mask"] == 0))
-    print(non_zeros.shape)
-    print(state[args.max_name + ".weight_mask"].nelement())
-    to_select = int(non_zeros.shape[1] * args.evaluate_p)
-
-    recover = non_zeros[:, np.random.permutation(non_zeros.shape[1])[:to_select]]
-    #print(state_dict[args.max_name + ".weight_orig"].std())
-    #print(state_dict[args.max_name + ".weight_orig"].mean())
-
-    #assert False
-    print(recover.shape)
-    count_success = 0
-    for i in range(recover.shape[1]):
-        mask[recover[0][i], recover[1][i]] = 1
-        w = torch.randn(1) * 0.1
-        if (w.abs() >= min_weight):
-            current_mask[args.max_name + ".weight_mask"][recover[0][i], recover[1][i], recover[2][i], recover[3][i]] = 1
-            state_dict[args.max_name + ".weight_orig"][recover[0][i], recover[1][i], recover[2][i], recover[3][i]] = w
-            count_success += 1
-    print(count_success / recover.shape[1])
-    assert False
     mask = mask.int().numpy()
     plt.imshow(mask)
     plt.savefig(f'ownership/{args.arch}_{args.dataset}_qrcode_add_{args.evaluate_p}.png')
     #assert False
-    mask = mask[2:2+29, 3:3+29]
+    mask = mask[3:3+29, 1:1+29]
     #assert False
     import qrcode
     qr = qrcode.QRCode(
@@ -167,7 +159,7 @@ def main():
 
     plt.imshow(mask)
     plt.savefig(f'ownership/{args.arch}_{args.dataset}_qrcode_add_{args.evaluate_p}.png')
-
+    assert False
     remove_prune(model, False)
     
     validate(test_loader, model, criterion)
@@ -203,6 +195,7 @@ def validate(val_loader, model, criterion):
 
         output = output.float()
         loss = loss.float()
+        
 
         # measure accuracy and record loss
         prec1 = accuracy(output.data, target)[0]
