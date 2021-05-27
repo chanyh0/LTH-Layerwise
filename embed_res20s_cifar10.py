@@ -95,6 +95,15 @@ for i in range(code.shape[0]):
             real_mask[i,j] = 0
             real_mask_flat[i,j] == 0
 
+original_mask = mask[max_name][r:r+h, c:c+w].clone()
+real_mask[0:9, 0:9] = original_mask[0:9, 0:9]
+real_mask[-9:,:9] = original_mask[-9:,:9]
+real_mask[:9,-9:] = original_mask[:9,-9:]
+real_mask[20:25, 20:25] = original_mask[20:25, 20:25]
+real_mask[-8, 4 * 3 + 9] = 1
+real_mask[6] = original_mask[6]
+real_mask[:, 6] = original_mask[:, 6]
+
 real_mask_one_new = (real_mask == 1).sum()
 real_mask_flat_new = (real_mask).sum((2,3))
 diff = real_mask_one_new - real_mask_one
@@ -118,16 +127,8 @@ else:
 
 import matplotlib.pyplot as plt
 
-original_mask = mask[max_name][r:r+h, c:c+w].clone()
-substitute_mask = torch.from_numpy(real_mask)
-substitute_mask[0:9, 0:9] = original_mask[0:9, 0:9]
-substitute_mask[-9:,:9] = original_mask[-9:,:9]
-substitute_mask[:9,-9:] = original_mask[:9,-9:]
-substitute_mask[20:25, 20:25] = original_mask[20:25, 20:25]
-substitute_mask[-8, 4 * 3 + 9] = 1
-substitute_mask[6] = original_mask[6]
-substitute_mask[:, 6] = original_mask[:, 6]
-mask[max_name][r:r+h, c:c+w] = substitute_mask
+
+mask[max_name][r:r+h, c:c+w] = real_mask
 
 
 vis = mask[max_name].sum((2,3)).numpy() > 0
