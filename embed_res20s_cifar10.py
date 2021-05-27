@@ -70,9 +70,11 @@ for i in range(sim.shape[0]):
     for j in range(sim.shape[1]):
         sim[i,j] = (mask_[i:i+h,j:j+w] == code).mean()
 r, c = np.where(sim == np.max(sim))
+r=2
+c=3
+#r = r[0]
+#c = c[0]
 
-r = r[0]
-c = c[0]
 print(r,c)
 real_mask = mask[max_name].numpy()[r:r+h, c:c+w].copy()
 real_mask_one = (real_mask == 1).sum()
@@ -116,8 +118,16 @@ else:
 
 import matplotlib.pyplot as plt
 
-
-mask[max_name][r:r+h, c:c+w] = torch.from_numpy(real_mask)
+original_mask = mask[max_name][r:r+h, c:c+w].clone()
+substitute_mask = torch.from_numpy(real_mask)
+substitute_mask[0:9, 0:9] = original_mask[0:9, 0:9]
+substitute_mask[-9:,:9] = original_mask[-9:,:9]
+substitute_mask[:9,-9:] = original_mask[:9,-9:]
+substitute_mask[20:25, 20:25] = original_mask[20:25, 20:25]
+substitute_mask[-8, 4 * 3 + 9] = 1
+substitute_mask[6] = original_mask[6]
+substitute_mask[:, 6] = original_mask[:, 6]
+mask[max_name][r:r+h, c:c+w] = substitute_mask
 
 
 vis = mask[max_name].sum((2,3)).numpy() > 0
