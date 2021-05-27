@@ -128,7 +128,7 @@ else:
 import matplotlib.pyplot as plt
 
 
-mask[max_name][r:r+h, c:c+w] = real_mask
+mask[max_name][r:r+h, c:c+w] = torch.from_numpy(real_mask)
 
 
 vis = mask[max_name].sum((2,3)).numpy() > 0
