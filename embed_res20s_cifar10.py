@@ -70,8 +70,8 @@ for i in range(sim.shape[0]):
     for j in range(sim.shape[1]):
         sim[i,j] = (mask_[i:i+h,j:j+w] == code).mean()
 r, c = np.where(sim == np.max(sim))
-r=2
-c=3
+#r=2
+#c=3
 #r = r[0]
 #c = c[0]
 
