@@ -111,7 +111,10 @@ def main():
 
     mask = state[args.max_name + ".weight_mask"].clone()
     mask = mask.sum((2,3)) > 0
-    min_weight = (state[args.max_name + ".weight_orig"] * state[args.max_name + ".weight_mask"]).abs().min()
+
+    prod = state[args.max_name + ".weight_orig"] * state[args.max_name + ".weight_mask"]
+    prod[prod == 0] = 10000000
+    min_weight = prod.abs().min()
     print(min_weight)
     non_zeros = np.stack(np.where(state[args.max_name + ".weight_mask"] == 0))
     print(non_zeros.shape)
