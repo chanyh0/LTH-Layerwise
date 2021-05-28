@@ -25,7 +25,8 @@ from torch.utils.data.sampler import SubsetRandomSampler
 from advertorch.utils import NormalizeByChannelMeanStd
 
 from utils import *
-from pruning_utils import *
+from pruning_utils_2 import *
+from pruning_utils_unprune import *
 
 parser = argparse.ArgumentParser(description='PyTorch Evaluation Tickets')
 
