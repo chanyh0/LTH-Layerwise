@@ -30,6 +30,13 @@ def setup_model_dataset(args):
             mean=[0.4914, 0.4822, 0.4465], std=[0.2470, 0.2435, 0.2616])
         train_set_loader, val_loader, test_loader, trigger_set_dataloader = cifar10_with_trigger_dataloaders(batch_size= args.batch_size, data_dir =args.data)
 
+    elif args.dataset == 'cifar100_trigger':
+        classes = 100
+        train_number = 45000
+        normalization = NormalizeByChannelMeanStd(
+            mean=[0.5071, 0.4866, 0.4409], std=[0.2673, 0.2564, 0.2762])
+        train_set_loader, val_loader, test_loader, trigger_set_dataloader = cifar100_with_trigger_dataloaders(batch_size= args.batch_size, data_dir =args.data)
+
     elif args.dataset == 'cifar100':
         classes = 100
         train_number = 45000
