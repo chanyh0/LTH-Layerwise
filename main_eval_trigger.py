@@ -57,8 +57,12 @@ parser.add_argument('--fc', action="store_true", help="whether rewind fc")
 parser.add_argument('--reverse_mask', action="store_true", help="whether using reverse mask")
 parser.add_argument('--rewind_arch', action="store_true", help="mask add back")
 
-parser.add_argument('--random-index', default=20, type=int)
-parser.add_argument('--random-sparsity', action="store_true")
+parser.add_argument('--evaluate', action="store_true")
+parser.add_argument('--evaluate-p', type=float, default=0.00)
+parser.add_argument('--evaluate-random', action="store_true")
+parser.add_argument('--evaluate-full', action="store_true")
+
+parser.add_argument('--checkpoint', type=str)
 
 
 
