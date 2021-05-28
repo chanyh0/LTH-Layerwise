@@ -82,15 +82,44 @@ def main():
     # prepare dataset 
     assert 'trigger' in args.dataset
     model, train_loader, val_loader, test_loader, trigger_set_loader = setup_model_dataset(args)
+    criterion = nn.CrossEntropyLoss()
+    decreasing_lr = list(map(int, args.decreasing_lr.split(',')))
+    if args.evaluate:
+
+        state_dict = torch.load(args.checkpoint, map_location="cpu")['state_dict']
+        if not args.evaluate_full:
+            current_mask = extract_mask(state_dict)
+            print(current_mask.keys())
+            prune_model_custom(model, current_mask, conv1=False)
+            check_sparsity(model, conv1=False)
+        try:
+            model.load_state_dict(state_dict)
+        except:
+            state_dict['normalize.mean'] = model.state_dict()['normalize.mean']
+            state_dict['normalize.std'] = model.state_dict()['normalize.std']
+            model.load_state_dict(state_dict)
+        model.cuda()
+        validate(val_loader, model, criterion)
+        if args.evaluate_p > 0:
+            pruning_model(model, args.evaluate_p, random=args.evaluate_random)
+        
+        check_sparsity(model, conv1=False)
+        
+        tacc = validate(val_loader, model, criterion)
+        # evaluate on test set
+        test_tacc = validate(test_loader, model, criterion)
+        trigger_tacc = validate(trigger_set_loader, model, criterion)
+
+        print(tacc)
+        print(test_tacc)
+        print(trigger_tacc)
+        return
     model.cuda()
 
     #loading tickets
     load_ticket(model, args)
-    trigger_label = np.random.randint(0, 10, size=200)
-    import pickle
-    pickle.dump(trigger_label, open("trigger_set_label.pkl", 'wb'))
-    criterion = nn.CrossEntropyLoss()
-    decreasing_lr = list(map(int, args.decreasing_lr.split(',')))
+    
+    
 
     if args.optim == 'sgd':
         print('training with SGD optimizer')
@@ -116,7 +145,7 @@ def main():
     for epoch in range(start_epoch, args.epochs):
 
         print(optimizer.state_dict()['param_groups'][0]['lr'])
-        acc = train(train_loader, trigger_set_loader, trigger_label, model, criterion, optimizer, epoch)
+        acc = train(train_loader, trigger_set_loader, model, criterion, optimizer, epoch)
 
         # evaluate on validation set
         tacc = validate(val_loader, model, criterion)
@@ -160,7 +189,7 @@ def main():
     check_sparsity(model, conv1=False)
     print('* best SA={}'.format(all_result['test_ta'][np.argmax(np.array(all_result['ta']))]))
 
-def train(train_loader, trigger_set_loader, trigger_label, model, criterion, optimizer, epoch):
+def train(train_loader, trigger_set_loader, model, criterion, optimizer, epoch):
     
     losses = AverageMeter()
     top1 = AverageMeter()
