@@ -1118,7 +1118,216 @@ class ResNet50_3(ResNet):
                 count += m.weight.numel()
                 print(m.weight.shape)
         print(count/25557032)
-    
+
+class ResNet50_4(ResNet):
+    def __init__(self, block, layers, num_classes=1000, zero_init_residual=False,
+                groups=1, width_per_group=64, replace_stride_with_dilation=None,
+                norm_layer=None, imagenet=False):
+        super(ResNet50_4, self).__init__(block, layers, num_classes, zero_init_residual,
+                groups, width_per_group, replace_stride_with_dilation,
+                norm_layer, imagenet)
+
+        if norm_layer is None:
+            norm_layer = nn.BatchNorm2d
+        self._norm_layer = norm_layer
+
+        self.inplanes = 64
+        self.dilation = 1
+        if replace_stride_with_dilation is None:
+            # each element in the tuple indicates if we should replace
+            # the 2x2 stride with a dilated convolution instead
+            replace_stride_with_dilation = [False, False, False]
+        if len(replace_stride_with_dilation) != 3:
+            raise ValueError("replace_stride_with_dilation should be None "
+                            "or a 3-element tuple, got {}".format(replace_stride_with_dilation))
+        self.groups = groups
+        self.base_width = width_per_group
+
+        # cifar10
+        print('normalize setting is default for CIFAR10')
+        self.normalize = NormalizeByChannelMeanStd(
+            mean=[0.4914, 0.4822, 0.4465], std=[0.2470, 0.2435, 0.2616])
+
+        if not imagenet:
+            self.conv1 = nn.Conv2d(3, self.inplanes, kernel_size=3, stride=1, padding=1, bias=False)
+            self.bn1 = norm_layer(self.inplanes)
+            self.relu = nn.ReLU(inplace=True)
+            self.maxpool = nn.Identity()
+        else:
+            self.conv1 = nn.Conv2d(3, self.inplanes, kernel_size=7, stride=2, padding=3, bias=False)
+            self.bn1 = nn.BatchNorm2d(self.inplanes)
+            self.relu = nn.ReLU(inplace=True)
+            self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+
+        self.layer1 = self._make_layer(block, 24, layers[0])
+        self.layer2 = self._make_layer(block, 48, layers[1], stride=2,
+                                    dilate=replace_stride_with_dilation[0])
+        self.layer3 = self._make_layer(block, 96, layers[2], stride=2,
+                                    dilate=replace_stride_with_dilation[1])
+        self.layer4 = self._make_layer(block, 128, layers[3], stride=2,
+                                    dilate=replace_stride_with_dilation[2])
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        self.fc = nn.Linear(216 * block.expansion, num_classes)
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+            elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+        if zero_init_residual:
+            for m in self.modules():
+                if isinstance(m, Bottleneck):
+                    nn.init.constant_(m.bn3.weight, 0)
+                elif isinstance(m, BasicBlock):
+                    nn.init.constant_(m.bn2.weight, 0)
+    def count(self):
+        count = 0
+        for n, m in self.named_modules():
+            if isinstance(m, nn.Conv2d):
+                count += m.weight.numel()
+                print(m.weight.shape)
+        print(count/25557032)
+
+class ResNet50_5(ResNet):
+    def __init__(self, block, layers, num_classes=1000, zero_init_residual=False,
+                groups=1, width_per_group=64, replace_stride_with_dilation=None,
+                norm_layer=None, imagenet=False):
+        super(ResNet50_5, self).__init__(block, layers, num_classes, zero_init_residual,
+                groups, width_per_group, replace_stride_with_dilation,
+                norm_layer, imagenet)
+
+        if norm_layer is None:
+            norm_layer = nn.BatchNorm2d
+        self._norm_layer = norm_layer
+
+        self.inplanes = 64
+        self.dilation = 1
+        if replace_stride_with_dilation is None:
+            # each element in the tuple indicates if we should replace
+            # the 2x2 stride with a dilated convolution instead
+            replace_stride_with_dilation = [False, False, False]
+        if len(replace_stride_with_dilation) != 3:
+            raise ValueError("replace_stride_with_dilation should be None "
+                            "or a 3-element tuple, got {}".format(replace_stride_with_dilation))
+        self.groups = groups
+        self.base_width = width_per_group
+
+        # cifar10
+        print('normalize setting is default for CIFAR10')
+        self.normalize = NormalizeByChannelMeanStd(
+            mean=[0.4914, 0.4822, 0.4465], std=[0.2470, 0.2435, 0.2616])
+
+        if not imagenet:
+            self.conv1 = nn.Conv2d(3, self.inplanes, kernel_size=3, stride=1, padding=1, bias=False)
+            self.bn1 = norm_layer(self.inplanes)
+            self.relu = nn.ReLU(inplace=True)
+            self.maxpool = nn.Identity()
+        else:
+            self.conv1 = nn.Conv2d(3, self.inplanes, kernel_size=7, stride=2, padding=3, bias=False)
+            self.bn1 = nn.BatchNorm2d(self.inplanes)
+            self.relu = nn.ReLU(inplace=True)
+            self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+
+        self.layer1 = self._make_layer(block, 24, layers[0])
+        self.layer2 = self._make_layer(block, 32, layers[1], stride=2,
+                                    dilate=replace_stride_with_dilation[0])
+        self.layer3 = self._make_layer(block, 64, layers[2], stride=2,
+                                    dilate=replace_stride_with_dilation[1])
+        self.layer4 = self._make_layer(block, 128, layers[3], stride=2,
+                                    dilate=replace_stride_with_dilation[2])
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        self.fc = nn.Linear(216 * block.expansion, num_classes)
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+            elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+        if zero_init_residual:
+            for m in self.modules():
+                if isinstance(m, Bottleneck):
+                    nn.init.constant_(m.bn3.weight, 0)
+                elif isinstance(m, BasicBlock):
+                    nn.init.constant_(m.bn2.weight, 0)
+    def count(self):
+        count = 0
+        for n, m in self.named_modules():
+            if isinstance(m, nn.Conv2d):
+                count += m.weight.numel()
+                print(m.weight.shape)
+        print(count/25557032)
+
+class ResNet50_6(ResNet):
+    def __init__(self, block, layers, num_classes=1000, zero_init_residual=False,
+                groups=1, width_per_group=64, replace_stride_with_dilation=None,
+                norm_layer=None, imagenet=False):
+        super(ResNet50_6, self).__init__(block, layers, num_classes, zero_init_residual,
+                groups, width_per_group, replace_stride_with_dilation,
+                norm_layer, imagenet)
+
+        if norm_layer is None:
+            norm_layer = nn.BatchNorm2d
+        self._norm_layer = norm_layer
+
+        self.inplanes = 64
+        self.dilation = 1
+        if replace_stride_with_dilation is None:
+            # each element in the tuple indicates if we should replace
+            # the 2x2 stride with a dilated convolution instead
+            replace_stride_with_dilation = [False, False, False]
+        if len(replace_stride_with_dilation) != 3:
+            raise ValueError("replace_stride_with_dilation should be None "
+                            "or a 3-element tuple, got {}".format(replace_stride_with_dilation))
+        self.groups = groups
+        self.base_width = width_per_group
+
+        # cifar10
+        print('normalize setting is default for CIFAR10')
+        self.normalize = NormalizeByChannelMeanStd(
+            mean=[0.4914, 0.4822, 0.4465], std=[0.2470, 0.2435, 0.2616])
+
+        if not imagenet:
+            self.conv1 = nn.Conv2d(3, self.inplanes, kernel_size=3, stride=1, padding=1, bias=False)
+            self.bn1 = norm_layer(self.inplanes)
+            self.relu = nn.ReLU(inplace=True)
+            self.maxpool = nn.Identity()
+        else:
+            self.conv1 = nn.Conv2d(3, self.inplanes, kernel_size=7, stride=2, padding=3, bias=False)
+            self.bn1 = nn.BatchNorm2d(self.inplanes)
+            self.relu = nn.ReLU(inplace=True)
+            self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+
+        self.layer1 = self._make_layer(block, 24, layers[0])
+        self.layer2 = self._make_layer(block, 32, layers[1], stride=2,
+                                    dilate=replace_stride_with_dilation[0])
+        self.layer3 = self._make_layer(block, 64, layers[2], stride=2,
+                                    dilate=replace_stride_with_dilation[1])
+        self.layer4 = self._make_layer(block, 96, layers[3], stride=2,
+                                    dilate=replace_stride_with_dilation[2])
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        self.fc = nn.Linear(216 * block.expansion, num_classes)
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+            elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+        if zero_init_residual:
+            for m in self.modules():
+                if isinstance(m, Bottleneck):
+                    nn.init.constant_(m.bn3.weight, 0)
+                elif isinstance(m, BasicBlock):
+                    nn.init.constant_(m.bn2.weight, 0)
+    def count(self):
+        count = 0
+        for n, m in self.named_modules():
+            if isinstance(m, nn.Conv2d):
+                count += m.weight.numel()
+                print(m.weight.shape)
+        print(count/25557032)
+
+
+
 
 def resnet50_2(**kwargs):
     return ResNet50_2(Bottleneck, [3,4,6,3],**kwargs)
@@ -1126,8 +1335,18 @@ def resnet50_2(**kwargs):
 def resnet50_3(**kwargs):
     return ResNet50_3(Bottleneck, [3,4,6,3],**kwargs)
 
+def resnet50_4(**kwargs):
+    return ResNet50_4(Bottleneck, [3,4,6,3],**kwargs)
+
+def resnet50_5(**kwargs):
+    return ResNet50_5(Bottleneck, [3,4,6,3],**kwargs)
+
+def resnet50_6(**kwargs):
+    return ResNet50_6(Bottleneck, [3,4,6,3],**kwargs)
+
+
 if __name__ == '__main__':
     #x = ResNet4(BasicBlock, [2,2,2,2])
     #x.count()
-    x = ResNet50_3(Bottleneck, [3,4,6,3])
+    x = ResNet50_6(Bottleneck, [3,4,6,3])
     x.count()
