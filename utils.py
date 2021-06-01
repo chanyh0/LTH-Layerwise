@@ -2,7 +2,7 @@ import copy
 import torch
 import numpy as np
 from torchvision.models import mobilenet
-from models.resnet import resnet18, resnet50, resnet152, resnext101_32x8d, wide_resnet50_2, resnext50_32x4d, resnet18_2, resnet18_3, resnet18_4, resnet18_5, resnet18_6
+from models.resnet import resnet18, resnet50, resnet152, resnext101_32x8d, wide_resnet50_2, resnext50_32x4d, resnet18_2, resnet18_3, resnet18_4, resnet18_5, resnet18_6, resnet50_2, resnet50_3
 from models.resnets import resnet20, resnet56
 from models.densenet import densenet161
 from models.shufflenet import shufflenet_v2_x1_0
@@ -74,6 +74,12 @@ def setup_model_dataset(args):
     elif args.arch == 'res50':
         print('build model resnet50')
         model = resnet50(num_classes=classes, imagenet=args.dataset == 'tiny-imagenet')
+    elif args.arch == 'res50_2':
+        print('build model resnet50-2')
+        model = resnet50_2(num_classes=classes, imagenet=args.dataset == 'tiny-imagenet')
+    elif args.arch == 'res50_3':
+        print('build model resnet50-3')
+        model = resnet50_3(num_classes=classes, imagenet=args.dataset == 'tiny-imagenet')
     elif args.arch == 'res20s':
         print('build model: resnet20')
         model = resnet20(number_class=classes)

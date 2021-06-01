@@ -37,6 +37,11 @@ qr.make()
 
 img = qr.make_image(fill_color="black", back_color="white")
 code = np.array(img)
+import matplotlib.pyplot as plt
+plt.imshow(img, cmap='gray', vmin=0, vmax=1)
+plt.axis("off")
+plt.savefig("qrcode.svg", bbox_inches='tight',pad_inches = 0)
+assert False
 from scipy.signal import correlate2d
 h,w = code.shape[0],code.shape[1]
 max_sim = 0
