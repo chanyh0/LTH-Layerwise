@@ -1167,7 +1167,7 @@ class ResNet50_4(ResNet):
         self.layer4 = self._make_layer(block, 128, layers[3], stride=2,
                                     dilate=replace_stride_with_dilation[2])
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(216 * block.expansion, num_classes)
+        self.fc = nn.Linear(128 * block.expansion, num_classes)
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
@@ -1236,7 +1236,7 @@ class ResNet50_5(ResNet):
         self.layer4 = self._make_layer(block, 128, layers[3], stride=2,
                                     dilate=replace_stride_with_dilation[2])
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(216 * block.expansion, num_classes)
+        self.fc = nn.Linear(128 * block.expansion, num_classes)
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
@@ -1305,7 +1305,7 @@ class ResNet50_6(ResNet):
         self.layer4 = self._make_layer(block, 96, layers[3], stride=2,
                                     dilate=replace_stride_with_dilation[2])
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(216 * block.expansion, num_classes)
+        self.fc = nn.Linear(96 * block.expansion, num_classes)
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
