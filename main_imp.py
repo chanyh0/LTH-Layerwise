@@ -242,11 +242,11 @@ def main():
 
         best_sa = 0
         start_epoch = 0
-
+        
         if args.prune_type == 'pt':
             print('* loading pretrained weight')
             initalization = torch.load(os.path.join(args.save_dir, '0model_SA_best.pth.tar'), map_location = torch.device('cuda:'+str(args.gpu)))['state_dict']
-
+        validate(val_loader, model, criterion)
         pruning_model(model, args.rate, conv1=args.conv1)
         remain_weight = check_sparsity(model, conv1=args.conv1)
         current_mask = extract_mask(model.state_dict())
