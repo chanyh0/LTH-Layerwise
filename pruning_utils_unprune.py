@@ -19,6 +19,7 @@ def custom_prune(model, mask_dict, prune_type, num_paths, args, add_back=False):
     n_param = 0
     n_after_zeros = 0
     for name,m in model.named_modules():
+        print(name)
         if need_to_prune(name, m, args.conv1):
             mask = mask_dict[name+'.weight_mask']
             n_zeros += (mask == 0).float().sum().item()
