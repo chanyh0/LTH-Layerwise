@@ -237,8 +237,7 @@ def extract_mask(model_dict):
     new_dict = {}
 
     for key in model_dict.keys():
-        if 'mask' in key:
-            new_dict[key] = model_dict[key]
+        new_dict[key[:-1] + '_mask'] = model_dict[key]
 
     return new_dict
 
