@@ -313,7 +313,7 @@ def load_ticket(model, args):
             sparse_weight = loading_weight[name + '.weight'] * current_mask[name + '.weight_mask']
             m.load(sparse_weight, None)
         elif 'fc' in name or 'bn' in name:
-            m.weight = loading_weight[name + '.weight']
+            m.weight.data = loading_weight[name + '.weight']
         else:
             print(name)
         
