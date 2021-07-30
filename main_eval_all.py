@@ -137,7 +137,7 @@ def main():
     all_result['ta'] = []
 
     start_epoch = 0 
-    remain_weight = check_sparsity(model, conv1=args.conv1)
+    #remain_weight = check_sparsity(model, conv1=args.conv1)
 
     for epoch in range(start_epoch, args.epochs):
 
@@ -154,7 +154,7 @@ def main():
         all_result['train'].append(acc)
         all_result['ta'].append(tacc)
         all_result['test_ta'].append(test_tacc)
-        all_result['remain_weight'] = remain_weight
+        #all_result['remain_weight'] = remain_weight
 
         # remember best prec@1 and save checkpoint
         is_best_sa = tacc  > best_sa
