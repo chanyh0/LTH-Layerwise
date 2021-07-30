@@ -167,13 +167,6 @@ class SparseConv2D(torch.nn.Module):
       batch_size = input.shape[3]
 
       tmp = input_height - tmp_kernel_height + 2 * vertical_padding
-      #print(input_height)
-      #print(tmp_kernel_height)
-      #print(vertical_padding)
-      #print(vertical_stride)
-      #print(tmp)
-      #print(tmp % vertical_stride)
-      #assert(tmp % vertical_stride == 0)
       output_height = tmp // vertical_stride + 1
       tmp = input_width - tmp_kernel_width + 2 * horizontal_padding
       #assert(tmp % horizontal_stride == 0)
@@ -244,7 +237,47 @@ class SparseConv2D(torch.nn.Module):
       self.kernel_ptr_sparse = self.kernel_ptr_sparse.cuda()
       self.kernel_map_sparse = self.kernel_map_sparse.cuda()
 
-    
+
+
+
+    if not isinstance(self.dilation, Tuple):
+        vertical_dilation = self.dilation
+        horizontal_dilation = self.dilation
+    else:
+        vertical_dilation = self.dilation[0]
+        horizontal_dilation = self.dilation[1]
+
+    if not isinstance(self.stride, Tuple):
+        vertical_stride = self.stride
+        horizontal_stride = self.stride
+    else:
+        vertical_stride = self.stride[0]
+        horizontal_stride = self.stride[1]
+
+    if not isinstance(self.padding, Tuple):
+        vertical_padding = self.padding
+        horizontal_padding = self.padding
+    else:
+        vertical_padding = self.padding[0]
+        horizontal_padding = self.padding[1]
+
+    tmp_kernel_height = self.kernel_height + (self.kernel_height - 1) * (vertical_dilation - 1)
+    tmp_kernel_width = self.kernel_width + (self.kernel_width - 1) * (horizontal_dilation - 1)
+
+    # get the input dimension, check if the dimension match with kernel dimension
+    input = input.transpose(0, 3).transpose(1, 2).transpose(0, 1)
+    input_height = input.shape[0]
+    input_width = input.shape[1]
+    assert(input.shape[2] == self.in_channels)
+    batch_size = input.shape[3]
+
+    tmp = input_height - tmp_kernel_height + 2 * vertical_padding
+    output_height = tmp // vertical_stride + 1
+    tmp = input_width - tmp_kernel_width + 2 * horizontal_padding
+    #assert(tmp % horizontal_stride == 0)
+    output_width = tmp // horizontal_stride + 1
+
+    output_channels = self.out_channels
     output = torch.zeros(output_height, output_width, output_channels, batch_size).cuda()
 
 
