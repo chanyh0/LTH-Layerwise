@@ -35,7 +35,7 @@ __all__ = ['ResNet', 'resnet20', 'resnet32', 'resnet44', 'resnet56', 'resnet110'
 def _weights_init(m):
     classname = m.__class__.__name__
     #print(classname)
-    if isinstance(m, nn.Linear) or isinstance(m, SparseConv2D):
+    if isinstance(m, nn.Linear):
         init.kaiming_normal_(m.weight)
 
 class LambdaLayer(nn.Module):
