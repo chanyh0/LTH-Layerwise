@@ -160,9 +160,9 @@ class SparseConv2D(torch.nn.Module):
       tmp_kernel_width = self.kernel_width + (self.kernel_width - 1) * (horizontal_dilation - 1)
 
       # get the input dimension, check if the dimension match with kernel dimension
+      input = input.transpose(0, 3).transpose(1, 2).transpose(0, 1)
       input_height = input.shape[0]
       input_width = input.shape[1]
-      print(input.shape)
       assert(input.shape[2] == self.in_channels)
       batch_size = input.shape[3]
 
