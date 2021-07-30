@@ -318,6 +318,7 @@ def load_ticket(model, args):
         #check_sparsity(model, conv1=args.conv1)
     
     for name, m in model.named_modules():
+        print(name)
         if name + ".weight_mask" in current_mask:
             sparse_weight = loading_weight[name + '.weight'] * current_mask[name + '.weight_mask']
             m.load(sparse_weight, None)
