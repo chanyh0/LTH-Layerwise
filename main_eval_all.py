@@ -304,7 +304,7 @@ def load_ticket(model, args):
 
             loading_weight['fc.weight'] = new_initialization['fc.weight']
             loading_weight['fc.bias'] = new_initialization['fc.bias']
-            loading_weight['conv1.weight'] = new_initialization['conv1.weight']
+            #loading_weight['conv1.weight'] = new_initialization['conv1.weight']
 
         print('*number of loading weight={}'.format(len(loading_weight.keys())))
         print('*number of model weight={}'.format(len(model.state_dict().keys())))
