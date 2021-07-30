@@ -167,16 +167,16 @@ class SparseConv2D(torch.nn.Module):
       batch_size = input.shape[3]
 
       tmp = input_height - tmp_kernel_height + 2 * vertical_padding
-      print(input_height)
-      print(tmp_kernel_height)
-      print(vertical_padding)
-      print(vertical_stride)
-      print(tmp)
-      print(tmp % vertical_stride)
-      assert(tmp % vertical_stride == 0)
+      #print(input_height)
+      #print(tmp_kernel_height)
+      #print(vertical_padding)
+      #print(vertical_stride)
+      #print(tmp)
+      #print(tmp % vertical_stride)
+      #assert(tmp % vertical_stride == 0)
       output_height = tmp // vertical_stride + 1
       tmp = input_width - tmp_kernel_width + 2 * horizontal_padding
-      assert(tmp % horizontal_stride == 0)
+      #assert(tmp % horizontal_stride == 0)
       output_width = tmp // horizontal_stride + 1
 
       output_channels = self.out_channels
