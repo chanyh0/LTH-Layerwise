@@ -317,7 +317,7 @@ def load_ticket(model, args):
         else:
             print(name)
         
-    check_sparsity(model, conv1=args.conv1)
+    #check_sparsity(model, conv1=args.conv1)
 
 def warmup_lr(epoch, step, optimizer, one_epoch_step):
 
