@@ -315,7 +315,7 @@ def load_ticket(model, args):
             try:
                 m.load(sparse_weight, None)
             except:
-                m.weight.data = loading_weight[name + '.weight']
+                #m.weight.data = loading_weight[name + '.weight']
                 prune.custom_from_mask(m, 'weight', current_mask[name + '.weight_mask'])
         
     #check_sparsity(model, conv1=args.conv1)
