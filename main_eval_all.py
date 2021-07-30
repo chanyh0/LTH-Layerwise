@@ -308,24 +308,23 @@ def load_ticket(model, args):
 
         print('*number of loading weight={}'.format(len(loading_weight.keys())))
         print('*number of model weight={}'.format(len(model.state_dict().keys())))
-        model.load_state_dict(loading_weight)
-
     # mask 
-    if args.mask_dir:
-        print('loading mask')
-        current_mask_weight = torch.load(args.mask_dir, map_location = torch.device('cuda:'+str(args.gpu)))
-        if 'state_dict' in current_mask_weight.keys():
-            current_mask_weight = current_mask_weight['state_dict']
-        current_mask = extract_mask(current_mask_weight)
+    assert args.mask_dir
+    print('loading mask')
+    current_mask_weight = torch.load(args.mask_dir, map_location = torch.device('cuda:'+str(args.gpu)))
+    if 'state_dict' in current_mask_weight.keys():
+        current_mask_weight = current_mask_weight['state_dict']
+    current_mask = extract_mask(current_mask_weight)
         #check_sparsity(model, conv1=args.conv1)
-        if args.arch == 'res18':
-            downsample = 100
+    
+    for name, m in model.named_modules():
+        if name + ".weight_mask" in current_mask:
+            sparse_weight = loading_weight[name + '.weight'] * current_mask[name + '.weight_mask']
+            m.load(sparse_weight, None)
         else:
-            downsample = 1000
+            m.weight = loading_weight[name + '.weight']
         
-        custom_prune(model, current_mask, args.type, args.num_paths, args, args.add_back)
-        #prune_random_betweeness(model, current_mask, int(args.num_paths), downsample=downsample, conv1=args.conv1)
-        check_sparsity(model, conv1=args.conv1)
+    check_sparsity(model, conv1=args.conv1)
 
 def warmup_lr(epoch, step, optimizer, one_epoch_step):
 

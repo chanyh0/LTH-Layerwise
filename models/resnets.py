@@ -25,7 +25,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.nn.init as init
-
+from conv import SparseConv2D
 from torch.autograd import Variable
 from advertorch.utils import NormalizeByChannelMeanStd
 
@@ -35,7 +35,7 @@ __all__ = ['ResNet', 'resnet20', 'resnet32', 'resnet44', 'resnet56', 'resnet110'
 def _weights_init(m):
     classname = m.__class__.__name__
     #print(classname)
-    if isinstance(m, nn.Linear) or isinstance(m, nn.Conv2d):
+    if isinstance(m, nn.Linear) or isinstance(m, SparseConv2D):
         init.kaiming_normal_(m.weight)
 
 class LambdaLayer(nn.Module):
@@ -52,9 +52,9 @@ class BasicBlock(nn.Module):
 
     def __init__(self, in_planes, planes, stride=1, option='A'):
         super(BasicBlock, self).__init__()
-        self.conv1 = nn.Conv2d(in_planes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
+        self.conv1 = SparseConv2D(in_planes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(planes)
-        self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv2 = SparseConv2D(planes, planes, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(planes)
 
         self.shortcut = nn.Sequential()
@@ -67,7 +67,7 @@ class BasicBlock(nn.Module):
                                             F.pad(x[:, :, ::2, ::2], (0, 0, 0, 0, planes//4, planes//4), "constant", 0))
             elif option == 'B':
                 self.shortcut = nn.Sequential(
-                     nn.Conv2d(in_planes, self.expansion * planes, kernel_size=1, stride=stride, bias=False),
+                     SparseConv2D(in_planes, self.expansion * planes, kernel_size=1, stride=stride, bias=False),
                      nn.BatchNorm2d(self.expansion * planes)
                 )
 
@@ -87,7 +87,7 @@ class ResNet(nn.Module):
         self.normalize = NormalizeByChannelMeanStd(
             mean=[0.4914, 0.4822, 0.4465], std=[0.2470, 0.2435, 0.2616])
 
-        self.conv1 = nn.Conv2d(3, 16, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv1 = SparseConv2D(3, 16, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(16)
         self.layer1 = self._make_layer(block, 16, num_blocks[0], stride=1)
         self.layer2 = self._make_layer(block, 32, num_blocks[1], stride=2)
@@ -152,7 +152,7 @@ if __name__ == '__main__':
     import torch.nn.utils.prune as prune
     def prune_model_custom(model, mask_dict):
         for name,m in model.named_modules():
-            if isinstance(m, nn.Conv2d):
+            if isinstance(m, SparseConv2D):
                 print('pruning layer with custom mask:', name)
                 try:
                     prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'])
