@@ -296,16 +296,6 @@ def load_ticket(model, args):
             loading_weight['normalize.std'] = new_initialization['normalize.std']
             loading_weight['normalize.mean'] = new_initialization['normalize.mean']
 
-        if not (args.prune_type == 'lt' or args.prune_type == 'trained'):
-            keys = list(loading_weight.keys())
-            for key in keys:
-                if key.startswith('fc') or key.startswith('conv1'):
-                    del loading_weight[key]
-
-            loading_weight['fc.weight'] = new_initialization['fc.weight']
-            loading_weight['fc.bias'] = new_initialization['fc.bias']
-            #loading_weight['conv1.weight'] = new_initialization['conv1.weight']
-
         print('*number of loading weight={}'.format(len(loading_weight.keys())))
         print('*number of model weight={}'.format(len(model.state_dict().keys())))
     # mask 
