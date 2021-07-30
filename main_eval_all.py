@@ -308,6 +308,7 @@ def load_ticket(model, args):
         #check_sparsity(model, conv1=args.conv1)
     
     print(loading_weight.keys())
+    model.load_state_dict(loading_weight, strict=False)
     for name, m in model.named_modules():
         if 'conv' in name:
             sparse_weight = loading_weight[name + '.weight'] * current_mask[name + '.weight_mask']
@@ -316,10 +317,6 @@ def load_ticket(model, args):
             except:
                 m.weight.data = loading_weight[name + '.weight']
                 prune.custom_from_mask(m, 'weight', current_mask[name + '.weight_mask'])
-        elif 'fc' in name or 'bn' in name:
-            m.weight.data = loading_weight[name + '.weight']
-        else:
-            print(name)
         
     #check_sparsity(model, conv1=args.conv1)
 
