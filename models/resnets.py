@@ -51,8 +51,12 @@ class BasicBlock(nn.Module):
     expansion = 1
 
     def __init__(self, in_planes, planes, stride=1, option='A'):
+        if stride == 2:
+            conv = nn.Conv2d
+        else:
+            conv = SparseConv2D
         super(BasicBlock, self).__init__()
-        self.conv1 = SparseConv2D(in_planes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
+        self.conv1 = conv(in_planes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(planes)
         self.conv2 = SparseConv2D(planes, planes, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(planes)
@@ -67,7 +71,7 @@ class BasicBlock(nn.Module):
                                             F.pad(x[:, :, ::2, ::2], (0, 0, 0, 0, planes//4, planes//4), "constant", 0))
             elif option == 'B':
                 self.shortcut = nn.Sequential(
-                     SparseConv2D(in_planes, self.expansion * planes, kernel_size=1, stride=stride, bias=False),
+                     conv(in_planes, self.expansion * planes, kernel_size=1, stride=stride, bias=False),
                      nn.BatchNorm2d(self.expansion * planes)
                 )
 

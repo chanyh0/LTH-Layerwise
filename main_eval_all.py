@@ -311,7 +311,11 @@ def load_ticket(model, args):
     for name, m in model.named_modules():
         if 'conv' in name:
             sparse_weight = loading_weight[name + '.weight'] * current_mask[name + '.weight_mask']
-            m.load(sparse_weight, None)
+            try:
+                m.load(sparse_weight, None)
+            except:
+                m.weight.data = loading_weight[name + '.weight']
+                prune.custom_from_mask(m, 'weight', current_mask[name + '.weight_mask'])
         elif 'fc' in name or 'bn' in name:
             m.weight.data = loading_weight[name + '.weight']
         else:
