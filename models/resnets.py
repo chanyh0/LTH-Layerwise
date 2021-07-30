@@ -80,6 +80,8 @@ class BasicBlock(nn.Module):
         print(out.shape)
         out = self.conv2(out)
         print(out.shape)
+        print(self.bn2.weight)
+        print(self.bn2.num_batches_tracked)
         out = self.bn2(out)
         out += self.shortcut(x)
         out = F.relu(out)
