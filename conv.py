@@ -170,6 +170,8 @@ class SparseConv2D(torch.nn.Module):
       print(input_height)
       print(tmp_kernel_height)
       print(vertical_padding)
+      print(tmp)
+      print(tmp % vertical_stride)
       assert(tmp % vertical_stride == 0)
       output_height = tmp // vertical_stride + 1
       tmp = input_width - tmp_kernel_width + 2 * horizontal_padding
