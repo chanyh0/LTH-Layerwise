@@ -148,7 +148,7 @@ def main():
         tacc = validate(val_loader, model, criterion)
         # evaluate on test set
         #test_tacc = validate(test_loader, model, criterion)
-        test_acc = 0
+        test_tacc = 0
         scheduler.step()
 
         all_result['train'].append(acc)
