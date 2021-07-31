@@ -246,7 +246,7 @@ class SparseConv2D(torch.nn.Module):
     _lib.spmm_conv.restype = None
     _lib.spmm_conv.argtypes = [ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p]
 
-    print(self.kernel_ptr_sparse)
+    #print(self.kernel_ptr_sparse)
     
     _lib.spmm_conv(ctypes.c_void_p(input.data_ptr()), ctypes.c_void_p(output.data_ptr()), ctypes.c_void_p(self.kernel_ptr.data_ptr()), ctypes.c_void_p(self.kernel_map.data_ptr()),  ctypes.c_void_p(self.kernel_offset.data_ptr()), ctypes.c_void_p(self.kernel_value.data_ptr()), ctypes.c_void_p(self.kernel_ptr_sparse.data_ptr()), ctypes.c_void_p(self.kernel_map_sparse.data_ptr()))
     
