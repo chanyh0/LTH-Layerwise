@@ -38,7 +38,7 @@ void spmm_conv(void *input_data_t, void *output_data_t, void *kernel_ptr_t, void
 	cudaEventSynchronize(event2);
 	cudaEventElapsedTime(&time, event1, event2);
 
-	printf("execution time: %f\n", time);
+	//printf("execution time: %f\n", time);
 }
 
 
