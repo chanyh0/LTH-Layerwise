@@ -76,6 +76,10 @@ class BasicBlock(nn.Module):
                 )
 
     def forward(self, x):
+        print(self.bn1.weight)
+        print(self.bn1.num_batches_tracked)
+        print(self.bn1.running_mean)
+        print(self.bn1.running_std)
         out = F.relu(self.bn1(self.conv1(x)))
         print(out.shape)
         out = self.conv2(out)
