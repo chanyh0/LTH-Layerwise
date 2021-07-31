@@ -82,6 +82,10 @@ class BasicBlock(nn.Module):
         print(out.shape)
         print(self.bn2.weight)
         print(self.bn2.num_batches_tracked)
+        print(self.bn2.running_mean)
+        print(self.bn2.running_std)
+
+
         out = self.bn2(out)
         out += self.shortcut(x)
         out = F.relu(out)
