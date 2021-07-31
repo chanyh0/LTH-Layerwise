@@ -79,7 +79,7 @@ class BasicBlock(nn.Module):
         print(self.bn1.weight)
         print(self.bn1.num_batches_tracked)
         print(self.bn1.running_mean)
-        print(self.bn1.running_std)
+        print(self.bn1.running_var)
         out = F.relu(self.bn1(self.conv1(x)))
         print(out.shape)
         out = self.conv2(out)
@@ -87,7 +87,7 @@ class BasicBlock(nn.Module):
         print(self.bn2.weight)
         print(self.bn2.num_batches_tracked)
         print(self.bn2.running_mean)
-        print(self.bn2.running_std)
+        print(self.bn2.running_var)
 
 
         out = self.bn2(out)
