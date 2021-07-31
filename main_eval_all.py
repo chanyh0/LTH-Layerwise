@@ -114,8 +114,8 @@ def main():
         tacc = validate(val_loader, model, criterion)
         # evaluate on test set
         test_tacc = validate(test_loader, model, criterion)
-        print(tacc)
-        print(test_tacc)
+        #print(tacc)
+        #print(test_tacc)
         return
     #loading tickets
     model.cuda()
