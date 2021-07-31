@@ -120,7 +120,7 @@ class SparseConv2D(torch.nn.Module):
         kernel_map_sparse.append(i)
 
 
-    print(kernel_ptr_sparse)
+    #print(kernel_ptr_sparse)
     self.block_ptr = torch.IntTensor(block_ptr)
     self.kernel_ptr = torch.IntTensor(kernel_ptr)
     self.kernel_map = torch.IntTensor(kernel_map)
