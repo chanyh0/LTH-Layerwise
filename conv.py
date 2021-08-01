@@ -233,7 +233,7 @@ class SparseConv2D(torch.nn.Module):
       self.kernel_ptr = self.kernel_ptr.cuda()
       self.kernel_map = self.kernel_map.cuda()
       self.kernel_offset = self.kernel_offset.cuda()
-      self.kernel_value = self.kernel_value.cuda()
+      self.kernel_value.cuda()
       self.kernel_ptr_sparse = self.kernel_ptr_sparse.cuda()
       self.kernel_map_sparse = self.kernel_map_sparse.cuda()
 
