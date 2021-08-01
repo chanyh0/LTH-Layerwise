@@ -124,7 +124,7 @@ def main():
 
     
     decreasing_lr = list(map(int, args.decreasing_lr.split(',')))
-    for name, p in model.parameters():
+    for name, p in model.named_parameters():
         print(name)
     
     assert False
