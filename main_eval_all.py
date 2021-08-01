@@ -124,7 +124,10 @@ def main():
 
     
     decreasing_lr = list(map(int, args.decreasing_lr.split(',')))
-
+    for name, p in model.parameters():
+        print(name)
+    
+    assert False
     optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                     momentum=args.momentum,
                                     weight_decay=args.weight_decay)
