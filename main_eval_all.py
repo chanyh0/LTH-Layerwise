@@ -312,12 +312,13 @@ def load_ticket(model, args):
     
     print(loading_weight.keys())
     model.load_state_dict(loading_weight, strict=False)
+    from conv import SparseConv2D
     for name, m in model.named_modules():
         if 'conv' in name:
             sparse_weight = loading_weight[name + '.weight'] * current_mask[name + '.weight_mask']
-            try:
+            if isinstance(m, SparseConv2D):
                 m.load(sparse_weight, None)
-            except:
+            else:
                 #m.weight.data = loading_weight[name + '.weight']
                 prune.custom_from_mask(m, 'weight', current_mask[name + '.weight_mask'])
         
