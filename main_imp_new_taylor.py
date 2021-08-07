@@ -101,7 +101,7 @@ def prune_taylor1_abs(model, mask_dict, args):
     result_flatten = torch.cat(result_flatten, 0)
     threshold, _ = torch.kthvalue(result_flatten, int((result_flatten.numel() - zeros) * args.rate) + zeros )
     for key, param in zip(mask_dict.keys(), result):
-        new_mask_dict[key][param > threshold] = 0
+        new_mask_dict[key][param < threshold] = 0
     return new_mask_dict
 
 def main():
