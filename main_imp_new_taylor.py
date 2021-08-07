@@ -72,8 +72,7 @@ def prune_taylor1_abs(model, mask_dict, args):
     params = []
     print(mask_dict.keys())
     for name, m in named_params:
-        print(name + '_mask')
-        if name + '_mask' in mask_dict:
+        if name[:-5] + '_mask' in mask_dict:
             params.append(m)
 
     rev_f, n_elements = get_reverse_flatten_params_fun(params,get_count=True)
