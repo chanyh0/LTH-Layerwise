@@ -70,6 +70,7 @@ def prune_taylor1_abs(model, mask_dict, args):
     new_mask_dict = copy.deepcopy(mask_dict)
     named_params = model.named_parameters()
     params = []
+    print(mask_dict.keys())
     for name, m in named_params:
         if name + '_mask' in mask_dict:
             params.append(m)
