@@ -1,7 +1,7 @@
 import torch
 import numpy as np
-from models.resnets import resnet20
-a = torch.load("ownership/res20s_cifar10_extreme.pth.tar", map_location="cpu")
+from models.vgg import vgg16_bn
+a = torch.load("20checkpoint.pth.tar", map_location="cpu")
 a.keys()
 def check_sparsity(mask, conv1=True):
     
@@ -138,9 +138,9 @@ mask[max_name][r:r+h, c:c+w] = torch.from_numpy(real_mask)
 
 vis = mask[max_name].sum((2,3)).numpy() > 0
 plt.imshow(vis)
-plt.savefig(f"ownership/res20s_cifar10_vis_{max_name}.pdf")
+plt.savefig(f"ownership/vgg16_tiny_vis_{max_name}.pdf")
 plt.close()
-torch.save(mask, f'ownership/res20s_cifar10_qrcode_{max_name}.pth.tar')
+torch.save(mask, f'ownership/vgg16_tiny_qrcode_{max_name}.pth.tar')
 
 
 check_sparsity(mask)
@@ -149,5 +149,5 @@ vis = mask[max_name].sum((2,3)).numpy() > 0
 plt.imshow(vis)
 plt.savefig("vis2.png")
 plt.close()
-torch.save(mask, 'ownership/res20s_cifar10_extreme.pth.tar')
+torch.save(mask, 'ownership/vgg16_tiny_extreme.pth.tar')
 '''
