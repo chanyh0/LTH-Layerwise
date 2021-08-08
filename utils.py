@@ -50,6 +50,12 @@ def setup_model_dataset(args):
         normalization = NormalizeByChannelMeanStd(
             mean=[0.4802, 0.4481, 0.3975], std=[0.2302, 0.2265, 0.2262])
         train_set_loader, val_loader, test_loader = tiny_imagenet_dataloaders(batch_size= args.batch_size, data_dir =args.data)
+    elif args.dataset == 'tiny-imagenet-trigger':
+        classes = 200
+        train_number = 90000
+        normalization = NormalizeByChannelMeanStd(
+            mean=[0.4802, 0.4481, 0.3975], std=[0.2302, 0.2265, 0.2262])
+        train_set_loader, val_loader, test_loader,trigger_set_dataloader = tiny_imagenet_with_trigger_dataloaders(batch_size= args.batch_size, data_dir =args.data)
     else:
         raise ValueError('unknow dataset')
 
