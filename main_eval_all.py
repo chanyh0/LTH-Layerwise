@@ -308,7 +308,12 @@ def load_ticket(model, args):
 
         print('*number of loading weight={}'.format(len(loading_weight.keys())))
         print('*number of model weight={}'.format(len(model.state_dict().keys())))
-        model.load_state_dict(loading_weight)
+        try:
+            model.load_state_dict(loading_weight)
+        except:
+            pruning_model(model, 0, args.conv1)
+            model.load_state_dict(loading_weight)
+
 
     # mask 
     if args.mask_dir:
