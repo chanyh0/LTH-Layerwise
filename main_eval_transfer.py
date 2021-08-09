@@ -287,11 +287,9 @@ def load_ticket(model, args):
         if 'state_dict' in current_mask_weight.keys():
             current_mask_weight = current_mask_weight['state_dict']
         current_mask = extract_mask(current_mask_weight)
-        #check_sparsity(model, conv1=args.conv1)
-        if args.arch == 'res18':
-            downsample = 100
-        else:
-            downsample = 1000
+        for key in list(current_mask.keys()):
+            if key.startswith('conv1'):
+                del current_mask[key]
         
         custom_prune(model, current_mask, args.type, args.num_paths, args, args.add_back)
         #prune_random_betweeness(model, current_mask, int(args.num_paths), downsample=downsample, conv1=args.conv1)
