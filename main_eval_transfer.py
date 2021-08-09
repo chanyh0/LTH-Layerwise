@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import torch
 import torch.optim
 import torch.nn as nn
+from torch.serialization import load
 import torch.utils.data
 import torch.nn.functional as F
 import torchvision.models as models
@@ -305,8 +306,8 @@ def load_ticket(model, args):
         elif 'state_dict' in initalization.keys():
             print('loading from state_dict')
             initalization = initalization['state_dict']
-        
-        loading_weight = extract_main_weight(initalization, fc=True, conv1=True)
+        loading_weight = initalization
+        #loading_weight = extract_main_weight(initalization, fc=True, conv1=True)
         new_initialization = model.state_dict()
         if not 'normalize.std' in loading_weight:
             loading_weight['normalize.std'] = new_initialization['normalize.std']
