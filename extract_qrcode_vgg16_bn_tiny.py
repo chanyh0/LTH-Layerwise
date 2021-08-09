@@ -119,8 +119,8 @@ def main():
     mask = mask.int().numpy()
     plt.imshow(mask)
     plt.savefig(f'ownership/{args.arch}_{args.dataset}_qrcode_{args.evaluate_p}.png')
-    r = 15
-    h = 33
+    r = 7
+    h = 2
     mask = mask[r:r+29, h:29 + h]
     #assert False
     import qrcode
