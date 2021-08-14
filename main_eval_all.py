@@ -114,8 +114,8 @@ def main():
         tacc = validate(val_loader, model, criterion)
         # evaluate on test set
         test_tacc = validate(test_loader, model, criterion)
-        #print(tacc)
-        #print(test_tacc)
+        print(tacc)
+        print(test_tacc)
         return
     #loading tickets
     model.cuda()
@@ -124,6 +124,7 @@ def main():
 
     
     decreasing_lr = list(map(int, args.decreasing_lr.split(',')))
+
     optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                     momentum=args.momentum,
                                     weight_decay=args.weight_decay)
@@ -136,7 +137,7 @@ def main():
     all_result['ta'] = []
 
     start_epoch = 0 
-    #remain_weight = check_sparsity(model, conv1=args.conv1)
+    remain_weight = check_sparsity(model, conv1=args.conv1)
 
     for epoch in range(start_epoch, args.epochs):
 
@@ -146,14 +147,14 @@ def main():
         # evaluate on validation set
         tacc = validate(val_loader, model, criterion)
         # evaluate on test set
-        #test_tacc = validate(test_loader, model, criterion)
-        test_tacc = 0
+        test_tacc = validate(test_loader, model, criterion)
+
         scheduler.step()
 
         all_result['train'].append(acc)
         all_result['ta'].append(tacc)
         all_result['test_ta'].append(test_tacc)
-        #all_result['remain_weight'] = remain_weight
+        all_result['remain_weight'] = remain_weight
 
         # remember best prec@1 and save checkpoint
         is_best_sa = tacc  > best_sa
@@ -295,30 +296,38 @@ def load_ticket(model, args):
             loading_weight['normalize.std'] = new_initialization['normalize.std']
             loading_weight['normalize.mean'] = new_initialization['normalize.mean']
 
+        if not (args.prune_type == 'lt' or args.prune_type == 'trained'):
+            keys = list(loading_weight.keys()) 
+            for key in keys:
+                if key.startswith('fc') or key.startswith('conv1'):
+                    del loading_weight[key]
+
+            loading_weight['fc.weight'] = new_initialization['fc.weight']
+            loading_weight['fc.bias'] = new_initialization['fc.bias']
+            loading_weight['conv1.weight'] = new_initialization['conv1.weight']
+
         print('*number of loading weight={}'.format(len(loading_weight.keys())))
         print('*number of model weight={}'.format(len(model.state_dict().keys())))
-    # mask 
-    assert args.mask_dir
-    print('loading mask')
-    current_mask_weight = torch.load(args.mask_dir, map_location = torch.device('cuda:'+str(args.gpu)))
-    if 'state_dict' in current_mask_weight.keys():
-        current_mask_weight = current_mask_weight['state_dict']
-    current_mask = extract_mask(current_mask_weight)
-        #check_sparsity(model, conv1=args.conv1)
-    
-    print(loading_weight.keys())
-    model.load_state_dict(loading_weight, strict=False)
-    from conv import SparseConv2D
-    for name, m in model.named_modules():
-        if 'conv' in name:
-            sparse_weight = loading_weight[name + '.weight'] * current_mask[name + '.weight_mask']
-            if isinstance(m, SparseConv2D):
-                m.load(sparse_weight, None)
-            else:
-                #m.weight.data = loading_weight[name + '.weight']
-                prune.custom_from_mask(m, 'weight', current_mask[name + '.weight_mask'])
+        model.load_state_dict(loading_weight)
         
-    #check_sparsity(model, conv1=args.conv1)
+
+
+    # mask 
+    if args.mask_dir:
+        print('loading mask')
+        current_mask_weight = torch.load(args.mask_dir, map_location = torch.device('cuda:'+str(args.gpu)))
+        if 'state_dict' in current_mask_weight.keys():
+            current_mask_weight = current_mask_weight['state_dict']
+        current_mask = extract_mask(current_mask_weight)
+        #check_sparsity(model, conv1=args.conv1)
+        if args.arch == 'res18':
+            downsample = 100
+        else:
+            downsample = 1000
+        
+        custom_prune(model, current_mask, args.type, args.num_paths, args, args.add_back)
+        #prune_random_betweeness(model, current_mask, int(args.num_paths), downsample=downsample, conv1=args.conv1)
+        check_sparsity(model, conv1=args.conv1)
 
 def warmup_lr(epoch, step, optimizer, one_epoch_step):
 
@@ -368,8 +377,7 @@ def setup_seed(seed):
     torch.cuda.manual_seed_all(seed) 
     np.random.seed(seed) 
     random.seed(seed) 
-    #torch.backends.cudnn.deterministic = True 
-    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True 
 
 if __name__ == '__main__':
     main()
