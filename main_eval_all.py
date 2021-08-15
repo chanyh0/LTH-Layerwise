@@ -155,7 +155,7 @@ def main():
         all_result['train'].append(acc)
         all_result['ta'].append(tacc)
         all_result['test_ta'].append(test_tacc)
-        all_result['remain_weight'] = remain_weight
+        if args.mask_dir: all_result['remain_weight'] = remain_weight
 
         # remember best prec@1 and save checkpoint
         is_best_sa = tacc  > best_sa
@@ -184,7 +184,7 @@ def main():
         plt.savefig(os.path.join(args.save_dir, 'net_train.png'))
         plt.close()
 
-    check_sparsity(model, conv1=args.conv1)
+    if args.mask_dir: check_sparsity(model, conv1=args.conv1)
     print('* best SA={}'.format(all_result['test_ta'][np.argmax(np.array(all_result['ta']))]))
 
 def train(train_loader, model, criterion, optimizer, epoch):
