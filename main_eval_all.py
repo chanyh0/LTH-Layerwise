@@ -137,7 +137,8 @@ def main():
     all_result['ta'] = []
 
     start_epoch = 0 
-    remain_weight = check_sparsity(model, conv1=args.conv1)
+    if args.mask:
+        remain_weight = check_sparsity(model, conv1=args.conv1)
 
     for epoch in range(start_epoch, args.epochs):
 
