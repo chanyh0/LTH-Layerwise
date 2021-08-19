@@ -1,0 +1,2 @@
+num=$1
+CUDA_VISIBLE_DEVICES=0 python -u main_eval_all.py --data datasets/cifar10 --dataset cifar10 --arch res18 --save_dir res18_cifar10_structural_lth --pretrained LT_cifar10_res18_s1/${num}checkpoint.pth.tar --mask_dir new_mask_10.pth.tar --fc --type identity --prune-type lt
