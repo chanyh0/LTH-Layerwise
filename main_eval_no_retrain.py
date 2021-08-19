@@ -250,7 +250,10 @@ def load_ticket(model, args):
             initalization = initalization['state_dict']
         else:
             assert False
-        
+        for key in list(initalization.keys()):
+            if 'orig' in key:
+                initalization[key[:-4]] = initalization[key]
+                del initalization[key]
         loading_weight = extract_main_weight(initalization, fc=True, conv1=True)
         new_initialization = model.state_dict()
         if not 'normalize.std' in loading_weight:
