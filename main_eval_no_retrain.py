@@ -252,7 +252,7 @@ def load_ticket(model, args):
             assert False
         for key in list(initalization.keys()):
             if 'orig' in key:
-                initalization[key[:-4]] = initalization[key]
+                initalization[key[:-5]] = initalization[key]
                 del initalization[key]
         loading_weight = extract_main_weight(initalization, fc=True, conv1=True)
         new_initialization = model.state_dict()
