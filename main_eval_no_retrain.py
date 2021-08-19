@@ -137,7 +137,7 @@ def main():
     all_result['ta'] = []
 
     start_epoch = 0 
-    if args.mask:
+    if args.mask_dir:
         remain_weight = check_sparsity(model, conv1=args.conv1)
 
     tacc = validate(val_loader, model, criterion)
