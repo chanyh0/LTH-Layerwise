@@ -51,7 +51,7 @@ class BasicBlock(nn.Module):
     expansion = 1
 
     def __init__(self, in_planes, planes, stride=1, option='A'):
-        if stride == 2:
+        if True:
             conv = nn.Conv2d
         else:
             conv = SparseConv2D
