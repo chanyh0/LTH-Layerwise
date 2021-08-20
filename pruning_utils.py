@@ -83,7 +83,7 @@ def prune_model_custom_fillback(model, mask_dict, conv1=False):
                 mask = mask.view(mask.shape[0], -1)
                 count = torch.sum(mask != 0, 1) # [C]
                 #sparsity = torch.sum(mask) / mask.numel()
-                num_channel = torch.sum(mask).float() / mask.shape[0]
+                num_channel = count / mask.shape[0]
                 int_channel = int(num_channel)
                 frac_channel = int_channel - int_channel
                 print(mask.shape)
