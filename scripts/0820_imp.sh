@@ -1,0 +1,3 @@
+CUDA_VISIBLE_DEVICES=0 nohup python -u main_imp_fillback.py --data datasets/cifar10 --dataset cifar10 --arch res18 --save_dir resnet18_cifar10_lt_0.2_fillback --init pretrained_model/resnet18_cifar10_1_init.pth.tar --seed 1 --lr 0.1 --fc --rate 0.2 --pruning_times 20 > 0820_resnet18_cifar10_lt_0.2_gpu0.out &
+
+CUDA_VISIBLE_DEVICES=1 nohup python -u main_imp_fillback.py --data datasets/cifar10 --dataset cifar10 --arch res20s --save_dir resnet18_cifar10_lt_0.2_fillback --init pretrained_model/resnet20_cifar10_1_init.pth.tar --seed 1 --lr 0.1 --fc --rate 0.2 --pruning_times 20 > 0820_resnet20_cifar10_lt_0.2_gpu0.out &
