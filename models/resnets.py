@@ -104,7 +104,7 @@ class ResNet(nn.Module):
         self.normalize = NormalizeByChannelMeanStd(
             mean=[0.4914, 0.4822, 0.4465], std=[0.2470, 0.2435, 0.2616])
 
-        self.conv1 = SparseConv2D(3, 16, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv1 = nn.Conv2d(3, 16, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(16)
         self.layer1 = self._make_layer(block, 16, num_blocks[0], stride=1)
         self.layer2 = self._make_layer(block, 32, num_blocks[1], stride=2)
