@@ -28,20 +28,21 @@ from torch.utils.data.sampler import SubsetRandomSampler
 from advertorch.utils import NormalizeByChannelMeanStd
 
 from utils import *
-from pruning_utils_3 import *
+from pruning_utils import *
 
 parser = argparse.ArgumentParser(description='PyTorch Iterative Pruning')
 
 ##################################### general setting #################################################
-parser.add_argument('--data', type=str, default='../data', help='location of the data corpus')
+parser.add_argument('--data', type=str, default='../../data', help='location of the data corpus')
 parser.add_argument('--dataset', type=str, default='cifar10', help='dataset')
 parser.add_argument('--arch', type=str, default='res20s', help='model architecture')
-parser.add_argument('--split_file', type=str, default=None, help='dataset index')
+parser.add_argument('--file_name', type=str, default=None, help='dataset index')
 parser.add_argument('--seed', default=None, type=int, help='random seed')
 parser.add_argument('--save_dir', help='The directory used to save the trained models', default=None, type=str)
 parser.add_argument('--gpu', type=int, default=0, help='gpu device id')
 parser.add_argument('--resume', action="store_true", help="resume from checkpoint")
 parser.add_argument('--checkpoint', type=str, default=None, help='checkpoint file')
+parser.add_argument('--init', type=str, default=None, help='init file')
 
 ##################################### training setting #################################################
 parser.add_argument('--batch_size', type=int, default=128, help='batch size')
@@ -56,9 +57,12 @@ parser.add_argument('--decreasing_lr', default='91,136', help='decreasing strate
 ##################################### Pruning setting #################################################
 parser.add_argument('--pruning_times', default=16, type=int, help='overall times of pruning')
 parser.add_argument('--rate', default=0.2, type=float, help='pruning rate')
-parser.add_argument('--prune_type', default='lt', type=str, help='IMP type (lt, pt or rewind_lt)')
-parser.add_argument('--random_prune', action='store_true', help='whether using random prune')
+parser.add_argument('--prune_type', default='lt', type=str, help='IMP type (lt,pt or pt_trans)')
+parser.add_argument('--pretrained', default=None, type=str, help='pretrained weight for pt')
+parser.add_argument('--conv1', action="store_true", help="whether pruning&rewind conv1")
+parser.add_argument('--fc', action="store_true", help="whether rewind fc")
 parser.add_argument('--rewind_epoch', default=2, type=int, help='rewind checkpoint')
+
 
 best_sa = 0
 
@@ -66,6 +70,11 @@ def main():
     global args, best_sa
     args = parser.parse_args()
     print(args)
+
+    print('*'*50)
+    print('conv1 included for prune and rewind: {}'.format(args.conv1))
+    print('fc included for rewind: {}'.format(args.fc))
+    print('*'*50)
 
     torch.cuda.set_device(int(args.gpu))
     os.makedirs(args.save_dir, exist_ok=True)
@@ -79,44 +88,74 @@ def main():
     criterion = nn.CrossEntropyLoss()
     decreasing_lr = list(map(int, args.decreasing_lr.split(',')))
 
-    if args.prune_type == 'lt':
-        print('lottery tickets setting (rewind to random init')
-        initalization = deepcopy(model.state_dict())
-    elif args.prune_type == 'pt':
-        initalization = None
-    elif args.prune_type == 'rewind_lt':
-        initalization = None
-    else:
-        raise ValueError('unknown prune_type')
-
     optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay)
     scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=decreasing_lr, gamma=0.1)
     
+    print(model.normalize)  
+    new_initialization = copy.deepcopy(model.state_dict())
+    if not os.path.exists(args.init):
+        torch.save(new_initialization, args.init)
+    initialization = torch.load(args.init)
+    if 'state_dict' in initialization:
+        initialization = initialization['state_dict']
+        
+    initialization['normalize.mean'] = new_initialization['normalize.mean']
+    initialization['normalize.std'] = new_initialization['normalize.std']
+
+    '''
+    if not args.prune_type == 'lt':
+        keys = list(initialization.keys())
+        for key in keys:
+            if key.startswith('fc') or key.startswith('conv1'):
+                del initialization[key]
+
+        initialization['fc.weight'] = new_initialization['fc.weight']
+        initialization['fc.bias'] = new_initialization['fc.bias']
+        initialization['conv1.weight'] = new_initialization['conv1.weight']
+        model.load_state_dict(initialization)
+    '''
+        
     if args.resume:
         print('resume from checkpoint')
-        checkpoint = torch.load(args.checkpoint, map_location = torch.device('cuda:'+str(args.gpu)))
-        best_sa = checkpoint['best_sa']
+        checkpoint = torch.load(args.checkpoint, map_location="cpu")
+        try:
+            best_sa = checkpoint['best_sa']
+            all_result = checkpoint['result']
+        except:
+            best_sa = checkpoint['best_prec1']
         start_epoch = checkpoint['epoch']
-        all_result = checkpoint['result']
-        start_state = checkpoint['state']
+        start_state = checkpoint['state'] if 'state' in checkpoint else 1
 
         if start_state>0:
             current_mask = extract_mask(checkpoint['state_dict'])
+            for m in current_mask:
+                print(current_mask[m].float().mean())
+            #print(current_mask)
             prune_model_custom(model, current_mask)
-            check_sparsity(model)
+            check_sparsity(model, conv1=False)
             optimizer = torch.optim.SGD(model.parameters(), args.lr,
-                                        momentum=args.momentum,
-                                        weight_decay=args.weight_decay)
+                                momentum=args.momentum,
+                                weight_decay=args.weight_decay)
             scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=decreasing_lr, gamma=0.1)
-
+        if 'normalize.mean' not in checkpoint['state_dict']:
+            checkpoint['state_dict']['normalize.mean'] = new_initialization['normalize.mean']
+            checkpoint['state_dict']['normalize.std'] = new_initialization['normalize.std']
         model.load_state_dict(checkpoint['state_dict'])
         optimizer.load_state_dict(checkpoint['optimizer'])
         scheduler.load_state_dict(checkpoint['scheduler'])
-        initalization = checkpoint['init_weight']
+        initialization = copy.deepcopy(checkpoint['init_weight']) if 'init_weight' in checkpoint else torch.load(args.init)['state_dict']
+
+        if 'normalize.mean' not in initialization:
+            initialization['normalize.mean'] = new_initialization['normalize.mean']
+            initialization['normalize.std'] = new_initialization['normalize.std']
         print('loading state:', start_state)
         print('loading from epoch: ',start_epoch, 'best_sa=', best_sa)
+        all_result = {}
+        all_result['train'] = [best_sa]
+        all_result['test_ta'] = [best_sa]
+        all_result['ta'] = [best_sa]
 
     else:
         all_result = {}
@@ -135,19 +174,14 @@ def main():
         print('pruning state', state)
         print('******************************************')
         
-        check_sparsity(model)        
+        check_sparsity(model, conv1=False)        
         for epoch in range(start_epoch, args.epochs):
 
             print(optimizer.state_dict()['param_groups'][0]['lr'])
-
+            if epoch == args.rewind_epoch and args.prune_type == 'rewind_lt' and state == 0:
+                torch.save(model.state_dict(), os.path.join(args.save_dir, f"epoch_{args.rewind_epoch}.pth.tar"))
+                initialization = copy.deepcopy(model.state_dict())
             acc = train(train_loader, model, criterion, optimizer, epoch)
-
-            if state == 0:
-                if epoch == args.rewind_epoch:
-                    torch.save(model.state_dict(), os.path.join(args.save_dir, 'epoch_{}_rewind_weight.pt'.format(epoch+1)))
-                    if args.prune_type == 'rewind_lt':
-                        initalization = deepcopy(model.state_dict())
-
             # evaluate on validation set
             tacc = validate(val_loader, model, criterion)
             # evaluate on test set
@@ -171,7 +205,7 @@ def main():
                 'best_sa': best_sa,
                 'optimizer': optimizer.state_dict(),
                 'scheduler': scheduler.state_dict(),
-                'init_weight': initalization
+                'init_weight': initialization
             }, is_SA_best=is_best_sa, pruning=state, save_path=args.save_dir)
         
             plt.plot(all_result['train'], label='train_acc')
@@ -182,7 +216,8 @@ def main():
             plt.close()
 
         #report result
-        check_sparsity(model)
+        validate(val_loader, model, criterion) # extra forward
+        check_sparsity(model, conv1=False)
         print('* best SA={}'.format(all_result['test_ta'][np.argmax(np.array(all_result['ta']))]))
 
         all_result = {}
@@ -193,24 +228,18 @@ def main():
         best_sa = 0
         start_epoch = 0
 
-        if args.prune_type == 'pt':
-            print('* loading pretrained weight')
-            initalization = torch.load(os.path.join(args.save_dir, '0model_SA_best.pth.tar'), map_location = torch.device('cuda:'+str(args.gpu)))['state_dict']
-
-        #pruning and rewind 
-        if args.random_prune:
-            print('random pruning')
-            pruning_model_random(model, args.rate)
-        else:
-            print('L1 pruning')
-            pruning_model(model, args.rate)
-
-        remain_weight = check_sparsity(model)
+        pruning_model(model, args.rate, conv1=False)
+        remain_weight = check_sparsity(model, conv1=False)
         current_mask = extract_mask(model.state_dict())
-        remove_prune(model)
-        #rewind weight to init
-        model.load_state_dict(initalization)
+        for m in current_mask:
+            print(current_mask[m].float().mean())
+
+        remove_prune(model, conv1=False)
+
+        model.load_state_dict(initialization)
         prune_model_custom(model, current_mask)
+        check_sparsity(model, conv1=False)
+
         optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                     momentum=args.momentum,
                                     weight_decay=args.weight_decay)
@@ -307,6 +336,19 @@ def save_checkpoint(state, is_SA_best, save_path, pruning, filename='checkpoint.
     torch.save(state, filepath)
     if is_SA_best:
         shutil.copyfile(filepath, os.path.join(save_path, str(pruning)+'model_SA_best.pth.tar'))
+
+def load_weight(model, initialization, args): 
+    print('loading pretrained weight')
+    loading_weight = extract_main_weight(initialization)
+    
+    for key in loading_weight.keys():
+        if not (key in model.state_dict().keys()):
+            print(key)
+            assert False
+
+    print('*number of loading weight={}'.format(len(loading_weight.keys())))
+    print('*number of model weight={}'.format(len(model.state_dict().keys())))
+    model.load_state_dict(loading_weight)
 
 def warmup_lr(epoch, step, optimizer, one_epoch_step):
 

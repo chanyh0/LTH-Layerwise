@@ -75,6 +75,28 @@ def prune_model_custom(model, mask_dict, conv1=False):
                 print('pruning layer with custom mask:', name)
                 prune.CustomFromMask.apply(m, 'weight', mask=mask_dict[name+'.weight_mask'].to(m.weight.device))
 
+def prune_model_custom_fillback(model, mask_dict, conv1=False):
+    for name,m in model.named_modules():
+        if isinstance(m, nn.Conv2d):
+            if (name == 'conv1' and conv1) or (name != 'conv1'):
+                mask = mask_dict[name+'.weight_mask']
+                mask = mask.view(mask.shape[0], -1)
+                count = torch.sum(mask != 0, 1) # [C]
+                #sparsity = torch.sum(mask) / mask.numel()
+                num_channel = torch.sum(mask).float() / mask.shape[0]
+                int_channel = int(num_channel)
+                frac_channel = int_channel - int_channel
+
+                threshold, _ = torch.kthvalue(count, mask.shape[0] - int_channel - 1)
+                
+                mask[torch.where(count > threshold)[0]] = 1
+                mask[torch.where(count < threshold)[0]] = 0
+                mask[torch.where(count == threshold)[0],:int(frac_channel * mask.shape[1])] = 1
+                mask[torch.where(count == threshold)[0],int(frac_channel * mask.shape[1]):] = 0
+                mask = mask.view(*mask_dict[name+'.weight_mask'].shape)
+                print('pruning layer with custom mask:', name)
+                prune.CustomFromMask.apply(m, 'weight', mask=mask.to(m.weight.device))
+
 
 def pruning_model_random(model, px):
 
