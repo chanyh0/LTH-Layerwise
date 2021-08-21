@@ -104,7 +104,7 @@ def main():
     initialization['normalize.mean'] = new_initialization['normalize.mean']
     initialization['normalize.std'] = new_initialization['normalize.std']
 
-    
+    print(initialization.keys())
     if not args.prune_type == 'lt':
         keys = list(initialization.keys())
         for key in keys:
