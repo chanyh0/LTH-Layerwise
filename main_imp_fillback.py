@@ -116,7 +116,7 @@ def main():
         initialization['conv1.weight'] = new_initialization['conv1.weight']
         model.load_state_dict(initialization)
     else:
-        print(initialization)
+        print(initialization.keys())
         model.load_state_dict(initialization)
         
     if args.resume:
