@@ -100,11 +100,11 @@ def main():
     initialization = torch.load(args.init)
     if 'state_dict' in initialization:
         initialization = initialization['state_dict']
-        
+    
     initialization['normalize.mean'] = new_initialization['normalize.mean']
     initialization['normalize.std'] = new_initialization['normalize.std']
 
-    '''
+    
     if not args.prune_type == 'lt':
         keys = list(initialization.keys())
         for key in keys:
@@ -115,7 +115,8 @@ def main():
         initialization['fc.bias'] = new_initialization['fc.bias']
         initialization['conv1.weight'] = new_initialization['conv1.weight']
         model.load_state_dict(initialization)
-    '''
+    else:
+        model.load_state_dict(initialization)
         
     if args.resume:
         print('resume from checkpoint')
