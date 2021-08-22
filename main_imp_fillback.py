@@ -239,7 +239,7 @@ def main():
         remove_prune(model, conv1=False)
 
         model.load_state_dict(initialization)
-        prune_model_custom(model, current_mask)
+        prune_model_custom_fillback(model, current_mask)
         check_sparsity(model, conv1=False)
 
         optimizer = torch.optim.SGD(model.parameters(), args.lr,
