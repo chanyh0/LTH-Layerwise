@@ -89,7 +89,7 @@ def prune_model_custom_fillback(model, mask_dict, conv1=False):
                 frac_channel = num_channel - int_channel
                 print(mask.shape)
                 print(int_channel)
-                threshold, _ = torch.kthvalue(count, mask.shape[0] - int_channel - 1)
+                threshold, _ = torch.kthvalue(count, mask.shape[0] - int_channel)
                 
                 mask[torch.where(count > threshold)[0]] = 1
                 mask[torch.where(count < threshold)[0]] = 0
