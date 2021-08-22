@@ -1,0 +1,16 @@
+CUDA_VISIBLE_DEVICES=4 nohup python -u main_imp_new.py --data datasets/cifar100 --dataset cifar100 --arch res50 --save_dir resnet50_cifar100_lt_0.1 --init LotteryTickets/cifar100_LT/random_init.pt --seed 1 --lr 0.1 --fc --rate 0.1 --pruning_times 12 --resume --checkpoint LotteryTickets/cifar100_LT/2_checkpoint.pt --prune_type lt --weight_decay 2e-4 --batch_size 256 --warmup 5 > 0519_resnet50_cifar100_lt_0.1_GPU4.out &
+
+CUDA_VISIBLE_DEVICES=5 nohup python -u main_imp_new.py --data datasets/cifar10 --dataset cifar10 --arch res50 --save_dir resnet50_cifar10_lt_0.1 --init LotteryTickets/cifar10_LT/random_init.pt --seed 1 --lr 0.1 --fc --rate 0.1 --pruning_times 17 --resume --checkpoint LotteryTickets/cifar10_LT/7_checkpoint.pt --prune_type lt --weight_decay 2e-4 --batch_size 256 --warmup 5 > 0519_resnet50_cifar10_lt_0.1_GPU5.out &
+
+CUDA_VISIBLE_DEVICES=4 nohup python -u main_imp_new.py --data datasets/cifar100 --dataset cifar100 --arch res50 --save_dir resnet50_cifar100_lt_0.05 --init LotteryTickets/cifar100_LT/random_init.pt --seed 1 --lr 0.1 --fc --rate 0.05 --pruning_times 15 --resume --checkpoint resnet50_cifar100_lt_0.1/5checkpoint.pth.tar --prune_type lt --weight_decay 2e-4 --batch_size 256 --warmup 5 > 0521_resnet50_cifar100_lt_0.05_GPU4.out &
+
+CUDA_VISIBLE_DEVICES=5 nohup python -u main_imp_new.py --data datasets/cifar10 --dataset cifar10 --arch res50 --save_dir resnet50_cifar10_lt_0.05 --init LotteryTickets/cifar10_LT/random_init.pt --seed 1 --lr 0.1 --fc --rate 0.05 --pruning_times 15 --resume --checkpoint resnet50_cifar10_lt_0.1/2checkpoint.pth.tar --prune_type lt --weight_decay 2e-4 --batch_size 256 --warmup 5 > 0522_resnet50_cifar10_lt_0.05_GPU5.out &
+
+CUDA_VISIBLE_DEVICES=4 nohup python -u main_imp_new.py --data datasets/cifar100 --dataset cifar100 --arch res50 --save_dir resnet50_cifar100_lt_0.05 --init LotteryTickets/cifar100_LT/random_init.pt --seed 1 --lr 0.1 --fc --rate 0.05 --pruning_times 15 --resume --checkpoint resnet50_cifar100_lt_0.1/4checkpoint.pth.tar --prune_type lt --weight_decay 2e-4 --batch_size 256 --warmup 5 > 0522_resnet50_cifar100_lt_0.05_GPU4.out &
+
+CUDA_VISIBLE_DEVICES=4 nohup python -u main_imp_new.py --data datasets/cifar100 --dataset cifar100 --arch res50 --save_dir resnet50_cifar100_lt_0.01 --init LotteryTickets/cifar100_LT/random_init.pt --seed 1 --lr 0.1 --fc --rate 0.01 --pruning_times 15 --resume --checkpoint resnet50_cifar100_lt_0.1/4checkpoint.pth.tar --prune_type lt --weight_decay 2e-4 --batch_size 256 --warmup 5 > 0522_resnet50_cifar100_lt_0.01_GPU4.out &
+
+
+CUDA_VISIBLE_DEVICES=5 nohup python -u main_imp_new.py --data datasets/cifar10 --dataset cifar10 --arch res50 --save_dir resnet50_cifar10_lt_0.01 --init LotteryTickets/cifar10_LT/random_init.pt --seed 1 --lr 0.1 --fc --rate 0.01 --pruning_times 15 --resume --checkpoint resnet50_cifar10_lt_0.05/8checkpoint.pth.tar --prune_type lt --weight_decay 2e-4 --batch_size 256 --warmup 5 > 0522_resnet50_cifar10_lt_0.01_GPU5.out &
+
+resnet50_cifar100_lt_0.01/10model_SA_best.pth.tar

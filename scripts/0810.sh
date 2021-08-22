@@ -1,0 +1,15 @@
+CUDA_VISIBLE_DEVICES=0 nohup python -u main_eval_transfer.py --data datasets/cifar10 --dataset cifar10 --arch res50 --save_dir res50_cifar10_transfer_extreme --pretrained 9-checkpoint.pth.tar --mask_dir 9-checkpoint.pth.tar --fc --num-paths 2000 --type omp --prune-type transfer --weight_decay 5e-4 --warmup 5 --batch_size 256 --lr 0.1  --type omp --num-paths 400000 > 400000.out &
+
+CUDA_VISIBLE_DEVICES=1 nohup python -u main_eval_transfer.py --data datasets/cifar10 --dataset cifar10 --arch res50 --save_dir res50_cifar10_transfer_extreme --pretrained 9-checkpoint.pth.tar --mask_dir 9-checkpoint.pth.tar --fc --num-paths 2000 --type omp --prune-type transfer --weight_decay 5e-4 --warmup 5 --batch_size 256 --lr 0.1  --type omp --num-paths 300000 > 300000.out &
+
+CUDA_VISIBLE_DEVICES=2 nohup python -u main_eval_transfer.py --data datasets/cifar10 --dataset cifar10 --arch res50 --save_dir res50_cifar10_transfer_extreme --pretrained 9-checkpoint.pth.tar --mask_dir 9-checkpoint.pth.tar --fc --num-paths 2000 --type omp --prune-type transfer --weight_decay 5e-4 --warmup 5 --batch_size 256 --lr 0.1  --type omp --num-paths 200000 > 200000.out &
+
+CUDA_VISIBLE_DEVICES=3 nohup python -u main_eval_transfer.py --data datasets/cifar10 --dataset cifar10 --arch res50 --save_dir res50_cifar10_transfer_extreme --pretrained 9-checkpoint.pth.tar --mask_dir 9-checkpoint.pth.tar --fc --num-paths 2000 --type omp --prune-type transfer --weight_decay 5e-4 --warmup 5 --batch_size 256 --lr 0.1  --type omp --num-paths 500000 > 500000.out &
+
+CUDA_VISIBLE_DEVICES=4 nohup python -u main_eval_transfer.py --data datasets/cifar10 --dataset cifar10 --arch res50 --save_dir res50_cifar10_transfer_extreme --pretrained 9-checkpoint.pth.tar --mask_dir 9-checkpoint.pth.tar --fc --num-paths 2000 --type omp --prune-type transfer --weight_decay 5e-4 --warmup 5 --batch_size 256 --lr 0.1  --type omp --num-paths 100000 > 100000.out &
+
+CUDA_VISIBLE_DEVICES=5 nohup python -u main_eval_transfer.py --data datasets/cifar10 --dataset cifar10 --arch res50 --save_dir res50_cifar10_transfer_extreme --pretrained 9-checkpoint.pth.tar --mask_dir 9-checkpoint.pth.tar --fc --num-paths 2000 --type omp --prune-type transfer --weight_decay 5e-4 --warmup 5 --batch_size 256 --lr 0.1  --type omp --num-paths 80000 > 80000.out &
+
+CUDA_VISIBLE_DEVICES=6 nohup python -u main_eval_transfer.py --data datasets/cifar10 --dataset cifar10 --arch res50 --save_dir res50_cifar10_transfer_extreme --pretrained 9-checkpoint.pth.tar --mask_dir 9-checkpoint.pth.tar --fc --num-paths 2000 --type omp --prune-type transfer --weight_decay 5e-4 --warmup 5 --batch_size 256 --lr 0.1  --type omp --num-paths 60000 > 60000.out &
+
+CUDA_VISIBLE_DEVICES=7 nohup python -u main_eval_transfer.py --data datasets/cifar10 --dataset cifar10 --arch res50 --save_dir res50_cifar10_transfer_extreme --pretrained 9-checkpoint.pth.tar --mask_dir 9-checkpoint.pth.tar --fc --num-paths 2000 --type omp --prune-type transfer --weight_decay 5e-4 --warmup 5 --batch_size 256 --lr 0.1  --type omp --num-paths 40000 > 40000.out &

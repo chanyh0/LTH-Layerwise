@@ -1,0 +1,89 @@
+CUDA_VISIBLE_DEVICES=7 nohup python -u main_imp.py --data ../data/tiny-imagenet-200 --dataset tiny-imagenet \
+--seed 1 --arch res50 --pruning_times 15 --rate 0.2 --prune_type rewind_lt --epoch 160 --lr 0.125 --decreasing_lr 80,120 \
+  --warmup 20  --batch_size 32 --save_dir res50_tiny-imagenet_b32_e160_lr0.125_w20 \
+  --rewind_epoch 8 \
+  > 0601_res50_tiny-imagenet_b32_e160_lr0.125_w20_IMP_GPU7.out &
+
+CUDA_VISIBLE_DEVICES=4 nohup python -u main_imp.py --data ../data/tiny-imagenet-200 --dataset tiny-imagenet \
+--seed 1 --arch res50 --pruning_times 15 --rate 0.2 --prune_type rewind_lt --epoch 160 --lr 0.15 --decreasing_lr 80,120 \
+  --warmup 20  --batch_size 32 --save_dir res50_tiny-imagenet_b32_e160_lr0.15_w20 \
+  --rewind_epoch 8 \
+  > 0601_res50_tiny-imagenet_b32_e160_lr0.15_w20_IMP_GPU4.out &
+
+CUDA_VISIBLE_DEVICES=5 nohup python -u main_imp.py --data ../data/tiny-imagenet-200 --dataset tiny-imagenet \
+--seed 1 --arch res50 --pruning_times 15 --rate 0.2 --prune_type rewind_lt --epoch 160 --lr 0.2 --decreasing_lr 80,120 \
+  --warmup 20  --batch_size 32 --save_dir res50_tiny-imagenet_b32_e160_lr0.2_w20 \
+  --rewind_epoch 8 \
+  > 0601_res50_tiny-imagenet_b32_e160_lr0.2_w20_IMP_GPU5.out &
+
+CUDA_VISIBLE_DEVICES=6 nohup python -u main_imp.py --data ../data/tiny-imagenet-200 --dataset tiny-imagenet \
+--seed 1 --arch res50 --pruning_times 15 --rate 0.2 --prune_type rewind_lt --epoch 160 --lr 0.4 --decreasing_lr 80,120 \
+  --warmup 20  --batch_size 32 --save_dir res50_tiny-imagenet_b32_e160_lr0.4_w20 \
+  --rewind_epoch 8 \
+  > 0601_res50_tiny-imagenet_b32_e160_lr0.4_w20_IMP_GPU6.out &
+
+
+  CUDA_VISIBLE_DEVICES=3 nohup python -u main_imp.py --data ../data/tiny-imagenet-200 --dataset tiny-imagenet \
+--seed 1 --arch res50 --pruning_times 15 --rate 0.2 --prune_type rewind_lt --epoch 160 --lr 0.1 --decreasing_lr 80,120 \
+  --warmup 20  --batch_size 32 --save_dir res50_tiny-imagenet_b32_e160_lr0.1_w20 \
+  --rewind_epoch 8 \
+  > 0601_res50_tiny-imagenet_b32_e160_lr0.1_w20_IMP_GPU3.out &
+
+    CUDA_VISIBLE_DEVICES=2 nohup python -u main_imp.py --data ../data/tiny-imagenet-200 --dataset tiny-imagenet \
+--seed 1 --arch res50 --pruning_times 15 --rate 0.2 --prune_type rewind_lt --epoch 160 --lr 0.075 --decreasing_lr 80,120 \
+  --warmup 20  --batch_size 32 --save_dir res50_tiny-imagenet_b32_e160_lr0.075_w20 \
+  --rewind_epoch 8 \
+  > 0601_res50_tiny-imagenet_b32_e160_lr0.075_w20_IMP_GPU2.out &
+
+  CUDA_VISIBLE_DEVICES=1 nohup python -u main_imp.py --data ../data/tiny-imagenet-200 --dataset tiny-imagenet \
+--seed 1 --arch res50 --pruning_times 15 --rate 0.2 --prune_type rewind_lt --epoch 160 --lr 0.05 --decreasing_lr 80,120 \
+  --warmup 20  --batch_size 32 --save_dir res50_tiny-imagenet_b32_e160_lr0.05_w20 \
+  --rewind_epoch 8 \
+  > 0601_res50_tiny-imagenet_b32_e160_lr0.05_w20_IMP_GPU1.out &
+
+
+
+
+
+  CUDA_VISIBLE_DEVICES=7 nohup python -u main_imp.py --data ../data/tiny-imagenet-200 --dataset tiny-imagenet \
+--seed 1 --arch res50 --pruning_times 15 --rate 0.2 --prune_type rewind_lt --epoch 160 --lr 0.125 --decreasing_lr 80,120 \
+  --warmup 20  --batch_size 32 --save_dir res50_tiny-imagenet_b32_e160_lr0.125_w20_continue \
+  --rewind_epoch 8 --resume --checkpoint res50_tiny-imagenet_b32_e160_lr0.125_w20/2checkpoint.pth.tar \
+  > 0601_res50_tiny-imagenet_b32_e160_lr0.125_w20_IMP_GPU7_continue.out &
+
+CUDA_VISIBLE_DEVICES=4 nohup python -u main_imp.py --data ../data/tiny-imagenet-200 --dataset tiny-imagenet \
+--seed 1 --arch res50 --pruning_times 15 --rate 0.2 --prune_type rewind_lt --epoch 160 --lr 0.15 --decreasing_lr 80,120 \
+  --warmup 20  --batch_size 32 --save_dir res50_tiny-imagenet_b32_e160_lr0.15_w20_continue \
+  --rewind_epoch 8 --resume --checkpoint res50_tiny-imagenet_b32_e160_lr0.15_w20/2checkpoint.pth.tar \
+  > 0601_res50_tiny-imagenet_b32_e160_lr0.15_w20_IMP_GPU4_continue.out &
+
+CUDA_VISIBLE_DEVICES=5 nohup python -u main_imp.py --data ../data/tiny-imagenet-200 --dataset tiny-imagenet \
+--seed 1 --arch res50 --pruning_times 15 --rate 0.2 --prune_type rewind_lt --epoch 160 --lr 0.2 --decreasing_lr 80,120 \
+  --warmup 20  --batch_size 32 --save_dir res50_tiny-imagenet_b32_e160_lr0.2_w20_continue \
+  --rewind_epoch 8 --resume --checkpoint res50_tiny-imagenet_b32_e160_lr0.2_w20/2checkpoint.pth.tar \
+  > 0601_res50_tiny-imagenet_b32_e160_lr0.2_w20_IMP_GPU5_continue.out &
+
+CUDA_VISIBLE_DEVICES=6 nohup python -u main_imp.py --data ../data/tiny-imagenet-200 --dataset tiny-imagenet \
+--seed 1 --arch res50 --pruning_times 15 --rate 0.2 --prune_type rewind_lt --epoch 160 --lr 0.4 --decreasing_lr 80,120 \
+  --warmup 20  --batch_size 32 --save_dir res50_tiny-imagenet_b32_e160_lr0.4_w20_continue \
+  --rewind_epoch 8 --resume --checkpoint res50_tiny-imagenet_b32_e160_lr0.4_w20/2checkpoint.pth.tar \
+  > 0601_res50_tiny-imagenet_b32_e160_lr0.4_w20_IMP_GPU6_continue.out &
+
+
+  CUDA_VISIBLE_DEVICES=3 nohup python -u main_imp.py --data ../data/tiny-imagenet-200 --dataset tiny-imagenet \
+--seed 1 --arch res50 --pruning_times 15 --rate 0.2 --prune_type rewind_lt --epoch 160 --lr 0.1 --decreasing_lr 80,120 \
+  --warmup 20  --batch_size 32 --save_dir res50_tiny-imagenet_b32_e160_lr0.1_w20_continue \
+  --rewind_epoch 8 --resume --checkpoint res50_tiny-imagenet_b32_e160_lr0.1_w20/2model_SA_best.pth.tar \
+  > 0601_res50_tiny-imagenet_b32_e160_lr0.1_w20_IMP_GPU3_continue.out &
+
+    CUDA_VISIBLE_DEVICES=2 nohup python -u main_imp.py --data ../data/tiny-imagenet-200 --dataset tiny-imagenet \
+--seed 1 --arch res50 --pruning_times 15 --rate 0.2 --prune_type rewind_lt --epoch 160 --lr 0.075 --decreasing_lr 80,120 \
+  --warmup 20  --batch_size 32 --save_dir res50_tiny-imagenet_b32_e160_lr0.075_w20_continue \
+  --rewind_epoch 8 --resume --checkpoint res50_tiny-imagenet_b32_e160_lr0.075_w20/2checkpoint.pth.tar \
+  > 0601_res50_tiny-imagenet_b32_e160_lr0.075_w20_IMP_GPU2_continue.out &
+
+  CUDA_VISIBLE_DEVICES=1 nohup python -u main_imp.py --data ../data/tiny-imagenet-200 --dataset tiny-imagenet \
+--seed 1 --arch res50 --pruning_times 15 --rate 0.2 --prune_type rewind_lt --epoch 160 --lr 0.05 --decreasing_lr 80,120 \
+  --warmup 20  --batch_size 32 --save_dir res50_tiny-imagenet_b32_e160_lr0.05_w20_continue \
+  --rewind_epoch 8 --resume --checkpoint res50_tiny-imagenet_b32_e160_lr0.05_w20/2checkpoint.pth.tar \
+  > 0601_res50_tiny-imagenet_b32_e160_lr0.05_w20_IMP_GPU1_continue.out &

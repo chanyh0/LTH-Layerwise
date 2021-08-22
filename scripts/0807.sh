@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=0 python -u main_imp_new_taylor.py --data datasets/cifar10 --dataset cifar10 --arch res20s --save_dir res20s_cifar10_lt_0.2 --init pretrained_model/res20s_cifar10_1.pt --seed 1 --lr 0.1 --fc --rate 0.2 --pruning_times 10 --prune_type lt

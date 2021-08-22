@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=0 python -u main_eval_transfer.py --data datasets/cifar10 --dataset cifar10 --arch res50 --save_dir res50_cifar10_transfer_extreme --pretrained 9-checkpoint.pth.tar --mask_dir 9-checkpoint.pth.tar --fc --num-paths 2000 --type omp --prune-type transfer --weight_decay 5e-4 --warmup 5 --batch_size 256 --lr 0.1 

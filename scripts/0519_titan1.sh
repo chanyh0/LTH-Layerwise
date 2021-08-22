@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=0 nohup python -u main_imp_new.py --data datasets/cifar100 --dataset cifar100 --arch res20s --save_dir res20s_cifar100_lt_0.2_128 --init LotteryTickets/cifar100_LT/random_init.pt --seed 7 --lr 0.1 --fc --rate 0.2 --pruning_times 10 --prune_type rewind_lt --rewind_epoch 3 > 0519_res20s_cifar100_rewind_lt_0.2_GPU0.out &

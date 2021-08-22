@@ -1,0 +1,5 @@
+CUDA_VISIBLE_DEVICES=2 nohup python -u main_eval_all.py --data datasets/cifar10 --dataset cifar10 --arch res18 --save_dir res18_cifar10_structural_lth --pretrained resnet18_cifar10_lt_0.2/0checkpoint.pth.tar --mask_dir new_mask_11_no_rewind.pth.tar --fc --type identity --prune-type lt > 0814_res18_cifar10_structural_lth_11_no_rewind_GPU2.out &
+
+CUDA_VISIBLE_DEVICES=1 nohup python -u main_eval_all.py --data datasets/cifar10 --dataset cifar10 --arch res18 --save_dir res18_cifar10_structural_lth --pretrained resnet18_cifar10_lt_0.2/0checkpoint.pth.tar --mask_dir new_mask_12_no_rewind.pth.tar --fc --type identity --prune-type lt > 0814_res18_cifar10_structural_lth_12_no_rewind_GPU2.out &
+
+CUDA_VISIBLE_DEVICES=0 nohup python -u main_eval_all.py --data datasets/cifar10 --dataset cifar10 --arch res18 --save_dir res18_cifar10_structural_lth --pretrained resnet18_cifar10_lt_0.2/0checkpoint.pth.tar --mask_dir new_mask_13_no_rewind.pth.tar --fc --type identity --prune-type lt > 0814_res18_cifar10_structural_lth_13_no_rewind_GPU2.out &

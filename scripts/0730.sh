@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=1 python -u main_eval_all.py --data datasets/cifar10 --dataset cifar10 --arch res20s --save_dir test --pretrained LT_cifar10_res20s_s1/mask_with_init/init.pt --mask_dir LT_cifar10_res20s_s1/mask_with_init/19-mask.pt --fc 
