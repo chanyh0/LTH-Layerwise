@@ -1,0 +1,3 @@
+CUDA_VISIBLE_DEVICES=2 nohup python -u main_imp_new.py --data datasets/cifar10 --dataset cifar10 --arch res18 --save_dir resnet18_cifar10_lt_0.2_s3_rewind --init pretrained_model/res18_cifar10_3_init.pth.tar --seed 3 --lr 0.1 --fc --rate 0.2 --pruning_times 20 > 0821_res18_cifar10_lt_0.2_gpu2_new.out &
+
+CUDA_VISIBLE_DEVICES=3 nohup python -u main_imp_new.py --data datasets/cifar10 --dataset cifar10 --arch res18 --save_dir resnet18_cifar10_lt_0.2_s2_rewind --init pretrained_model/res18_cifar10_2_init.pth.tar --seed 2 --lr 0.1 --fc --rate 0.2 --pruning_times 20 > 0821_res18_cifar10_lt_0.2_rewind_GPU3.out &
