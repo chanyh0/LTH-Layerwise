@@ -122,15 +122,19 @@ def prune_model_custom_fillback_slow(model, mask_dict, conv1=False):
                 mask[torch.where(count == threshold)[0],int(frac_channel * mask.shape[1]):] = 0
 
                 norm = m.weight.data[torch.where(count < threshold)[0]].view(-1, mask.shape[1]).abs().sum(1)
-                threshold2, _ = torch.kthvalue(norm, int(norm.shape[0] / 2))
-                #print(norm)
-                print(norm.shape)
-                print(mask.mean())
-                mask2 = mask[torch.where(count < threshold)[0]]
-                mask2[norm < threshold2] = 0
-                mask2[norm >= threshold2] = 1
-                mask[torch.where(count < threshold)[0]] = mask2
-                print(mask.mean())
+                try:
+                    threshold2, _ = torch.kthvalue(norm, int(norm.shape[0] / 2))
+                
+                    #print(norm)
+                    print(norm.shape)
+                    print(mask.mean())
+                    mask2 = mask[torch.where(count < threshold)[0]]
+                    mask2[norm < threshold2] = 0
+                    mask2[norm >= threshold2] = 1
+                    mask[torch.where(count < threshold)[0]] = mask2
+                    print(mask.mean())
+                except:
+                    pass
 
 
 
