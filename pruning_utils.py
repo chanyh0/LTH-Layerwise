@@ -126,8 +126,10 @@ def prune_model_custom_fillback_slow(model, mask_dict, conv1=False):
                 #print(norm)
                 print(norm.shape)
                 print(mask.mean())
-                mask[torch.where(count < threshold)[0]][norm < threshold2] = 0
-                mask[torch.where(count < threshold)[0]][norm >= threshold2] = 1
+                mask2 = mask[torch.where(count < threshold)[0]]
+                mask2[norm < threshold2] = 0
+                mask2[norm >= threshold2] = 1
+                mask[torch.where(count < threshold)[0]] = mask2
                 print(mask.mean())
 
 
