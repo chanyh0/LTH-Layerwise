@@ -1,0 +1,2 @@
+CUDA_VISIBLE_DEVICES=1 nohup python -u main_imp_fillback.py --data ../data/tiny-imagenet-200 --dataset tiny-imagenet --seed 1 --arch res50 --pruning_times 2 --rate 0.8323 --prune_type seed2 --rewind_epoch 8 --epoch 160 --lr 0.1 --decreasing_lr 80,120  --warmup 20  --batch_size 32 --save_dir  res50_tiny-imagenet_b32_e160_lr0.1_w20_omp --resume --checkpoint res50_tiny-imagenet_b32_e160_lr0.1_w20/0checkpoint.pth.tar --init res50_tiny-imagenet_b32_e160_lr0.1_w20/0checkpoint.pth.tar > 0826_res50_tiny-imagenet_b32_e160_lr0.1_w20_OMP_2_seed2_fillback_GPU0.out &
+
